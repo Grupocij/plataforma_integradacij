@@ -3,43 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma Integrada CIJ | Leadjet & Controle de Gestão</title>
+    <title>Plataforma Integrada CIJ - Gestão Comercial, Financeira e Despesas</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- XLSX JS Style Library (SheetJS with full cell styling support) -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS with full cell styling support -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 
     <style>
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f1f5f9;
-            color: #1e293b;
-        }
-
-        .section-header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-        }
-
-        .btn-gradient-blue {
-            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-        }
-
-        .btn-gradient-blue:hover {
-            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-        }
-
-        .card-shadow {
-            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
-        }
-
-        .tab-btn.active {
-            background-color: #2563eb;
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            color: #0f172a;
         }
 
         .custom-scrollbar::-webkit-scrollbar {
@@ -47,287 +25,311 @@
             height: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #0f172a;
+            background: #e2e8f0;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #1e3a8a;
+            background: #94a3b8;
             border-radius: 4px;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #3b82f6;
+
+        /* Forçar texto escuro e fundo branco em todos os menus suspensos (select) */
+        select, select option {
+            color: #0f172a !important;
+            background-color: #ffffff !important;
         }
 
-        /* Estilos otimizados para salvar/imprimir em exatamente 1 PÁGINA A4 */
+        .section-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+        }
+
+        /* ESTILOS DE IMPRESSÃO (PDF EM 1 PÁGINA A4 RIGOROSA) */
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 8mm 10mm;
+                margin: 4mm;
             }
 
             body {
-                background-color: #ffffff !important;
-                color: #0f172a !important;
+                background: white !important;
+                color: black !important;
                 padding: 0 !important;
                 margin: 0 !important;
-                font-size: 10px !important;
+                font-size: 9px !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
 
-            header, nav, #view-home, #view-formulario, #view-banco, #view-despesas .no-print, #modalLinkCompartilhar, .no-print {
+            .no-print {
                 display: none !important;
             }
 
-            main {
-                max-width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
+            /* Garantir que apenas o módulo ativo seja impresso */
+            body > header, nav, footer {
+                display: none !important;
             }
 
+            /* Módulo Simulador Leadjet ajustado em exatas 1 página A4 */
             #view-calculadora {
                 display: block !important;
-                space-y: 12px !important;
-            }
-
-            .print-header {
-                background: #1e3a8a !important;
-                color: #ffffff !important;
-                padding: 12px 16px !important;
-                border-radius: 12px !important;
-                margin-bottom: 12px !important;
-            }
-
-            .print-card {
-                padding: 12px !important;
-                border: 1px solid #cbd5e1 !important;
-                border-radius: 12px !important;
-                box-shadow: none !important;
-                background-color: #ffffff !important;
-                margin-bottom: 10px !important;
+                width: 100% !important;
+                max-height: 285mm !important;
+                overflow: hidden !important;
+                page-break-inside: avoid !important;
                 break-inside: avoid !important;
+                padding: 0 !important;
+                margin: 0 !important;
             }
 
-            .print-grid {
-                gap: 8px !important;
+            #view-calculadora .simulador-container {
+                padding: 0 !important;
+                margin: 0 auto !important;
+                max-width: 100% !important;
             }
 
-            .print-res-diario {
-                background: #0f172a !important;
-                color: #ffffff !important;
-                border-radius: 10px !important;
-                padding: 10px !important;
-            }
-
-            .print-res-mensal {
-                background: #1e3a8a !important;
-                color: #ffffff !important;
-                border-radius: 10px !important;
-                padding: 10px !important;
-            }
-
-            .print-res-anual {
-                background: #312e81 !important;
-                color: #ffffff !important;
-                border-radius: 10px !important;
-                padding: 10px !important;
-            }
-
-            input, select {
-                background-color: #f8fafc !important;
+            #view-calculadora .card-simulador {
+                padding: 10px 14px !important;
+                margin-bottom: 8px !important;
                 border: 1px solid #cbd5e1 !important;
-                padding: 4px 8px !important;
-                font-size: 10px !important;
+                border-radius: 8px !important;
+                box-shadow: none !important;
+            }
+
+            #view-calculadora .card-simulador-resumo {
+                background-color: #002d72 !important;
+                color: #ffffff !important;
+                padding: 8px !important;
+                border-radius: 8px !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            #view-calculadora h2 {
+                font-size: 16px !important;
+                margin-bottom: 2px !important;
+            }
+
+            #view-calculadora input, #view-calculadora select {
+                padding: 3px 6px !important;
+                font-size: 9px !important;
+                background-color: #ffffff !important;
                 color: #0f172a !important;
-                -webkit-appearance: none !important;
-                appearance: none !important;
+            }
+
+            #view-calculadora label {
+                font-size: 8.5px !important;
+                margin-bottom: 1px !important;
+            }
+
+            /* Módulo Despesas em 1 Página */
+            #view-despesas {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                width: 100% !important;
+            }
+
+            #view-despesas td, #view-despesas th,
+            #view-solicitacao td, #view-solicitacao th {
+                color: #0f172a !important;
+                background-color: #ffffff !important;
+                font-size: 8.5px !important;
+                padding: 3px 5px !important;
+            }
+
+            #view-despesas th, #view-solicitacao th {
+                background-color: #1e3a8a !important;
+                color: #ffffff !important;
             }
         }
     </style>
 </head>
-<body class="min-h-screen pb-12">
+<body class="min-h-screen pb-12 flex flex-col">
 
-    <header class="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-950 text-white shadow-xl border-b-4 border-blue-600 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
-            <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
+    <header class="bg-[#0f172a] text-white shadow-md border-b border-slate-800 no-print sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
                 
-                <!-- Logo & Brand -->
-                <div class="flex items-center gap-3.5 cursor-pointer" onclick="navegarPara('home')">
-                    <div class="bg-blue-600 text-white p-2.5 rounded-xl shadow-md border border-blue-400/30 flex items-center justify-center">
-                        <i class="fa-solid fa-industry text-2xl"></i>
+                <!-- LOGO E BADGES -->
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-blue-600 rounded-xl text-white shadow-md">
+                        <i class="fa-solid fa-industry text-xl"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="bg-blue-500/30 text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-400/20 uppercase tracking-wider">Leadjet CIJ Portal</span>
-                            <span id="firebase-status-badge" class="bg-emerald-500/30 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-400/20 flex items-center gap-1">
-                                <i class="fa-solid fa-cloud text-[9px]"></i> Firebase On
+                            <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-950 px-2 py-0.5 rounded border border-blue-800">LEADJET CIJ PORTAL</span>
+                            <span id="firebase-status-badge" class="text-[10px] font-semibold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800 flex items-center gap-1">
+                                <i class="fa-solid fa-cloud text-[9px]"></i> Cloud Sync
                             </span>
                         </div>
-                        <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white">
-                            Plataforma de Gestão Integrada
-                        </h1>
+                        <h1 class="text-lg font-bold tracking-tight text-white leading-tight">Plataforma de Gestão Integrada</h1>
                     </div>
                 </div>
 
-                <!-- Navigation Tabs -->
-                <nav class="flex flex-wrap items-center justify-center gap-1.5 bg-slate-800/80 p-1.5 rounded-2xl border border-slate-700/60 backdrop-blur-md">
-                    <button type="button" id="tab-home" onclick="navegarPara('home')" class="tab-btn active px-3 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-house text-xs"></i> <span>Início</span>
+                <!-- NAVEGAÇÃO ENTRE MÓDULOS -->
+                <nav class="hidden md:flex space-x-1">
+                    <button onclick="navegarPara('inicio')" id="nav-inicio" class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 bg-blue-600 text-white shadow">
+                        <i class="fa-solid fa-house"></i> Início
                     </button>
-                    <button type="button" id="tab-formulario" onclick="navegarPara('formulario')" class="tab-btn px-3 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-file-signature text-xs"></i> <span>Solicitação CIJ</span>
+                    <button onclick="navegarPara('solicitacao')" id="nav-solicitacao" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-signature"></i> Solicitação CIJ
                     </button>
-                    <button type="button" id="tab-banco" onclick="navegarPara('banco')" class="tab-btn px-3 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-database text-xs"></i> <span>Banco de Dados</span>
-                        <span id="badge-total-banco" class="bg-blue-500 text-white text-[10px] font-black px-1.5 py-0.2 rounded-full">0</span>
+                    <button onclick="navegarPara('banco')" id="nav-banco" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-database"></i> Banco de Dados
+                        <span id="banco-count-badge" class="bg-blue-500 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
                     </button>
-                    <button type="button" id="tab-calculadora" onclick="navegarPara('calculadora')" class="tab-btn px-3 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-calculator text-xs"></i> <span>Simulador Leadjet</span>
+                    <button onclick="navegarPara('calculadora')" id="nav-calculadora" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-calculator"></i> Simulador Leadjet
                     </button>
-                    <button type="button" id="tab-despesas" onclick="navegarPara('despesas')" class="tab-btn px-3 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-receipt text-xs"></i> <span>Controle de Despesas</span>
+                    <button onclick="navegarPara('despesas')" id="nav-despesas" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-receipt"></i> Controle de Despesas
                     </button>
                 </nav>
 
+                <!-- MENU MOBILE BUTTON -->
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white p-2">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
             </div>
+        </div>
+
+        <!-- MOBILE MENU DROPDOWN -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 bg-slate-900 px-4 py-3 space-y-2">
+            <button onclick="navegarPara('inicio')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-white bg-blue-600 flex items-center gap-2">
+                <i class="fa-solid fa-house"></i> Início
+            </button>
+            <button onclick="navegarPara('solicitacao')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 flex items-center gap-2">
+                <i class="fa-solid fa-file-signature"></i> Solicitação CIJ
+            </button>
+            <button onclick="navegarPara('banco')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 flex items-center gap-2">
+                <i class="fa-solid fa-database"></i> Banco de Dados
+            </button>
+            <button onclick="navegarPara('calculadora')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 flex items-center gap-2">
+                <i class="fa-solid fa-calculator"></i> Simulador Leadjet
+            </button>
+            <button onclick="navegarPara('despesas')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 flex items-center gap-2">
+                <i class="fa-solid fa-receipt"></i> Controle de Despesas
+            </button>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
 
-        <!-- ================= PAGE 1: HOME PORTAL ================= -->
-        <div id="view-home" class="space-y-8">
-            
-            <!-- Hero Banner -->
-            <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden border border-blue-800/40">
+        <!-- 1. MÓDULO INÍCIO -->
+        <div id="view-inicio" class="space-y-8">
+            <div class="bg-gradient-to-r from-[#1b2559] via-[#111827] to-[#0f172a] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden border border-slate-800">
                 <div class="relative z-10 max-w-2xl">
-                    <span class="bg-blue-500/20 text-blue-300 text-xs font-bold px-3 py-1 rounded-full border border-blue-400/30">Sistemas Unificados</span>
-                    <h2 class="text-2xl sm:text-3xl font-black mt-3 tracking-tight">Gestão Comercial, Análise Financeira e Controle Operacional</h2>
-                    <p class="text-sm text-blue-200/90 mt-2 leading-relaxed">
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-900/50 px-3 py-1 rounded-full border border-blue-700/50">Sistemas Unificados</span>
+                    <h2 class="text-3xl font-extrabold tracking-tight mt-3 text-white leading-tight">
+                        Gestão Comercial, Análise Financeira e Controle Operacional
+                    </h2>
+                    <p class="text-slate-300 text-sm mt-2 leading-relaxed">
                         Acesse as ferramentas integradas para elaboração de pedidos de venda, consulta de histórico em nuvem, simulação de custos de insumos e controle de despesas de viagens.
                     </p>
                 </div>
-                <div class="absolute right-0 bottom-0 top-0 opacity-10 flex items-center justify-center p-8 pointer-events-none">
-                    <i class="fa-solid fa-industry text-[200px] text-white"></i>
+                <div class="absolute right-6 -bottom-10 opacity-10 text-slate-100 hidden lg:block">
+                    <i class="fa-solid fa-industry text-[220px]"></i>
                 </div>
             </div>
 
-            <!-- Portal Modules Selection Cards -->
+            <!-- CARDS DE MÓDULOS -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                
-                <!-- Card 1: Form -->
-                <div class="bg-white rounded-2xl border border-slate-200 card-shadow overflow-hidden flex flex-col justify-between hover:border-blue-400 transition group">
-                    <div class="p-5">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
+                    <div>
                         <div class="flex items-center justify-between mb-4">
-                            <span class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg group-hover:scale-110 transition duration-300">
-                                <i class="fa-solid fa-file-contract"></i>
-                            </span>
-                            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">Nova Solicitação</span>
+                            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-file-signature"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">Nova Solicitação</span>
                         </div>
-                        <h3 class="text-base font-extrabold text-slate-900">Solicitação CIJ</h3>
-                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+                        <h3 class="text-base font-bold text-slate-900">Solicitação CIJ</h3>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
                             Especificação técnica de impressoras, insumos, acessórios, parâmetros da linha e escopo de instalação.
                         </p>
                     </div>
-                    <div class="p-5 pt-0">
-                        <button type="button" onclick="navegarPara('formulario')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
-                            <span>Abrir Formulário</span>
-                            <i class="fa-solid fa-arrow-right text-xs"></i>
-                        </button>
-                    </div>
+                    <button onclick="navegarPara('solicitacao')" class="mt-6 w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
+                        Abrir Formulário <i class="fa-solid fa-arrow-right"></i>
+                    </button>
                 </div>
 
-                <!-- Card 2: Database Manager -->
-                <div class="bg-white rounded-2xl border border-slate-200 card-shadow overflow-hidden flex flex-col justify-between hover:border-indigo-400 transition group">
-                    <div class="p-5">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
+                    <div>
                         <div class="flex items-center justify-between mb-4">
-                            <span class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg group-hover:scale-110 transition duration-300">
+                            <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center text-xl">
                                 <i class="fa-solid fa-database"></i>
-                            </span>
-                            <span class="bg-indigo-100 text-indigo-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">Nuvem Sync</span>
+                            </div>
+                            <span class="text-[11px] font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-200">Nuvem Sync</span>
                         </div>
-                        <h3 class="text-base font-extrabold text-slate-900">Banco de Dados</h3>
-                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-                            Gerencie solicitações salvas no Firebase, recarregue para edição, gere planilhas Excel ou compartilhe links.
+                        <h3 class="text-base font-bold text-slate-900">Banco de Dados</h3>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                            Gerencie solicitações salvas na nuvem, recarregue para edição, gere planilhas Excel ou compartilhe links.
                         </p>
                     </div>
-                    <div class="p-5 pt-0">
-                        <button type="button" onclick="navegarPara('banco')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
-                            <span>Acessar Registros</span>
-                            <i class="fa-solid fa-arrow-right text-xs"></i>
-                        </button>
-                    </div>
+                    <button onclick="navegarPara('banco')" class="mt-6 w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
+                        Acessar Registros <i class="fa-solid fa-arrow-right"></i>
+                    </button>
                 </div>
 
-                <!-- Card 3: Financial Calculator -->
-                <div class="bg-white rounded-2xl border border-slate-200 card-shadow overflow-hidden flex flex-col justify-between hover:border-teal-400 transition group">
-                    <div class="p-5">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
+                    <div>
                         <div class="flex items-center justify-between mb-4">
-                            <span class="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center text-lg group-hover:scale-110 transition duration-300">
+                            <div class="w-12 h-12 bg-teal-100 text-teal-600 rounded-xl flex items-center justify-center text-xl">
                                 <i class="fa-solid fa-calculator"></i>
-                            </span>
-                            <span class="bg-teal-100 text-teal-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">Projeção Leadjet</span>
+                            </div>
+                            <span class="text-[11px] font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-full border border-teal-200">Projeção Leadjet</span>
                         </div>
-                        <h3 class="text-base font-extrabold text-slate-900">Simulador Financeiro</h3>
-                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-                            Cálculo dinâmico de consumo de tinta e solvente por matriz de impressão para estimativa de custos.
+                        <h3 class="text-base font-bold text-slate-900">Simulador Financeiro</h3>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                            Projeção completa de consumo de tinta, solvente, matrizes e estimativa de custos operacionais.
                         </p>
                     </div>
-                    <div class="p-5 pt-0">
-                        <button type="button" onclick="navegarPara('calculadora')" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
-                            <span>Abrir Simulador</span>
-                            <i class="fa-solid fa-arrow-right text-xs"></i>
-                        </button>
-                    </div>
+                    <button onclick="navegarPara('calculadora')" class="mt-6 w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
+                        Abrir Simulador <i class="fa-solid fa-arrow-right"></i>
+                    </button>
                 </div>
 
-                <!-- Card 4: Expense Control -->
-                <div class="bg-white rounded-2xl border border-slate-200 card-shadow overflow-hidden flex flex-col justify-between hover:border-sky-400 transition group">
-                    <div class="p-5">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
+                    <div>
                         <div class="flex items-center justify-between mb-4">
-                            <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center text-lg group-hover:scale-110 transition duration-300">
+                            <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center text-xl">
                                 <i class="fa-solid fa-receipt"></i>
-                            </span>
-                            <span class="bg-sky-100 text-sky-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">Viagens e Compras</span>
+                            </div>
+                            <span class="text-[11px] font-bold text-sky-700 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-200">Viagens e Compras</span>
                         </div>
-                        <h3 class="text-base font-extrabold text-slate-900">Controle de Despesas</h3>
-                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+                        <h3 class="text-base font-bold text-slate-900">Controle de Despesas</h3>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
                             Lançamento e relatório de compras por técnico/vendedor, cliente, combustível, hotel e refeições.
                         </p>
                     </div>
-                    <div class="p-5 pt-0">
-                        <button type="button" onclick="navegarPara('despesas')" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2">
-                            <span>Controle de Despesas</span>
-                            <i class="fa-solid fa-arrow-right text-xs"></i>
-                        </button>
-                    </div>
+                    <button onclick="navegarPara('despesas')" class="mt-6 w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
+                        Controle de Despesas <i class="fa-solid fa-arrow-right"></i>
+                    </button>
                 </div>
-
             </div>
-
         </div>
 
-        <!-- ================= PAGE 2: REQUEST FORM MODULE ================= -->
-        <div id="view-formulario" class="hidden space-y-8">
-            
-            <form id="formVendaInstalacao" class="space-y-8" onsubmit="event.preventDefault();">
-
-                <!-- Top Quick Save Bar -->
-                <div class="bg-blue-900 text-white rounded-2xl p-4 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4 border border-blue-700">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-cloud-arrow-up text-2xl text-blue-300"></i>
-                        <div>
-                            <h3 class="font-bold text-sm">Gestão Rápida da Solicitação</h3>
-                            <p class="text-xs text-blue-200">Salve no seu banco de dados na nuvem Firebase para acessar ou editar em qualquer computador.</p>
-                        </div>
+        <!-- 2. MÓDULO SOLICITAÇÃO CIJ -->
+        <div id="view-solicitacao" class="hidden space-y-6">
+            <div class="bg-blue-900 text-white p-4 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border border-blue-800">
+                <div class="flex items-center gap-3">
+                    <div class="p-3 bg-blue-800/80 rounded-xl text-blue-200">
+                        <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
                     </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <button type="button" onclick="salvarNoBancoDeDados()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl transition shadow-md flex items-center gap-2">
-                            <i class="fa-solid fa-square-plus text-sm"></i> Salvar no Banco
-                        </button>
+                    <div>
+                        <h3 class="text-base font-bold text-white leading-tight">Gestão Rápida da Solicitação</h3>
+                        <p class="text-xs text-blue-200 mt-0.5">Salve no seu banco de dados na nuvem para acessar ou editar em qualquer computador.</p>
                     </div>
                 </div>
+                <div class="flex flex-wrap gap-2 w-full sm:w-auto justify-end no-print">
+                    <button type="button" onclick="salvarFormularioBanco()" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold rounded-xl text-xs transition flex items-center gap-2 shadow-md">
+                        <i class="fa-solid fa-plus text-sm"></i> Salvar no Banco
+                    </button>
+                </div>
+            </div>
 
-                <!-- 1. Cliente -->
+            <form id="formVendaInstalacao" class="space-y-6" onsubmit="event.preventDefault();">
+                
+                <!-- 1. DADOS DO CLIENTE E LOCAL DE INSTALAÇÃO -->
                 <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="section-header px-6 py-4 text-white flex items-center justify-between">
                         <div class="flex items-center gap-3">
@@ -407,27 +409,27 @@
                     </div>
                 </section>
 
-                <!-- 2. Comercial -->
+                <!-- 2. DADOS COMERCIAIS DO PEDIDO DE VENDA -->
                 <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="section-header px-6 py-4 text-white flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <span class="bg-blue-500/30 text-blue-200 p-2 rounded-lg border border-blue-400/20"><i class="fa-solid fa-file-invoice-dollar text-lg"></i></span>
+                            <span class="bg-blue-500/30 text-blue-200 p-2 rounded-lg border border-blue-400/20"><i class="fa-solid fa-file-contract text-lg"></i></span>
                             <div>
                                 <h2 class="text-base md:text-lg font-bold">2. Dados Comerciais do Pedido de Venda</h2>
-                                <p class="text-xs text-blue-100">Condições de fornecimento, vigência comercial e modalidade do contrato.</p>
+                                <p class="text-xs text-blue-100">Números de controle comercial, prazos, consultor e condições de faturamento.</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Nº da Proposta Comercial</label>
-                            <input type="text" id="ven_num_proposta" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs text-slate-800 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50/50" placeholder="Ex: PROP-2026/042">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Nº Proposta Comercial</label>
+                            <input type="text" id="ven_num_proposta" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs text-slate-800 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50/50" placeholder="Ex: PROP-2026/045">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Nº do Pedido de Venda</label>
-                            <input type="text" id="ven_num_pedido" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs text-slate-800 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50/50" placeholder="Ex: PED-10895">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Nº Pedido de Venda *</label>
+                            <input type="text" id="ven_num_pedido" required class="w-full rounded-xl border border-slate-300 p-2.5 text-xs text-slate-800 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50/50" placeholder="Ex: PV-8890">
                         </div>
 
                         <div>
@@ -437,22 +439,22 @@
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Vendedor / Consultor CIJ</label>
-                            <input type="text" id="ven_vendedor" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs text-slate-800 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50/50" placeholder="Nome do Representante / Vendedor">
+                            <input type="text" id="ven_vendedor" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs text-slate-800 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50/50" placeholder="Nome do Vendedor">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Modalidade da Venda</label>
                             <select id="ven_modalidade" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs text-slate-800 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50/50">
-                                <option value="Venda Direta">Venda Direta</option>
-                                <option value="Locação">Locação</option>
-                                <option value="Comodato de Insumos">Comodato de Insumos</option>
+                                <option value="Venda Direta Equipamento">Venda Direta Equipamento</option>
+                                <option value="Locação com Insumos">Locação com Insumos</option>
+                                <option value="Comodato">Comodato</option>
                                 <option value="Demonstração / Teste">Demonstração / Teste</option>
                             </select>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Condição de Pagamento</label>
-                            <input type="text" id="ven_cond_pagto" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs text-slate-800 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50/50" placeholder="Ex: 28/56 dias ou Sinal + Saldo Faturado">
+                            <input type="text" id="ven_cond_pagto" class="w-full rounded-xl border border-slate-300 p-2.5 text-xs text-slate-800 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50/50" placeholder="Ex: 28/56 dias ou 50% Sinal + 50%">
                         </div>
 
                         <div>
@@ -467,14 +469,14 @@
                     </div>
                 </section>
 
-                <!-- 3. Relação Tabela -->
+                <!-- 3. RELAÇÃO COMPLETA DE EQUIPAMENTOS E INSUMOS -->
                 <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="section-header px-6 py-4 text-white flex items-center justify-between">
                         <div class="flex items-center gap-3">
                             <span class="bg-blue-500/30 text-blue-200 p-2 rounded-lg border border-blue-400/20"><i class="fa-solid fa-boxes-stacked text-lg"></i></span>
                             <div>
                                 <h2 class="text-base md:text-lg font-bold">3. Relação Completa de Equipamentos, Insumos e Acessórios da Venda</h2>
-                                <p class="text-xs text-blue-100">Selecione a categoria para carregar os modelos e informe a quantidade e preço unitário para cálculo automático do preço total.</p>
+                                <p class="text-xs text-blue-100">Selecione a categoria para carregar os modelos e informe a quantidade e preço unitário para cálculo automático.</p>
                             </div>
                         </div>
                     </div>
@@ -490,11 +492,10 @@
                                         <th class="py-3 px-2 w-16 text-center border-r border-slate-800">Qtd</th>
                                         <th class="py-3 px-3 w-36 border-r border-slate-800 text-right">Preço Unit. (R$)</th>
                                         <th class="py-3 px-3 w-40 border-r border-slate-800 text-right">Preço Total (R$)</th>
-                                        <th class="py-3 px-2 w-10 text-center">Ação</th>
+                                        <th class="py-3 px-2 w-10 text-center no-print">Ação</th>
                                     </tr>
                                 </thead>
                                 <tbody id="corpoTabelaVenda" class="divide-y divide-slate-200 text-xs">
-                                    <!-- Dynamic rows populated via JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -513,7 +514,7 @@
                     </div>
                 </section>
 
-                <!-- 4. Linha de Produção -->
+                <!-- 4. CONDIÇÕES TÉCNICAS DA LINHA DE PRODUÇÃO -->
                 <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="section-header px-6 py-4 text-white flex items-center justify-between">
                         <div class="flex items-center gap-3">
@@ -563,11 +564,11 @@
                     </div>
                 </section>
 
-                <!-- 5. Escopo -->
+                <!-- 5. ESCOPO DE SERVIÇOS -->
                 <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="section-header px-6 py-4 text-white flex items-center justify-between">
                         <div class="flex items-center gap-3">
-                            <span class="bg-blue-500/30 text-blue-200 p-2 rounded-lg border border-blue-400/20"><i class="fa-solid fa-screws-tilting text-lg"></i></span>
+                            <span class="bg-blue-500/30 text-blue-200 p-2 rounded-lg border border-blue-400/20"><i class="fa-solid fa-screwdriver-wrench text-lg"></i></span>
                             <div>
                                 <h2 class="text-base md:text-lg font-bold">5. Escopo de Serviços de Instalação e Treinamento Inclusos</h2>
                                 <p class="text-xs text-blue-100">Marque as tarefas e entregáveis técnicos acordados para esta ordem.</p>
@@ -577,7 +578,7 @@
 
                     <div class="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         <label class="flex items-center gap-3 p-3 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 cursor-pointer transition">
-                            <input type="checkbox" id="srv_física" checked class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                            <input type="checkbox" id="srv_fisica" checked class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
                             <span class="text-xs font-semibold text-slate-800">Montagem Mecânica / Posicionamento</span>
                         </label>
 
@@ -608,7 +609,7 @@
                     </div>
                 </section>
 
-                <!-- 6. Observações -->
+                <!-- 6. OBSERVAÇÕES GERAIS -->
                 <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="section-header px-6 py-4 text-white flex items-center justify-between">
                         <div class="flex items-center gap-3">
@@ -625,115 +626,79 @@
                     </div>
                 </section>
 
-                <!-- Actions Bar -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col lg:flex-row items-center justify-between gap-4">
+                <!-- BARRAS DE AÇÃO -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col lg:flex-row items-center justify-between gap-4 no-print">
                     <button type="button" onclick="limparFormulario()" class="text-xs font-bold bg-red-50 hover:bg-red-100 text-red-700 px-4 py-3 rounded-xl border border-red-200 transition">
                         <i class="fa-solid fa-trash-can mr-1"></i> Limpar Todos os Campos
                     </button>
 
                     <div class="flex flex-wrap items-center justify-center gap-3">
-                        <button type="button" onclick="salvarNoBancoDeDados()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md transition flex items-center gap-2 border border-emerald-500/30">
+                        <button type="button" onclick="salvarFormularioBanco()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md transition flex items-center gap-2 border border-emerald-400/30">
                             <i class="fa-solid fa-cloud-arrow-up text-sm"></i> Salvar no Banco
                         </button>
-                        <button type="button" onclick="copiarLinkPreenchido()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-5 py-3 rounded-xl transition shadow-md border border-indigo-400/30 flex items-center gap-2">
-                            <i class="fa-solid fa-link text-sm"></i> Copiar Link Preenchido
-                        </button>
                         <button type="button" onclick="gerarExcel()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md transition flex items-center gap-2 border border-blue-400/30">
-                            <i class="fa-solid fa-file-excel text-sm"></i> Exportar para Excel
+                            <i class="fa-solid fa-file-excel text-sm"></i> Exportar para Excel (.xlsx)
                         </button>
-                        <button type="button" onclick="enviarEmailComExcel()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md transition flex items-center gap-2 border border-teal-400/30">
-                            <i class="fa-solid fa-envelope text-sm"></i> Enviar por E-mail (Excel)
+                        <button type="button" onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md transition flex items-center gap-2">
+                            <i class="fa-solid fa-print text-sm"></i> Gerar PDF / Imprimir
                         </button>
                     </div>
                 </div>
-
             </form>
-
         </div>
 
-        <!-- ================= PAGE 3: DATABASE MANAGER MODULE ================= -->
+        <!-- 3. MÓDULO BANCO DE DADOS -->
         <div id="view-banco" class="hidden space-y-6">
-            
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="section-header px-6 py-4 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                    <div class="flex items-center gap-3.5">
-                        <span class="bg-indigo-500/30 text-indigo-200 p-2.5 rounded-xl border border-indigo-400/20"><i class="fa-solid fa-database text-xl"></i></span>
-                        <div>
-                            <h2 class="text-base md:text-lg font-extrabold">Banco de Dados em Nuvem (Firebase)</h2>
-                            <p class="text-[11px] text-blue-100">Histórico de solicitações salvas sincronizadas em tempo real na nuvem.</p>
-                        </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200 pb-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">Banco de Dados de Solicitações</h2>
+                        <p class="text-xs text-slate-500">Histórico de solicitações salvas na nuvem com atalhos de edição e exportação</p>
                     </div>
-
-                    <div class="flex flex-wrap items-center gap-2">
-                        <button type="button" onclick="exportarBancoCompleto()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-md flex items-center gap-2 border border-emerald-400/30">
+                    <div class="flex gap-2">
+                        <button onclick="exportarBackupJSON()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm">
                             <i class="fa-solid fa-download"></i> Backup Local (.json)
                         </button>
-                        <label class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-md flex items-center gap-2 cursor-pointer border border-indigo-400/30">
-                            <i class="fa-solid fa-upload"></i> Restaurar Backup
-                            <input type="file" id="inputImportarBanco" accept=".json" onchange="importarBancoCompleto(event)" class="hidden">
-                        </label>
                     </div>
                 </div>
 
-                <div class="p-6">
-                    <!-- Search and filters -->
-                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-                        <div class="relative w-full sm:w-80">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
-                            <input type="text" id="inputBuscaBanco" oninput="renderizarTabelaBanco()" placeholder="Buscar por cliente, CNPJ ou pedido..." class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-xs outline-none focus:border-indigo-600">
-                        </div>
-                        <div class="text-xs font-semibold text-slate-500">
-                            Registros salvos: <strong id="contadorBancoHeader" class="text-slate-900 font-bold">0</strong>
-                        </div>
-                    </div>
-
-                    <!-- Table of Saved Records -->
-                    <div class="overflow-x-auto border border-slate-200 rounded-xl">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-900 text-white text-xs font-bold uppercase tracking-wider">
-                                    <th class="py-3 px-3">Data / Hora</th>
-                                    <th class="py-3 px-3">Cliente / Razão Social</th>
-                                    <th class="py-3 px-3">Proposta / Pedido</th>
-                                    <th class="py-3 px-3 text-center">Itens</th>
-                                    <th class="py-3 px-3 text-right">Valor Total</th>
-                                    <th class="py-3 px-3 text-center">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="corpoTabelaBanco" class="divide-y divide-slate-200 text-xs">
-                                <!-- Dynamic rows via JS -->
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                <th class="p-3">Data / Código</th>
+                                <th class="p-3">Cliente / CNPJ</th>
+                                <th class="p-3">Proposta / Pedido</th>
+                                <th class="p-3">Valor Total</th>
+                                <th class="p-3 text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="banco-table-body" class="divide-y divide-slate-200">
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
         </div>
 
-        <!-- ================= PAGE 4: FINANCIAL CALCULATOR MODULE ================= -->
-        <div id="view-calculadora" class="hidden space-y-6">
-            
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden print-card">
-                <div class="section-header print-header px-6 py-4 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div class="flex items-center gap-3.5">
-                        <span class="bg-indigo-500/30 text-indigo-200 p-2.5 rounded-xl border border-indigo-400/20"><i class="fa-solid fa-calculator text-xl"></i></span>
-                        <div>
-                            <h2 class="text-base md:text-lg font-extrabold">Simulador Financeiro Leadjet</h2>
-                            <p class="text-[11px] text-blue-100">Projeção e estimativa precisa de custos operacionais com consumo de Tinta e Solvente.</p>
-                        </div>
-                    </div>
-
-                    <button type="button" onclick="imprimirSimuladorPDF()" class="no-print bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-2 border border-indigo-400/30">
-                        <i class="fa-solid fa-file-pdf text-sm"></i> Salvar PDF (1 Página)
+        <!-- 4. MÓDULO SIMULADOR LEADJET (FORMATADO PARA 1 PÁGINA A4) -->
+        <div id="view-calculadora" class="hidden space-y-4">
+            <div class="simulador-container max-w-4xl mx-auto space-y-4">
+                
+                <!-- CABEÇALHO DO SIMULADOR -->
+                <div class="card-simulador bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center relative">
+                    <h2 class="text-xl font-extrabold text-[#002d72]">Simulador Leadjet</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Projeção de Custos Operacionais e Consumo de Insumos</p>
+                    <button onclick="window.print()" class="absolute right-5 top-5 no-print px-3 py-1.5 bg-[#002d72] hover:bg-blue-900 text-white font-semibold rounded-xl text-xs transition flex items-center gap-1.5 shadow-md">
+                        <i class="fa-solid fa-file-pdf"></i> Salvar PDF (1 Página)
                     </button>
                 </div>
 
-                <div class="p-5">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 print-grid">
-                        
+                <!-- CARD FORMULÁRIO DE ENTRADA -->
+                <div class="card-simulador bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Tipo de Matriz</label>
-                            <select id="tipoMatriz" onchange="calcularSimulador()" class="w-full rounded-xl border border-slate-300 p-2 text-xs text-slate-800 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 bg-slate-50/50 font-semibold">
+                            <label class="block font-bold text-xs text-slate-700 mb-1">Tipo de Matriz</label>
+                            <select id="tipoMatriz" onchange="calcularSimuladorOficial()" class="w-full p-2 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs font-semibold outline-none focus:border-blue-600">
                                 <option value="14">5x5 (14 pts)</option>
                                 <option value="16" selected>7x5 (16 pts)</option>
                                 <option value="22">7x9 (22 pts)</option>
@@ -745,16 +710,15 @@
                         </div>
 
                         <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">Caracteres na Mensagem</label>
-                                <span class="text-[10px] font-bold text-indigo-600" id="display-pontos">(Pts: 0)</span>
-                            </div>
-                            <input type="number" id="caracteres" value="150" oninput="calcularSimulador()" class="w-full rounded-xl border border-slate-300 p-2 text-xs text-slate-800 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 bg-slate-50/50 font-bold">
+                            <label class="block font-bold text-xs text-slate-700 mb-1">
+                                Caracteres na Mensagem <span class="text-blue-600 font-bold" id="display-pontos">(Pts: 0)</span>
+                            </label>
+                            <input type="number" id="caracteres" value="150" oninput="calcularSimuladorOficial()" class="w-full p-2 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs font-medium outline-none focus:border-blue-600">
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Função Códigos (Extras)</label>
-                            <select id="extras" onchange="calcularSimulador()" class="w-full rounded-xl border border-slate-300 p-2 text-xs text-slate-800 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 bg-slate-50/50">
+                            <label class="block font-bold text-xs text-slate-700 mb-1">Função Códigos (Extras)</label>
+                            <select id="extras" onchange="calcularSimuladorOficial()" class="w-full p-2 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs font-semibold outline-none focus:border-blue-600">
                                 <option value="0">Nenhum</option>
                                 <option value="623">Código de Barras (+623 pts)</option>
                                 <option value="118">QR Code (+118 pts)</option>
@@ -762,23 +726,23 @@
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Impressões por Minuto (PPM)</label>
-                            <input type="number" id="imp_min" value="1" oninput="calcularSimulador()" class="w-full rounded-xl border border-slate-300 p-2 text-xs text-slate-800 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 bg-slate-50/50 font-semibold">
+                            <label class="block font-bold text-xs text-slate-700 mb-1">Impressões p/ Minuto</label>
+                            <input type="number" id="imp_min" value="1" oninput="calcularSimuladorOficial()" class="w-full p-2 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs font-medium outline-none focus:border-blue-600">
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Dias Trabalhados/Mês</label>
-                            <input type="number" id="dias" value="22" oninput="calcularSimulador()" class="w-full rounded-xl border border-slate-300 p-2 text-xs text-slate-800 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 bg-slate-50/50 font-semibold">
+                            <label class="block font-bold text-xs text-slate-700 mb-1">Dias Trabalhados/Mês</label>
+                            <input type="number" id="dias" value="22" oninput="calcularSimuladorOficial()" class="w-full p-2 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs font-medium outline-none focus:border-blue-600">
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Horas de Trabalho/Dia</label>
-                            <input type="number" id="horas" value="16" oninput="calcularSimulador()" class="w-full rounded-xl border border-slate-300 p-2 text-xs text-slate-800 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 bg-slate-50/50 font-semibold">
+                            <label class="block font-bold text-xs text-slate-700 mb-1">Horas de Trabalho/Dia</label>
+                            <input type="number" id="horas" value="16" oninput="calcularSimuladorOficial()" class="w-full p-2 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs font-medium outline-none focus:border-blue-600">
                         </div>
 
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Temperatura Ambiente (°C)</label>
-                            <select id="temperatura" onchange="calcularSimulador()" class="w-full rounded-xl border border-slate-300 p-2 text-xs text-slate-800 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 bg-slate-50/50 font-medium">
+                        <div class="md:col-span-2">
+                            <label class="block font-bold text-xs text-slate-700 mb-1">Temperatura (°C)</label>
+                            <select id="temperatura" onchange="calcularSimuladorOficial()" class="w-full p-2 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs font-semibold outline-none focus:border-blue-600">
                                 <option value="10">10°C</option>
                                 <option value="12">12°C</option>
                                 <option value="14">14°C</option>
@@ -793,109 +757,74 @@
                             </select>
                         </div>
 
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Preço Tinta (700ml)</label>
-                            <div class="relative">
-                                <span class="absolute left-3 top-2 text-xs font-bold text-slate-400">R$</span>
-                                <input type="number" id="precoTinta" value="300" oninput="calcularSimulador()" class="w-full rounded-xl border border-slate-300 p-2 pl-9 text-xs text-slate-800 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 bg-slate-50/50 font-bold">
+                        <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-200">
+                            <div>
+                                <label class="block font-bold text-xs text-slate-700 mb-1">Preço Tinta (700ml)</label>
+                                <input type="number" id="precoTinta" value="300" oninput="calcularSimuladorOficial()" class="w-full p-2 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs font-bold outline-none focus:border-blue-600">
+                            </div>
+                            <div>
+                                <label class="block font-bold text-xs text-slate-700 mb-1">Preço Solvente (700ml)</label>
+                                <input type="number" id="precoSolvente" value="150" oninput="calcularSimuladorOficial()" class="w-full p-2 bg-white border border-slate-300 text-slate-800 rounded-xl text-xs font-bold outline-none focus:border-blue-600">
                             </div>
                         </div>
-
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Preço Solvente (700ml)</label>
-                            <div class="relative">
-                                <span class="absolute left-3 top-2 text-xs font-bold text-slate-400">R$</span>
-                                <input type="number" id="precoSolvente" value="150" oninput="calcularSimulador()" class="w-full rounded-xl border border-slate-300 p-2 pl-9 text-xs text-slate-800 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 bg-slate-50/50 font-bold">
-                            </div>
-                        </div>
-
                     </div>
+                </div>
+
+                <!-- CARDS DE RESULTADOS RESUMO -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="bg-[#002d72] text-white p-4 rounded-2xl text-center shadow-sm card-simulador-resumo">
+                        <label class="block text-slate-300 text-xs font-medium mb-0.5">Custo Diário</label>
+                        <span id="res-diario" class="text-xl font-bold">R$ 0,00</span>
+                    </div>
+                    <div class="bg-[#002d72] text-white p-4 rounded-2xl text-center shadow-sm card-simulador-resumo">
+                        <label class="block text-slate-300 text-xs font-medium mb-0.5">Custo Mensal</label>
+                        <span id="res-mensal" class="text-xl font-bold">R$ 0,00</span>
+                    </div>
+                    <div class="bg-[#002d72] text-white p-4 rounded-2xl text-center shadow-sm card-simulador-resumo">
+                        <label class="block text-slate-300 text-xs font-medium mb-0.5">Custo Anual</label>
+                        <span id="res-anual" class="text-xl font-bold">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <!-- FOOTER DETALHAMENTO TÉCNICO -->
+                <div class="card-simulador bg-white p-4 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed shadow-sm">
+                    <strong class="text-[#002d72] text-xs block mb-1">Detalhamento Técnico (Mensal):</strong>
+                    • Total de Impressões: <span id="res-total-imp" class="font-bold text-slate-900">0</span> unidades<br>
+                    • Consumo de Tinta: <span id="res-tinta-ml" class="font-bold text-slate-900">0</span> ml (R$ <span id="res-tinta-rs" class="font-bold text-slate-900">0</span>)<br>
+                    • Consumo de Solvente: <span id="res-solvente-ml" class="font-bold text-slate-900">0</span> ml (R$ <span id="res-solvente-rs" class="font-bold text-slate-900">0</span>)
                 </div>
             </div>
-
-            <!-- Summary Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 print-grid">
-                <div class="bg-gradient-to-br from-slate-900 to-blue-950 text-white rounded-2xl p-5 shadow-md border border-slate-800 text-center print-res-diario">
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-blue-300 block mb-0.5">Custo Diário</span>
-                    <span id="res-diario" class="text-xl sm:text-2xl font-black text-white">R$ 0,00</span>
-                </div>
-
-                <div class="bg-gradient-to-br from-blue-900 to-indigo-900 text-white rounded-2xl p-5 shadow-md border border-blue-800 text-center print-res-mensal">
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-blue-200 block mb-0.5">Custo Mensal</span>
-                    <span id="res-mensal" class="text-xl sm:text-2xl font-black text-emerald-300">R$ 0,00</span>
-                </div>
-
-                <div class="bg-gradient-to-br from-indigo-900 to-slate-950 text-white rounded-2xl p-5 shadow-md border border-indigo-800 text-center print-res-anual">
-                    <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-200 block mb-0.5">Custo Anual</span>
-                    <span id="res-anual" class="text-xl sm:text-2xl font-black text-amber-300">R$ 0,00</span>
-                </div>
-            </div>
-
-            <!-- Technical Breakdown Footer -->
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 print-card">
-                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2.5 flex items-center gap-2">
-                    <i class="fa-solid fa-list-check text-blue-600"></i> Detalhamento Técnico Estimado (Mensal)
-                </h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-semibold text-slate-700 bg-slate-50 p-3.5 rounded-xl border border-slate-200 print-grid">
-                    <div>
-                        <span class="text-slate-500 block text-[10px]">Total de Impressões / Mês</span>
-                        <strong id="res-total-imp" class="text-slate-900 text-sm">0</strong> <span class="text-slate-500">unidades</span>
-                    </div>
-                    <div>
-                        <span class="text-slate-500 block text-[10px]">Consumo de Tinta</span>
-                        <strong id="res-tinta-ml" class="text-blue-700 text-sm">0</strong> <span class="text-slate-500">ml</span> (R$ <span id="res-tinta-rs">0,00</span>)
-                    </div>
-                    <div>
-                        <span class="text-slate-500 block text-[10px]">Consumo de Solvente</span>
-                        <strong id="res-solvente-ml" class="text-indigo-700 text-sm">0</strong> <span class="text-slate-500">ml</span> (R$ <span id="res-solvente-rs">0,00</span>)
-                    </div>
-                </div>
-            </div>
-
         </div>
 
-        <!-- ================= PAGE 5: EXPENSE CONTROL MODULE ================= -->
+        <!-- 5. MÓDULO CONTROLE DE DESPESAS -->
         <div id="view-despesas" class="hidden space-y-6">
-            
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/90 text-white p-5 rounded-2xl shadow-xl border border-sky-900/50 no-print">
-                <div class="flex items-center gap-3">
-                    <div class="p-3 bg-sky-500/20 rounded-2xl border border-sky-400/30">
-                        <i class="fa-solid fa-receipt text-2xl text-sky-400"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-extrabold text-white">Controle de Despesas e Viagens</h2>
-                        <p class="text-xs text-sky-200">Registro de despesas técnicas de compras, alimentação, hotel e hospedagem.</p>
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    <button type="button" onclick="exportarDespesasParaExcel()" class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 border border-emerald-500/30 shadow-md">
-                        <i class="fa-solid fa-file-excel text-sm"></i> Exportar Excel (.xlsx)
-                    </button>
-                    <button type="button" onclick="window.print()" class="px-3.5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 border border-sky-400/30 shadow-md">
-                        <i class="fa-solid fa-print text-sm"></i> Imprimir Relatório
-                    </button>
-                </div>
-            </div>
-
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
-                <!-- FORMULÁRIO DE CADASTRO -->
-                <section class="lg:col-span-5 bg-slate-900/90 p-6 rounded-2xl shadow-xl border border-sky-900/50 h-fit no-print">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
-                        <h3 class="text-sm font-bold text-white flex items-center gap-2 uppercase tracking-wider">
-                            <i class="fa-solid fa-circle-plus text-sky-400"></i> Registrar Nova Compra
-                        </h3>
-                        <span id="form-mode-badge" class="text-[10px] px-2.5 py-1 bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded-full font-bold uppercase">Novo</span>
+                <!-- FORMULÁRIO DE LANÇAMENTO DE DESPESAS -->
+                <section class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 no-print h-fit">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-receipt text-sky-600 text-lg"></i>
+                            <h2 class="text-lg font-bold text-slate-900">Lançamento de Despesa</h2>
+                        </div>
+                        <span id="desp-num-badge" class="text-xs px-2.5 py-1 bg-sky-100 text-sky-800 font-bold rounded-full border border-sky-300">REL-1001</span>
                     </div>
 
-                    <form id="expense-form" onsubmit="tratarEnvioDespesa(event)" class="space-y-4">
-                        <input type="hidden" id="expense-id">
+                    <form id="expense-form" class="space-y-4" onsubmit="salvarDespesa(event)">
+                        <div class="flex items-center justify-between bg-sky-50 p-3 rounded-xl border border-sky-200">
+                            <div>
+                                <label class="block text-[11px] font-bold text-sky-900">Nº do Relatório *</label>
+                                <input type="text" id="desp_num_relatorio" value="REL-1001" class="bg-transparent font-bold text-sky-900 text-xs focus:outline-none w-28">
+                            </div>
+                            <button type="button" onclick="novoRelatorioSequencial()" class="px-2.5 py-1 bg-sky-600 hover:bg-sky-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm">
+                                <i class="fa-solid fa-plus"></i> Novo Relatório
+                            </button>
+                        </div>
 
-                        <!-- TÉCNICO / VENDEDOR -->
                         <div>
-                            <label for="tecnico" class="block text-xs font-semibold text-slate-300 mb-1">Técnico / Vendedor *</label>
-                            <select id="tecnico" required class="w-full px-3.5 py-2.5 bg-slate-800/90 border border-slate-700 text-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 transition text-xs">
-                                <option value="" disabled selected>Selecione o profissional...</option>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Técnico / Vendedor *</label>
+                            <select id="desp_tecnico" required class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs font-semibold">
+                                <option value="" disabled selected>Selecione...</option>
                                 <option value="Filipe">Filipe</option>
                                 <option value="Anderson">Anderson</option>
                                 <option value="Adriano">Adriano</option>
@@ -905,144 +834,93 @@
                             </select>
                         </div>
 
-                        <!-- CLIENTE E CIDADE -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label for="cliente" class="block text-xs font-semibold text-slate-300 mb-1">Cliente Atendido *</label>
-                                <input type="text" id="cliente" required placeholder="Nome do cliente/empresa" 
-                                    class="w-full px-3.5 py-2.5 bg-slate-800/90 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 transition text-xs">
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Cliente *</label>
+                                <input type="text" id="desp_cliente" required placeholder="Nome do Cliente" class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs">
                             </div>
-
                             <div>
-                                <label for="cidade" class="block text-xs font-semibold text-slate-300 mb-1">Cidade *</label>
-                                <input type="text" id="cidade" required placeholder="Ex: Joinville" 
-                                    class="w-full px-3.5 py-2.5 bg-slate-800/90 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 transition text-xs">
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Cidade *</label>
+                                <input type="text" id="desp_cidade" required placeholder="Ex: Joinville" class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs">
                             </div>
                         </div>
 
-                        <!-- DESCRIÇÃO DO ITEM -->
                         <div>
-                            <label for="descricao" class="block text-xs font-semibold text-slate-300 mb-1">Descrição do Item / Compra *</label>
-                            <input type="text" id="descricao" required placeholder="Ex: Gasolina, Almoço, Parafusos M8..." 
-                                class="w-full px-3.5 py-2.5 bg-slate-800/90 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 transition text-xs">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Descrição do Item / Compra *</label>
+                            <input type="text" id="desp_descricao" required placeholder="Ex: Gasolina, Almoço..." class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs">
                         </div>
 
-                        <!-- VALOR E DATA DO PAGAMENTO -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label for="valor" class="block text-xs font-semibold text-slate-300 mb-1">Valor (R$) *</label>
-                                <input type="number" id="valor" step="0.01" min="0.01" required placeholder="0,00" 
-                                    class="w-full px-3.5 py-2.5 bg-slate-800/90 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 transition text-xs font-bold">
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Valor (R$) *</label>
+                                <input type="number" id="desp_valor" step="0.01" min="0.01" required placeholder="0,00" class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs font-bold">
                             </div>
-
                             <div>
-                                <label for="data_pagamento" class="block text-xs font-semibold text-slate-300 mb-1">Data do Pagamento *</label>
-                                <input type="date" id="data_pagamento" required 
-                                    class="w-full px-3.5 py-2.5 bg-slate-800/90 border border-slate-700 text-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 transition text-xs">
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Data Pagamento *</label>
+                                <input type="date" id="desp_data" required class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs font-medium">
                             </div>
                         </div>
 
-                        <!-- CATEGORIA -->
-                        <div>
-                            <label for="categoria" class="block text-xs font-semibold text-slate-300 mb-1">Categoria *</label>
-                            <select id="categoria" onchange="toggleCategoriaOutros()" required class="w-full px-3.5 py-2.5 bg-slate-800/90 border border-slate-700 text-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 transition text-xs">
-                                <option value="" disabled selected>Selecione a categoria...</option>
-                                <option value="Combustível">Combustível</option>
-                                <option value="Pedágio">Pedágio</option>
-                                <option value="Alimentação/Bebida">Alimentação/Bebida</option>
-                                <option value="Peças/Ferramentas">Peças/Ferramentas</option>
-                                <option value="Hotel">Hotel</option>
-                                <option value="Outros">Outros</option>
-                            </select>
-                        </div>
-
-                        <!-- CAMPO DINÂMICO PARA CATEGORIA OUTROS -->
-                        <div id="categoria-outros-container" class="hidden">
-                            <label for="categoria_outros" class="block text-xs font-semibold text-sky-300 mb-1">Especifique a Categoria *</label>
-                            <input type="text" id="categoria_outros" placeholder="Descreva a categoria personalizada" 
-                                class="w-full px-3.5 py-2.5 bg-slate-800 border border-sky-500/50 text-slate-100 placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 transition text-xs">
-                        </div>
-
-                        <!-- FORMA DE PAGAMENTO E CARTÃO -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label for="pagamento" class="block text-xs font-semibold text-slate-300 mb-1">Forma de Pagamento *</label>
-                                <select id="pagamento" required class="w-full px-3.5 py-2.5 bg-slate-800/90 border border-slate-700 text-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 transition text-xs">
-                                    <option value="" disabled selected>Selecione...</option>
-                                    <option value="Cartão de Crédito">Cartão de Crédito</option>
-                                    <option value="Dinheiro">Dinheiro</option>
-                                    <option value="Pix">Pix</option>
-                                    <option value="Outro">Outro</option>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Categoria *</label>
+                                <select id="desp_categoria" required class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs font-semibold">
+                                    <option value="Combustível">Combustível</option>
+                                    <option value="Pedágio">Pedágio</option>
+                                    <option value="Alimentação/Bebida">Alimentação/Bebida</option>
+                                    <option value="Peças/Ferramentas">Peças/Ferramentas</option>
+                                    <option value="Hotel">Hotel</option>
+                                    <option value="Outros">Outros</option>
                                 </select>
                             </div>
-
                             <div>
-                                <label for="cartao" class="block text-xs font-semibold text-slate-300 mb-1">Cartão Utilizado</label>
-                                <select id="cartao" class="w-full px-3.5 py-2.5 bg-slate-800/90 border border-slate-700 text-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 transition text-xs">
-                                    <option value="Não se aplica">Não se aplica (Dinheiro/Pix)</option>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Forma / Cartão *</label>
+                                <select id="desp_cartao" required class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs font-medium">
                                     <option value="Mastercard **0067">Mastercard **0067</option>
                                     <option value="Mastercard **9553">Mastercard **9553</option>
                                     <option value="Visa **7543">Visa **7543</option>
+                                    <option value="Dinheiro / Pix">Dinheiro / Pix</option>
                                 </select>
                             </div>
                         </div>
 
-                        <!-- OBSERVAÇÕES -->
                         <div>
-                            <label for="observacoes" class="block text-xs font-semibold text-slate-300 mb-1">Observações / Anotações</label>
-                            <textarea id="observacoes" rows="2" placeholder="Nº da nota fiscal, detalhes do comprovante ou observações da viagem..." 
-                                class="w-full px-3.5 py-2.5 bg-slate-800/90 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400 transition text-xs"></textarea>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Observações</label>
+                            <input type="text" id="desp_observacoes" placeholder="Nº NF ou observações da viagem" class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs">
                         </div>
 
-                        <div class="pt-2 flex gap-3">
-                            <button type="submit" id="btn-save" class="flex-1 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-2.5 rounded-xl transition shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 text-xs">
-                                <i class="fa-solid fa-floppy-disk"></i> <span id="btn-save-text">Salvar Despesa</span>
-                            </button>
-                            <button type="button" onclick="resetFormDespesas()" class="px-4 py-2.5 border border-slate-700 hover:bg-slate-800 text-slate-300 rounded-xl font-medium text-xs transition">
-                                Limpar
-                            </button>
-                        </div>
+                        <button type="submit" class="w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus-circle"></i> Adicionar Despesa ao Relatório
+                        </button>
                     </form>
                 </section>
 
-                <!-- TABELA E LISTA DE DESPESAS -->
+                <!-- TABELA E FILTROS DO CONTROLE DE DESPESAS -->
                 <section class="lg:col-span-7 space-y-4">
-                    
-                    <!-- PAINEL DE COMPILADO E TOTAL LANÇADO -->
-                    <div class="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 border border-sky-500/30 text-white p-5 rounded-2xl shadow-xl space-y-4">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-sky-800/50 pb-3">
-                            <div>
-                                <h3 class="font-bold text-base flex items-center gap-2 text-sky-300">
-                                    <i class="fa-solid fa-calculator text-sky-400"></i> Compilado dos Lançamentos
-                                </h3>
-                                <p class="text-xs text-slate-400">Resumo acumulado do lote atual</p>
-                            </div>
-                            <div class="text-left sm:text-right">
-                                <span class="text-[10px] uppercase tracking-wider text-sky-300 font-bold">Valor Total Lançado</span>
-                                <div id="total-geral-despesas" class="text-2xl font-black tracking-tight text-white">R$ 0,00</div>
-                            </div>
-                        </div>
-
-                        <!-- RESUMO POR CATEGORIA -->
+                    <div class="bg-gradient-to-r from-slate-900 to-sky-950 text-white p-5 rounded-2xl shadow-md flex justify-between items-center border border-slate-800">
                         <div>
-                            <div class="text-[10px] font-bold text-sky-300 mb-2 uppercase tracking-wider">Total por Categoria:</div>
-                            <div id="summary-by-category" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-                                <!-- Dynamic via JS -->
-                            </div>
+                            <span class="text-xs uppercase tracking-wider text-sky-300 font-bold">Total Acumulado Exibido</span>
+                            <h3 class="text-xs text-slate-300 mt-0.5">Resumo acumulado conforme filtros ativos</h3>
+                        </div>
+                        <div class="text-right">
+                            <div id="desp-total-acumulado" class="text-3xl font-black text-white">R$ 0,00</div>
                         </div>
                     </div>
 
                     <!-- BARRA DE FILTROS -->
-                    <div class="bg-slate-900/90 p-4 rounded-2xl shadow-md border border-sky-900/50 flex flex-col sm:flex-row gap-3 items-center justify-between no-print">
-                        <div class="relative w-full sm:w-60">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-sky-400 text-xs"></i>
-                            <input type="text" id="search-input-despesas" onkeyup="renderizarDespesas()" placeholder="Buscar por item, cliente..." 
-                                class="w-full pl-9 pr-3 py-2 bg-slate-800 border border-slate-700 text-slate-100 placeholder-slate-500 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-sky-400 transition">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 grid grid-cols-1 sm:grid-cols-5 gap-3 no-print">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Filtrar Dia Exato</label>
+                            <input type="date" id="filter-data-desp" onchange="renderizarRelatoriosDespesas()" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 text-slate-900 rounded-lg text-xs font-medium">
                         </div>
-
-                        <div class="flex gap-2 w-full sm:w-auto">
-                            <select id="filter-tecnico" onchange="renderizarDespesas()" class="w-full sm:w-auto px-3 py-2 bg-slate-800 border border-slate-700 text-slate-100 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-sky-400">
-                                <option value="Todos">Todos os Técnicos</option>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Filtrar Mês</label>
+                            <input type="month" id="filter-mes-desp" onchange="renderizarRelatoriosDespesas()" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 text-slate-900 rounded-lg text-xs font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Técnico</label>
+                            <select id="filter-tecnico-desp" onchange="renderizarRelatoriosDespesas()" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 text-slate-900 rounded-lg text-xs font-medium">
+                                <option value="Todos">Todos</option>
                                 <option value="Filipe">Filipe</option>
                                 <option value="Anderson">Anderson</option>
                                 <option value="Adriano">Adriano</option>
@@ -1050,9 +928,11 @@
                                 <option value="Gabriel">Gabriel</option>
                                 <option value="Sidnei">Sidnei</option>
                             </select>
-
-                            <select id="filter-categoria" onchange="renderizarDespesas()" class="w-full sm:w-auto px-3 py-2 bg-slate-800 border border-slate-700 text-slate-100 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-sky-400">
-                                <option value="Todas">Todas Categs.</option>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Categoria</label>
+                            <select id="filter-categoria-desp" onchange="renderizarRelatoriosDespesas()" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 text-slate-900 rounded-lg text-xs font-medium">
+                                <option value="Todas">Todas</option>
                                 <option value="Combustível">Combustível</option>
                                 <option value="Pedágio">Pedágio</option>
                                 <option value="Alimentação/Bebida">Alimentação/Bebida</option>
@@ -1061,218 +941,49 @@
                                 <option value="Outros">Outros</option>
                             </select>
                         </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Buscar Item/Cliente</label>
+                            <input type="text" id="filter-search-desp" onkeyup="renderizarRelatoriosDespesas()" placeholder="Buscar..." class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 text-slate-900 rounded-lg text-xs">
+                        </div>
                     </div>
 
-                    <!-- TABELA DE ITENS -->
-                    <div class="bg-slate-900/90 rounded-2xl shadow-xl border border-sky-900/50 overflow-hidden">
-                        <div class="overflow-x-auto custom-scrollbar">
-                            <table class="w-full text-left text-xs border-collapse">
+                    <!-- TABELA AGRUPADA DE RELATÓRIOS -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
                                 <thead>
-                                    <tr class="bg-slate-800/90 text-sky-300 font-semibold border-b border-slate-700 uppercase tracking-wider">
-                                        <th class="p-3">Técnico / Cliente</th>
-                                        <th class="p-3">Descrição</th>
-                                        <th class="p-3">Categoria / Cartão</th>
-                                        <th class="p-3">Data Pagto.</th>
-                                        <th class="p-3">Valor</th>
-                                        <th class="p-3 text-center no-print">Ações</th>
+                                    <tr class="bg-slate-900 text-white font-bold border-b border-slate-800">
+                                        <th class="p-3">RELATÓRIO / TÉCNICO</th>
+                                        <th class="p-3">CLIENTE / CIDADE</th>
+                                        <th class="p-3">ITENS</th>
+                                        <th class="p-3">DATA</th>
+                                        <th class="p-3">TOTAL (R$)</th>
+                                        <th class="p-3 text-center no-print">AÇÕES / EXPORTAR</th>
                                     </tr>
                                 </thead>
-                                <tbody id="expense-table-body" class="divide-y divide-slate-800 text-slate-200">
-                                    <!-- Dynamic rows via JS -->
+                                <tbody id="despesas-grouped-body" class="divide-y divide-slate-200">
                                 </tbody>
                             </table>
-                        </div>
-
-                        <!-- Estado Vazio -->
-                        <div id="empty-state-despesas" class="p-8 text-center">
-                            <div class="w-12 h-12 bg-sky-900/30 rounded-full flex items-center justify-center mx-auto mb-3 text-sky-400 border border-sky-500/20">
-                                <i class="fa-solid fa-receipt text-xl"></i>
-                            </div>
-                            <p class="font-medium text-slate-300 text-xs">Nenhuma compra registrada neste lote</p>
-                            <p class="text-[11px] text-slate-500 mt-1">Preencha o formulário ao lado para adicionar lançamentos.</p>
                         </div>
                     </div>
                 </section>
             </div>
-
         </div>
-
     </main>
 
-    <!-- Modal Compartilhar Link -->
-    <div id="modalLinkCompartilhar" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full p-6">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                <div class="flex items-center gap-2.5 text-indigo-900">
-                    <i class="fa-solid fa-share-nodes text-xl"></i>
-                    <h3 class="font-bold text-base">Link Preenchido Gerado!</h3>
-                </div>
-                <button type="button" onclick="fecharModalLink()" class="text-slate-400 hover:text-slate-600 p-1">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-            <p class="text-xs text-slate-600 mb-3">
-                O link abaixo contém todas as informações e itens preenchidos neste formulário. Qualquer pessoa com este link poderá visualizar e editar os dados:
-            </p>
-
-            <div id="avisoFileProtocol" class="hidden mb-3 p-3 bg-amber-50 border border-amber-300 rounded-xl text-amber-900 text-[11px] leading-relaxed">
-                <i class="fa-solid fa-triangle-exclamation text-amber-600 mr-1"></i>
-                <strong>Nota:</strong> Você está abrindo o arquivo localmente no seu computador (<code>file://</code>). Para que outras pessoas consigam abrir este link nos computadores delas, publique este arquivo <code>index.html</code> no seu servidor web/intranet ou GitHub Pages.
-            </div>
-
-            <div class="mb-4">
-                <input type="text" id="inputUrlCompartilhar" readonly onclick="this.select()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-xl p-3 outline-none focus:border-indigo-600 font-mono select-all">
-            </div>
-            <div class="flex justify-end gap-2">
-                <button type="button" onclick="fecharModalLink()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50">
-                    Fechar
-                </button>
-                <button type="button" onclick="copiarTextoInputModal()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-2 shadow-md">
-                    <i class="fa-solid fa-copy"></i> Copiar Link
-                </button>
-            </div>
-        </div>
+    <!-- NOTIFICAÇÃO TOAST -->
+    <div id="toast" class="fixed bottom-5 right-5 hidden z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-700">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-message" class="text-xs font-semibold">Ação executada com sucesso!</span>
     </div>
-
-    <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO DE DESPESA -->
-    <div id="delete-despesa-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-slate-900 rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-sky-900/60 space-y-4">
-            <div class="w-12 h-12 bg-red-950/50 border border-red-500/30 text-red-400 rounded-full flex items-center justify-center mx-auto">
-                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
-            </div>
-            <div class="text-center">
-                <h3 class="text-base font-bold text-white">Confirmar Exclusão</h3>
-                <p class="text-xs text-slate-400 mt-1">Tem certeza que deseja remover este lançamento? Esta ação não pode ser desfeita.</p>
-            </div>
-            <div class="flex gap-3 pt-2">
-                <button type="button" onclick="fecharModalExcluirDespesa()" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-medium text-xs transition">Cancelar</button>
-                <button type="button" id="confirm-delete-despesa-btn" class="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold text-xs transition shadow-md shadow-red-600/30">Excluir</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- FIREBASE INITIALIZATION & FIRESTORE CLOUD SYNC -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { 
-            getFirestore, 
-            collection, 
-            doc, 
-            setDoc, 
-            deleteDoc, 
-            onSnapshot 
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // Firebase Credentials Provided
-        const firebaseConfig = {
-            apiKey: "AIzaSyDW05GuYDxXUCmtWfSxhfap1-l6_qkNspw",
-            authDomain: "plataforma-cij.firebaseapp.com",
-            projectId: "plataforma-cij",
-            storageBucket: "plataforma-cij.firebasestorage.app",
-            messagingSenderId: "949985395100",
-            appId: "1:949985395100:web:cf881e0c91c63175228859",
-            measurementId: "G-PGX7H2R8G2"
-        };
-
-        let db, auth;
-        try {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            signInAnonymously(auth).catch(err => console.warn("Firebase Auth (Anônimo):", err.message));
-        } catch (e) {
-            console.error("Erro de inicialização do Firebase:", e);
-        }
-
-        // Global Firebase Bridge Object for legacy script access
-        window.firebaseSync = {
-            db,
-            saveSolicitacao: async (registro) => {
-                if (!db) return;
-                try {
-                    await setDoc(doc(db, "solicitacoes", registro.id), registro);
-                } catch (e) {
-                    console.error("Erro ao salvar no Firestore:", e);
-                }
-            },
-            deleteSolicitacao: async (id) => {
-                if (!db) return;
-                try {
-                    await deleteDoc(doc(db, "solicitacoes", id));
-                } catch (e) {
-                    console.error("Erro ao excluir do Firestore:", e);
-                }
-            },
-            saveDespesa: async (despesa) => {
-                if (!db) return;
-                try {
-                    await setDoc(doc(db, "despesas", despesa.id), despesa);
-                } catch (e) {
-                    console.error("Erro ao salvar despesa no Firestore:", e);
-                }
-            },
-            deleteDespesa: async (id) => {
-                if (!db) return;
-                try {
-                    await deleteDoc(doc(db, "despesas", id));
-                } catch (e) {
-                    console.error("Erro ao excluir despesa do Firestore:", e);
-                }
-            }
-        };
-
-        if (db) {
-            // Real-time Firestore Listener for Solicitacoes CIJ
-            onSnapshot(collection(db, "solicitacoes"), (snapshot) => {
-                const list = [];
-                snapshot.forEach((doc) => {
-                    list.push(doc.data());
-                });
-                list.sort((a, b) => (b.id > a.id ? 1 : -1));
-                
-                if (typeof salvarBancoLocal === 'function') {
-                    try {
-                        localStorage.setItem('cij_solicitacoes_database_v1', JSON.stringify(list));
-                    } catch (e) {}
-                }
-                if (typeof renderizarTabelaBanco === 'function') {
-                    renderizarTabelaBanco();
-                }
-                if (typeof atualizarBadgeBanco === 'function') {
-                    atualizarBadgeBanco();
-                }
-            }, (error) => {
-                console.warn("Firestore Solicitacoes Error:", error);
-            });
-
-            // Real-time Firestore Listener for Controle de Despesas
-            onSnapshot(collection(db, "despesas"), (snapshot) => {
-                const list = [];
-                snapshot.forEach((doc) => {
-                    list.push(doc.data());
-                });
-                list.sort((a, b) => (b.id > a.id ? 1 : -1));
-                
-                window.expenses = list;
-                if (typeof renderizarDespesas === 'function') {
-                    renderizarDespesas();
-                }
-            }, (error) => {
-                console.warn("Firestore Despesas Error:", error);
-            });
-        }
-    </script>
 
     <script>
+        /* VARIÁVEIS E ESTADOS GLOBAIS DA APLICAÇÃO */
+        window.listaDespesas = JSON.parse(localStorage.getItem('banco_despesas_cij') || '[]');
+        window.listaSolicitacoes = JSON.parse(localStorage.getItem('banco_solicitacoes_cij') || '[]');
+        let relatoriosExpandidos = new Set();
         let rowVendaCount = 0;
-        const DB_KEY = 'cij_solicitacoes_database_v1';
 
-        // Estado do módulo de despesas
-        window.expenses = [];
-        let deleteExpenseTargetId = null;
-
-        // Dicionário de modelos predefinidos por tecnologia / categoria
         const MODELOS_POR_CATEGORIA = {
             "Impressora CIJ": ["8820", "8860", "8860P", "8910", "8610", "Outro (Digitar)"],
             "Impressora TIJ": ["T-110H", "T110M", "291", "280", "Outro (Digitar)"],
@@ -1286,106 +997,6 @@
             "Sensor / Encoder / Automação": ["Sensor Fotoelétrico NPN/PNP", "Encoder Rotativo com Roda", "Cabo de Sinal / Comunicação CLP", "Outro (Digitar)"]
         };
 
-        function navegarPara(viewId) {
-            document.getElementById('view-home').classList.add('hidden');
-            document.getElementById('view-formulario').classList.add('hidden');
-            document.getElementById('view-banco').classList.add('hidden');
-            document.getElementById('view-calculadora').classList.add('hidden');
-            document.getElementById('view-despesas').classList.add('hidden');
-
-            document.getElementById('tab-home').classList.remove('active');
-            document.getElementById('tab-formulario').classList.remove('active');
-            document.getElementById('tab-banco').classList.remove('active');
-            document.getElementById('tab-calculadora').classList.remove('active');
-            document.getElementById('tab-despesas').classList.remove('active');
-
-            const viewEl = document.getElementById(`view-${viewId}`);
-            const tabEl = document.getElementById(`tab-${viewId}`);
-
-            if (viewEl) viewEl.classList.remove('hidden');
-            if (tabEl) tabEl.classList.add('active');
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            if (viewId === 'calculadora') {
-                calcularSimulador();
-            } else if (viewId === 'banco') {
-                renderizarTabelaBanco();
-            } else if (viewId === 'despesas') {
-                renderizarDespesas();
-            }
-        }
-
-        /* Utilitários seguros de codificação URL-Safe Base64 */
-        function utf8_to_b64(str) {
-            const b64 = window.btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-                return String.fromCharCode(parseInt(p1, 16));
-            }));
-            return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-        }
-
-        function b64_to_utf8(str) {
-            if (!str) return '';
-            let base64 = str.replace(/ /g, '+').replace(/-/g, '+').replace(/_/g, '/');
-            while (base64.length % 4) {
-                base64 += '=';
-            }
-            return decodeURIComponent(Array.prototype.map.call(window.atob(base64), function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-        }
-
-        function formatSentenceCase(text) {
-            if (!text) return '';
-            text = text.trim();
-            if (!text) return '';
-            const lower = text.toLowerCase();
-            return lower.replace(/(^\s*|[.!?]\s*)([a-zà-ÿ])/g, (match, separator, char) => separator + char.toUpperCase());
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
-            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-        }
-
-        function parseValorMoeda(val) {
-            if (val === null || val === undefined || val === '') return 0;
-            if (typeof val === 'number') return isNaN(val) ? 0 : val;
-            
-            let str = val.toString().trim();
-            if (!str) return 0;
-
-            str = str.replace(/R\$\s?/gi, '').trim();
-
-            if (str.includes('.') && str.includes(',')) {
-                str = str.replace(/\./g, '').replace(',', '.');
-            } else if (str.includes(',')) {
-                str = str.replace(',', '.');
-            } else if (str.includes('.')) {
-                const parts = str.split('.');
-                if (parts.length > 2) {
-                    str = str.replace(/\./g, '');
-                } else if (parts.length === 2 && parts[1].length === 3) {
-                    str = str.replace('.', '');
-                }
-            }
-
-            str = str.replace(/[^0-9.]/g, '');
-            let parsed = parseFloat(str);
-            return isNaN(parsed) ? 0 : parsed;
-        }
-
-        function formatarMoeda(num) {
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(num || 0);
-        }
-
         function safeSetVal(id, val) {
             const el = document.getElementById(id);
             if (el) el.value = val !== undefined && val !== null ? val : '';
@@ -1393,12 +1004,17 @@
 
         function safeGetVal(id, defaultVal = '') {
             const el = document.getElementById(id);
-            return el ? el.value : defaultVal;
+            return el ? el.value.trim() : defaultVal;
         }
 
-        function safeSetText(id, text) {
+        function safeSetText(id, txt) {
             const el = document.getElementById(id);
-            if (el) el.textContent = text !== undefined && text !== null ? text : '';
+            if (el) el.innerText = txt !== undefined && txt !== null ? txt : '';
+        }
+
+        function safeGetText(id) {
+            const el = document.getElementById(id);
+            return el ? el.innerText.trim() : '';
         }
 
         function safeGetChecked(id) {
@@ -1406,19 +1022,114 @@
             return el ? el.checked : false;
         }
 
-        function mostrarNotificacao(mensagem, ehErro = false) {
-            const badge = document.createElement('div');
-            badge.className = `fixed bottom-5 right-5 ${ehErro ? 'bg-red-900 border-red-400' : 'bg-blue-900 border-blue-400'} text-white text-xs font-bold px-4 py-3 rounded-xl shadow-2xl border z-50 flex items-center gap-2 animate-bounce`;
-            badge.innerHTML = `<i class="fa-solid ${ehErro ? 'fa-triangle-exclamation text-amber-400' : 'fa-circle-check text-green-400'} text-base"></i> <span>${mensagem}</span>`;
-            document.body.appendChild(badge);
-            setTimeout(() => badge.remove(), 4000);
+        function parseValorMoeda(val) {
+            if (val === null || val === undefined || val === '') return 0;
+            if (typeof val === 'number') return isNaN(val) ? 0 : val;
+            let str = val.toString().trim().replace(/R\$\s?/gi, '');
+            if (str.includes('.') && str.includes(',')) {
+                str = str.replace(/\./g, '').replace(',', '.');
+            } else if (str.includes(',')) {
+                str = str.replace(',', '.');
+            } else if (str.includes('.')) {
+                const parts = str.split('.');
+                if (parts.length > 2 || (parts.length === 2 && parts[1].length === 3)) {
+                    str = str.replace(/\./g, '');
+                }
+            }
+            str = str.replace(/[^0-9.]/g, '');
+            let parsed = parseFloat(str);
+            return isNaN(parsed) ? 0 : parsed;
         }
 
+        function formatarMoeda(val) {
+            return (parseFloat(val) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function mostrarNotificacao(msg) {
+            const toast = document.getElementById('toast');
+            safeSetText('toast-message', msg);
+            if (toast) {
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 3500);
+            }
+        }
+
+        function navegarPara(moduloId) {
+            const modulos = ['inicio', 'solicitacao', 'banco', 'calculadora', 'despesas'];
+            modulos.forEach(m => {
+                const view = document.getElementById(`view-${m}`);
+                const nav = document.getElementById(`nav-${m}`);
+                if (view) view.classList.add('hidden');
+                if (nav) {
+                    nav.classList.remove('bg-blue-600', 'text-white', 'shadow');
+                    nav.classList.add('text-slate-300');
+                }
+            });
+
+            const activeView = document.getElementById(`view-${moduloId}`);
+            const activeNav = document.getElementById(`nav-${moduloId}`);
+            if (activeView) activeView.classList.remove('hidden');
+            if (activeNav) {
+                activeNav.classList.add('bg-blue-600', 'text-white', 'shadow');
+                activeNav.classList.remove('text-slate-300');
+            }
+
+            if (moduloId === 'despesas') renderizarRelatoriosDespesas();
+            if (moduloId === 'banco') renderizarBancoDados();
+            if (moduloId === 'calculadora') calcularSimuladorOficial();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
+        /* LÓGICA DO SIMULADOR LEADJET (CÁLCULO OFICIAL) */
+        function calcularSimuladorOficial() {
+            const ptsMatriz = parseInt(safeGetVal('tipoMatriz', '16')) || 16;
+            const chars = parseInt(safeGetVal('caracteres', '150')) || 0;
+            const ptsExtra = parseInt(safeGetVal('extras', '0')) || 0;
+            const impMin = parseInt(safeGetVal('imp_min', '1')) || 0;
+            const dias = parseInt(safeGetVal('dias', '22')) || 1;
+            const horas = parseInt(safeGetVal('horas', '16')) || 0;
+            const temp = parseInt(safeGetVal('temperatura', '20')) || 20;
+            
+            const precoTinta = parseFloat(safeGetVal('precoTinta', '300')) || 0;
+            const precoSolvente = parseFloat(safeGetVal('precoSolvente', '150')) || 0;
+
+            const totalPontos = (ptsMatriz * chars) + ptsExtra;
+            safeSetText('display-pontos', `(Pts: ${totalPontos})`);
+
+            const totalImpMes = impMin * 60 * horas * dias;
+            safeSetText('res-total-imp', totalImpMes.toLocaleString('pt-BR'));
+
+            const consumoTintaMl = ((totalPontos * totalImpMes) / 1280000000) * 700;
+            const custoTinta = (consumoTintaMl / 700) * precoTinta;
+
+            let mlPorHora = (temp <= 20) ? (2 + (temp - 10) * 0.2) : (4 + (temp - 20) * 0.4);
+            const consumoSolventeMl = mlPorHora * (horas * dias);
+            const custoSolvente = (consumoSolventeMl / 700) * precoSolvente;
+
+            const custoTotalMensal = custoTinta + custoSolvente;
+            const custoTotalDiario = custoTotalMensal / (dias || 1);
+            const custoTotalAnual = custoTotalMensal * 12;
+
+            safeSetText('res-tinta-ml', consumoTintaMl.toFixed(1));
+            safeSetText('res-tinta-rs', custoTinta.toFixed(2));
+            safeSetText('res-solvente-ml', consumoSolventeMl.toFixed(1));
+            safeSetText('res-solvente-rs', custoSolvente.toFixed(2));
+            
+            safeSetText('res-diario', "R$ " + custoTotalDiario.toFixed(2));
+            safeSetText('res-mensal', "R$ " + custoTotalMensal.toFixed(2));
+            safeSetText('res-anual', "R$ " + custoTotalAnual.toFixed(2));
+        }
+
+        /* LÓGICA DA TABELA DE SOLICITAÇÃO CIJ */
         function obterDescricaoDaLinha(tr) {
             const selectModelo = tr.querySelector('.venda-desc-select');
             const inputCustom = tr.querySelector('.venda-desc-custom');
             if (!selectModelo) return '';
-
             if (selectModelo.value === "Outro (Digitar)") {
                 return inputCustom ? inputCustom.value.trim() : '';
             }
@@ -1453,7 +1164,6 @@
                 <td class="py-2 px-2">
                     <div class="flex flex-col gap-1">
                         <select class="venda-desc-select w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 outline-none focus:border-blue-600 bg-white font-medium" onchange="tratarSelecaoModeloCustom(this)">
-                            <!-- Dynamic options -->
                         </select>
                         <input type="text" class="venda-desc-custom hidden w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 outline-none focus:border-blue-600 bg-white font-medium" placeholder="Digite o modelo/descrição customizado">
                     </div>
@@ -1467,7 +1177,7 @@
                 <td class="py-2 px-2">
                     <input type="text" readonly class="venda-preco-total w-full rounded-lg border border-slate-200 p-2 text-xs text-blue-900 font-extrabold text-right bg-slate-100 outline-none" value="R$ 0,00" placeholder="R$ 0,00">
                 </td>
-                <td class="py-2 px-2 text-center">
+                <td class="py-2 px-2 text-center no-print">
                     <button type="button" onclick="removerLinhaVenda('row-venda-${rowVendaCount}')" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg transition" title="Excluir Linha">
                         <i class="fa-solid fa-trash-can text-xs"></i>
                     </button>
@@ -1592,357 +1302,88 @@
             safeSetText('valorTotalGeral', formatarMoeda(somaGeral));
         }
 
-        function calcularSimulador() {
-            const ptsMatriz = parseInt(safeGetVal('tipoMatriz', '16'));
-            const chars = parseInt(safeGetVal('caracteres', '150')) || 0;
-            const ptsExtra = parseInt(safeGetVal('extras', '0'));
-            const impMin = parseInt(safeGetVal('imp_min', '1')) || 0;
-            const dias = parseInt(safeGetVal('dias', '22')) || 1;
-            const horas = parseInt(safeGetVal('horas', '16')) || 0;
-            const temp = parseInt(safeGetVal('temperatura', '20'));
-            
-            const precoTinta = parseFloat(safeGetVal('precoTinta', '300')) || 0;
-            const precoSolvente = parseFloat(safeGetVal('precoSolvente', '150')) || 0;
-
-            const totalPontos = (ptsMatriz * chars) + ptsExtra;
-            safeSetText('display-pontos', "(Pts: " + totalPontos + ")");
-
-            const totalImpMes = impMin * 60 * horas * dias;
-            safeSetText('res-total-imp', totalImpMes.toLocaleString('pt-BR'));
-
-            const consumoTintaMl = ((totalPontos * totalImpMes) / 1280000000) * 700;
-            const custoTinta = (consumoTintaMl / 700) * precoTinta;
-
-            let mlPorHora = (temp <= 20) ? (2 + (temp - 10) * 0.2) : (4 + (temp - 20) * 0.4);
-            const consumoSolventeMl = mlPorHora * (horas * dias);
-            const custoSolvente = (consumoSolventeMl / 700) * precoSolvente;
-
-            const custoTotalMensal = custoTinta + custoSolvente;
-            const custoTotalDiario = custoTotalMensal / dias;
-            const custoTotalAnual = custoTotalMensal * 12;
-
-            safeSetText('res-tinta-ml', consumoTintaMl.toFixed(1));
-            safeSetText('res-tinta-rs', custoTinta.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-            safeSetText('res-solvente-ml', consumoSolventeMl.toFixed(1));
-            safeSetText('res-solvente-rs', custoSolvente.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-
-            safeSetText('res-diario', "R$ " + custoTotalDiario.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-            safeSetText('res-mensal', "R$ " + custoTotalMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-            safeSetText('res-anual', "R$ " + custoTotalAnual.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        function limparFormulario() {
+            const form = document.getElementById('formVendaInstalacao');
+            if (form) form.reset();
+            const tbody = document.getElementById('corpoTabelaVenda');
+            if (tbody) tbody.innerHTML = '';
+            rowVendaCount = 0;
+            adicionarLinhaVenda();
+            mostrarNotificacao('Formulário limpo.');
         }
 
-        function imprimirSimuladorPDF() {
-            calcularSimulador();
-            window.print();
-        }
+        function salvarFormularioBanco() {
+            const cliente = safeGetVal('cli_razao');
+            const pedido = safeGetVal('ven_num_pedido') || 'S/N';
+            const cnpj = safeGetVal('cli_cnpj');
 
-        function obterBancoLocal() {
-            try {
-                const data = localStorage.getItem(DB_KEY);
-                return data ? JSON.parse(data) : [];
-            } catch (e) {
-                console.error("Erro ao ler banco local:", e);
-                return [];
-            }
-        }
-
-        function salvarBancoLocal(lista) {
-            try {
-                localStorage.setItem(DB_KEY, JSON.stringify(lista));
-                atualizarBadgeBanco();
-            } catch (e) {
-                mostrarNotificacao("Erro de memória ao salvar no navegador.", true);
-            }
-        }
-
-        function atualizarBadgeBanco() {
-            const banco = obterBancoLocal();
-            safeSetText('badge-total-banco', banco.length);
-        }
-
-        function obterDadosFormulario() {
-            const dados = {
-                cli_razao: safeGetVal('cli_razao'),
-                cli_fantasia: safeGetVal('cli_fantasia'),
-                cli_cnpj: safeGetVal('cli_cnpj'),
-                cli_ie: safeGetVal('cli_ie'),
-                cli_cep: safeGetVal('cli_cep'),
-                cli_endereco: safeGetVal('cli_endereco'),
-                cli_cidade: safeGetVal('cli_cidade'),
-                cli_contato_nome: safeGetVal('cli_contato_nome'),
-                cli_contato_fone: safeGetVal('cli_contato_fone'),
-                cli_contato_email: safeGetVal('cli_contato_email'),
-                cli_tecnico_nome: safeGetVal('cli_tecnico_nome'),
-                cli_tecnico_fone: safeGetVal('cli_tecnico_fone'),
-                cli_transportadora: safeGetVal('cli_transportadora'),
-                
-                ven_num_proposta: safeGetVal('ven_num_proposta'),
-                ven_num_pedido: safeGetVal('ven_num_pedido'),
-                ven_data_solicitacao: safeGetVal('ven_data_solicitacao'),
-                ven_vendedor: safeGetVal('ven_vendedor'),
-                ven_modalidade: safeGetVal('ven_modalidade'),
-                ven_cond_pagto: safeGetVal('ven_cond_pagto'),
-                ven_previsao_entrega: safeGetVal('ven_previsao_entrega'),
-                ven_previsao_instalacao: safeGetVal('ven_previsao_instalacao'),
-
-                lin_substrato: safeGetVal('lin_substrato'),
-                lin_velocidade: safeGetVal('lin_velocidade'),
-                lin_sentido: safeGetVal('lin_sentido'),
-                lin_ambiente: safeGetVal('lin_ambiente'),
-                lin_energia: safeGetVal('lin_energia'),
-                lin_suporte_mecanico: safeGetVal('lin_suporte_mecanico'),
-
-                srv_física: safeGetChecked('srv_física'),
-                srv_eletrica: safeGetChecked('srv_eletrica'),
-                srv_parametrizacao: safeGetChecked('srv_parametrizacao'),
-                srv_treina_operador: safeGetChecked('srv_treina_operador'),
-                srv_treina_manutencao: safeGetChecked('srv_treina_manutencao'),
-                srv_integracao_clp: safeGetChecked('srv_integracao_clp'),
-
-                obs_gerais: safeGetVal('obs_gerais'),
-
-                itens_venda: []
-            };
-
-            const rows = document.querySelectorAll('#corpoTabelaVenda tr');
-            rows.forEach(row => {
-                dados.itens_venda.push({
-                    categoria: row.querySelector('.venda-cat')?.value || '',
-                    descricao: obterDescricaoDaLinha(row),
-                    qtd: row.querySelector('.venda-qtd')?.value || '1',
-                    preco_unit: row.querySelector('.venda-preco-unit')?.value || '',
-                    preco_total: row.querySelector('.venda-preco-total')?.value || ''
-                });
-            });
-
-            return dados;
-        }
-
-        function carregarDadosNoFormulario(dados) {
-            if (!dados) return;
-
-            for (const key in dados) {
-                if (key !== 'itens_venda' && key !== 'id' && key !== 'data_registro') {
-                    const el = document.getElementById(key);
-                    if (el) {
-                        if (el.type === 'checkbox') el.checked = !!dados[key];
-                        else el.value = dados[key];
-                    }
-                }
-            }
-
-            if (dados.itens_venda && Array.isArray(dados.itens_venda) && dados.itens_venda.length > 0) {
-                const tbody = document.getElementById('corpoTabelaVenda');
-                if (tbody) tbody.innerHTML = '';
-                rowVendaCount = 0;
-                dados.itens_venda.forEach(item => {
-                    adicionarLinhaVenda(item.categoria, item.descricao, item.qtd, item.preco_unit);
-                });
-            }
-
-            navegarPara('formulario');
-            mostrarNotificacao('Dados carregados no formulário!');
-        }
-
-        function salvarNoBancoDeDados() {
-            const dados = obterDadosFormulario();
-            
-            if (!dados.cli_razao && !dados.ven_num_pedido) {
-                mostrarNotificacao('Preencha ao menos o nome do Cliente ou o Nº do Pedido para salvar.', true);
+            if (!cliente) {
+                mostrarNotificacao('Preencha a Razão Social / Cliente para salvar.');
                 return;
             }
 
-            let valorTotalAcumulado = 0;
-            let totalItens = 0;
-            dados.itens_venda.forEach(i => {
-                valorTotalAcumulado += parseValorMoeda(i.preco_total);
-                totalItens += parseInt(i.qtd, 10) || 1;
-            });
-
-            const registro = {
-                id: 'SOL_' + Date.now(),
-                data_registro: new Date().toLocaleString('pt-BR'),
-                cliente: dados.cli_razao || 'Cliente Sem Nome',
-                cnpj: dados.cli_cnpj || '-',
-                proposta: dados.ven_num_proposta || '-',
-                pedido: dados.ven_num_pedido || '-',
-                vendedor: dados.ven_vendedor || '-',
-                total_itens: totalItens,
-                valor_total: valorTotalAcumulado,
-                dados_completos: dados
+            const reg = {
+                id: Date.now().toString(),
+                data_criacao: new Date().toLocaleDateString('pt-BR'),
+                tipo: 'Solicitação CIJ',
+                numero: pedido,
+                cliente,
+                cnpj,
+                total: safeGetText('valorTotalGeral')
             };
 
-            // Save to Firebase Cloud
-            if (window.firebaseSync && window.firebaseSync.saveSolicitacao) {
-                window.firebaseSync.saveSolicitacao(registro);
-            }
-
-            // Save to LocalStorage fallback
-            const banco = obterBancoLocal();
-            banco.unshift(registro);
-            salvarBancoLocal(banco);
-
-            mostrarNotificacao('Solicitação gravada com sucesso no Banco de Dados em Nuvem!');
+            window.listaSolicitacoes.unshift(reg);
+            localStorage.setItem('banco_solicitacoes_cij', JSON.stringify(window.listaSolicitacoes));
+            mostrarNotificacao('Solicitação gravada no Banco de Dados!');
         }
 
-        function renderizarTabelaBanco() {
-            const tbody = document.getElementById('corpoTabelaBanco');
+        function renderizarBancoDados() {
+            const tbody = document.getElementById('banco-table-body');
             if (!tbody) return;
+            tbody.innerHTML = '';
 
-            const filtro = (safeGetVal('inputBuscaBanco') || '').toLowerCase().trim();
-            const banco = obterBancoLocal();
+            safeSetText('banco-count-badge', window.listaSolicitacoes.length.toString());
 
-            const filtrados = banco.filter(item => {
-                return item.cliente.toLowerCase().includes(filtro) ||
-                       item.cnpj.toLowerCase().includes(filtro) ||
-                       item.pedido.toLowerCase().includes(filtro) ||
-                       item.proposta.toLowerCase().includes(filtro);
-            });
+            if (window.listaSolicitacoes.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400 font-medium">Nenhum registro gravado.</td></tr>`;
+                return;
+            }
 
-            safeSetText('contadorBancoHeader', filtrados.length);
-
-            if (filtrados.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="py-8 text-center text-slate-400">
-                            <i class="fa-solid fa-folder-open text-3xl mb-2 block"></i>
-                            <span>Nenhuma solicitação encontrada no banco de dados.</span>
-                        </td>
-                    </tr>
+            window.listaSolicitacoes.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-slate-200 hover:bg-slate-50';
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold">${s.data_criacao}</td>
+                    <td class="p-3"><strong>${s.cliente}</strong><br><span class="text-slate-400 text-[10px]">${s.cnpj}</span></td>
+                    <td class="p-3">${s.tipo} (${s.numero})</td>
+                    <td class="p-3 font-bold text-blue-900">${s.total}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="excluirSolicitacao('${s.id}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
                 `;
-                return;
-            }
-
-            tbody.innerHTML = filtrados.map(item => `
-                <tr class="hover:bg-slate-50 transition border-b border-slate-200">
-                    <td class="py-3 px-3 font-medium text-slate-500">${item.data_registro}</td>
-                    <td class="py-3 px-3">
-                        <div class="font-extrabold text-slate-900">${item.cliente}</div>
-                        <div class="text-[10px] text-slate-500">CNPJ: ${item.cnpj}</div>
-                    </td>
-                    <td class="py-3 px-3">
-                        <span class="bg-blue-100 text-blue-900 text-[10px] font-bold px-2 py-0.5 rounded-full">Ped: ${item.pedido}</span>
-                        <span class="text-[10px] text-slate-500 block mt-0.5">Prop: ${item.proposta}</span>
-                    </td>
-                    <td class="py-3 px-3 text-center font-bold text-slate-700">${item.total_itens}</td>
-                    <td class="py-3 px-3 text-right font-black text-blue-700">${formatarMoeda(item.valor_total)}</td>
-                    <td class="py-3 px-3 text-center">
-                        <div class="flex items-center justify-center gap-1.5">
-                            <button type="button" onclick="carregarDoBanco('${item.id}')" class="bg-blue-600 hover:bg-blue-700 text-white p-1.5 rounded-lg transition" title="Carregar e Editar">
-                                <i class="fa-solid fa-pen-to-square text-xs"></i>
-                            </button>
-                            <button type="button" onclick="gerarExcelDoRegistroBanco('${item.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white p-1.5 rounded-lg transition" title="Exportar Excel">
-                                <i class="fa-solid fa-file-excel text-xs"></i>
-                            </button>
-                            <button type="button" onclick="copiarLinkDoRegistroBanco('${item.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white p-1.5 rounded-lg transition" title="Copiar Link Preenchido">
-                                <i class="fa-solid fa-link text-xs"></i>
-                            </button>
-                            <button type="button" onclick="excluirDoBanco('${item.id}')" class="bg-red-500 hover:bg-red-700 text-white p-1.5 rounded-lg transition" title="Excluir Registro">
-                                <i class="fa-solid fa-trash-can text-xs"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
+                tbody.appendChild(tr);
+            });
         }
 
-        function carregarDoBanco(id) {
-            const banco = obterBancoLocal();
-            const item = banco.find(r => r.id === id);
-            if (item && item.dados_completos) {
-                carregarDadosNoFormulario(item.dados_completos);
-            }
+        function excluirSolicitacao(id) {
+            window.listaSolicitacoes = window.listaSolicitacoes.filter(s => s.id !== id);
+            localStorage.setItem('banco_solicitacoes_cij', JSON.stringify(window.listaSolicitacoes));
+            renderizarBancoDados();
+            mostrarNotificacao('Solicitação removida!');
         }
 
-        function excluirDoBanco(id) {
-            if (window.firebaseSync && window.firebaseSync.deleteSolicitacao) {
-                window.firebaseSync.deleteSolicitacao(id);
-            }
-            let banco = obterBancoLocal();
-            banco = banco.filter(r => r.id !== id);
-            salvarBancoLocal(banco);
-            renderizarTabelaBanco();
-            mostrarNotificacao('Registro excluído com sucesso.');
+        function exportarBackupJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(window.listaSolicitacoes));
+            const a = document.createElement('a');
+            a.href = dataStr;
+            a.download = `Backup_Plataforma_CIJ_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
         }
 
-        function exportarBancoCompleto() {
-            const banco = obterBancoLocal();
-            if (banco.length === 0) {
-                mostrarNotificacao('Não há dados no banco para exportar.', true);
-                return;
-            }
-
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(banco, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `Backup_Banco_Solicitacoes_CIJ_${Date.now()}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-            mostrarNotificacao('Backup em JSON baixado com sucesso!');
-        }
-
-        function importarBancoCompleto(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const dadosImportados = JSON.parse(e.target.result);
-                    if (Array.isArray(dadosImportados)) {
-                        dadosImportados.forEach(item => {
-                            if (window.firebaseSync && window.firebaseSync.saveSolicitacao) {
-                                window.firebaseSync.saveSolicitacao(item);
-                            }
-                        });
-                        salvarBancoLocal(dadosImportados);
-                        renderizarTabelaBanco();
-                        mostrarNotificacao('Banco de dados restaurado com sucesso!');
-                    } else {
-                        mostrarNotificacao('Arquivo JSON de backup inválido.', true);
-                    }
-                } catch (err) {
-                    mostrarNotificacao('Erro ao ler arquivo de backup.', true);
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        function copiarLinkDoRegistroBanco(id) {
-            const banco = obterBancoLocal();
-            const item = banco.find(r => r.id === id);
-            if (!item || !item.dados_completos) return;
-
-            const jsonStr = JSON.stringify(item.dados_completos);
-            const b64Data = utf8_to_b64(jsonStr);
-            const baseUrl = window.location.href.split('#')[0];
-            const fullUrl = `${baseUrl}#dados=${b64Data}`;
-
-            const modal = document.getElementById('modalLinkCompartilhar');
-            const inputModal = document.getElementById('inputUrlCompartilhar');
-            if (inputModal) inputModal.value = fullUrl;
-            if (modal) modal.classList.remove('hidden');
-
-            try {
-                navigator.clipboard.writeText(fullUrl);
-            } catch (e) {}
-        }
-
-        function gerarExcelDoRegistroBanco(id) {
-            const banco = obterBancoLocal();
-            const item = banco.find(r => r.id === id);
-            if (!item || !item.dados_completos) return;
-
-            carregarDadosNoFormulario(item.dados_completos);
-            setTimeout(() => {
-                gerarExcel();
-            }, 300);
-        }
-
+        /* EXPORTAÇÃO EXCEL DA SOLICITAÇÃO CIJ */
         function gerarExcel() {
             if (typeof XLSX === 'undefined') {
-                mostrarNotificacao('A biblioteca Excel está sendo carregada...');
+                mostrarNotificacao('A biblioteca Excel está carregando...');
                 return;
             }
 
@@ -1955,40 +1396,19 @@
                 const cellObj = { v: val !== null && val !== undefined ? val : '', t: typeof val === 'number' ? 'n' : 's' };
                 const s = { font: { name: 'Calibri', sz: sz, bold: bold, color: { rgb: color } }, alignment: { horizontal: align, vertical: 'center', wrapText: true } };
                 if (bg) s.fill = { fgColor: { rgb: bg } };
-                if (border) {
-                    s.border = {
-                        top: { style: 'thin', color: { rgb: 'CBD5E1' } },
-                        bottom: { style: 'thin', color: { rgb: 'CBD5E1' } },
-                        left: { style: 'thin', color: { rgb: 'CBD5E1' } },
-                        right: { style: 'thin', color: { rgb: 'CBD5E1' } }
-                    };
-                }
+                if (border) s.border = { top: { style: 'thin', color: { rgb: 'CBD5E1' } }, bottom: { style: 'thin', color: { rgb: 'CBD5E1' } }, left: { style: 'thin', color: { rgb: 'CBD5E1' } }, right: { style: 'thin', color: { rgb: 'CBD5E1' } } };
                 cellObj.s = s;
                 return cellObj;
             }
 
-            const ws1Data = [];
-            const ws1Merges = [];
-
-            ws1Data.push([
-                createCell('SOLICITAÇÃO DE EQUIPAMENTOS CIJ - VENDA E INSTALAÇÃO', { bold: true, color: 'FFFFFF', bg: '1E3A8A', align: 'center', sz: 13, border: false }),
-                createCell(''), createCell(''), createCell(''), createCell(''), createCell('')
-            ]);
-            ws1Merges.push({ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } });
-
-            const hoje = new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR');
-            ws1Data.push([
-                createCell(`PROPOSTA: ${proposta}   |   PEDIDO: ${pedido}   |   CLIENTE: ${cliente}   |   EMISSÃO: ${hoje}`, { bold: true, color: '1E3A8A', bg: 'DBEAFE', align: 'center', sz: 10, border: false }),
-                createCell(''), createCell(''), createCell(''), createCell(''), createCell('')
-            ]);
-            ws1Merges.push({ s: { r: 1, c: 0 }, e: { r: 1, c: 5 } });
-
-            ws1Data.push([createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false})]);
-
-            const headers = ["#", "Tecnologia / Categoria", "Modelo / Descrição do Equipamento", "Qtd", "Preço Unitário (R$)", "Preço Total (R$)"];
-            ws1Data.push(headers.map(h => createCell(h, { 
-                bold: true, color: 'FFFFFF', bg: '0F172A', align: h === 'Qtd' || h === '#' ? 'center' : (h.includes('Preço') ? 'right' : 'left'), sz: 11 
-            })));
+            /* --- ABA 1: EQUIPAMENTOS E INSUMOS --- */
+            const ws1Data = [
+                [createCell('SOLICITAÇÃO DE EQUIPAMENTOS CIJ - VENDA E INSTALAÇÃO', { bold: true, color: 'FFFFFF', bg: '1E3A8A', align: 'center', sz: 13 }), createCell(''), createCell(''), createCell(''), createCell(''), createCell('')],
+                [createCell(`PROPOSTA: ${proposta}   |   PEDIDO: ${pedido}   |   CLIENTE: ${cliente}`, { bold: true, color: '1E3A8A', bg: 'DBEAFE', align: 'center', sz: 10 }), createCell(''), createCell(''), createCell(''), createCell(''), createCell('')],
+                [createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false})],
+                ["#", "Tecnologia / Categoria", "Modelo / Descrição", "Qtd", "Preço Unit. (R$)", "Preço Total (R$)"].map(h => createCell(h, { bold: true, color: 'FFFFFF', bg: '0F172A', align: h.includes('Preço') ? 'right' : 'left', sz: 11 }))
+            ];
+            const ws1Merges = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 5 } }];
 
             const rows = document.querySelectorAll('#corpoTabelaVenda tr');
             let totalItens = 0;
@@ -1997,35 +1417,133 @@
             rows.forEach((row, idx) => {
                 const cat = row.querySelector('.venda-cat')?.value || '-';
                 const desc = obterDescricaoDaLinha(row) || '-';
-                const qtdStr = row.querySelector('.venda-qtd')?.value || '1';
-                const qtd = parseInt(qtdStr, 10) || 1;
+                const qtd = parseInt(row.querySelector('.venda-qtd')?.value || '1', 10);
                 const precoUnitStr = row.querySelector('.venda-preco-unit')?.value || 'R$ 0,00';
                 const precoTotalStr = row.querySelector('.venda-preco-total')?.value || 'R$ 0,00';
 
                 totalItens += qtd;
                 valorGeralAcumulado += parseValorMoeda(precoTotalStr);
 
-                const rowBg = idx % 2 === 0 ? 'FFFFFF' : 'F8FAFC';
+                const bg = idx % 2 === 0 ? 'FFFFFF' : 'F8FAFC';
                 ws1Data.push([
-                    createCell(idx + 1, { align: 'center', bold: true, color: '64748B', bg: rowBg }),
-                    createCell(cat, { bold: true, color: '1E3A8A', bg: rowBg }),
-                    createCell(desc, { bg: rowBg }),
-                    createCell(qtd, { align: 'center', bold: true, bg: rowBg }),
-                    createCell(precoUnitStr, { align: 'right', bold: true, color: '334155', bg: rowBg }),
-                    createCell(precoTotalStr, { align: 'right', bold: true, color: '0958D9', bg: rowBg })
+                    createCell(idx + 1, { align: 'center', bold: true, color: '64748B', bg }),
+                    createCell(cat, { bold: true, color: '1E3A8A', bg }),
+                    createCell(desc, { bg }),
+                    createCell(qtd, { align: 'center', bold: true, bg }),
+                    createCell(precoUnitStr, { align: 'right', bold: true, bg }),
+                    createCell(precoTotalStr, { align: 'right', bold: true, color: '0958D9', bg })
                 ]);
             });
 
             ws1Data.push([
-                createCell('TOTAL DE ITENS LISTADOS:', { bold: true, color: '1E3A8A', bg: 'E2E8F0', align: 'right' }),
+                createCell('TOTAL:', { bold: true, color: '1E3A8A', bg: 'E2E8F0', align: 'right' }),
                 createCell(''), createCell(''),
                 createCell(totalItens, { bold: true, color: '1E3A8A', bg: 'E2E8F0', align: 'center' }),
-                createCell('VALOR TOTAL DA SOLICITAÇÃO:', { bold: true, color: '1E3A8A', bg: 'E2E8F0', align: 'right' }), 
+                createCell('VALOR TOTAL:', { bold: true, color: '1E3A8A', bg: 'E2E8F0', align: 'right' }), 
                 createCell(formatarMoeda(valorGeralAcumulado), { bold: true, color: '0958D9', bg: 'E2E8F0', align: 'right' })
             ]);
             ws1Merges.push({ s: { r: ws1Data.length - 1, c: 0 }, e: { r: ws1Data.length - 1, c: 2 } });
 
-            function aoaToSheetStyled(data, merges) {
+            /* --- ABA 2: RESUMO COMPLETO DA SOLICITAÇÃO --- */
+            const ws2Data = [];
+            const ws2Merges = [];
+
+            ws2Data.push([
+                createCell('RELATÓRIO TÉCNICO E COMERCIAL DA SOLICITAÇÃO', { bold: true, color: 'FFFFFF', bg: '1E3A8A', align: 'center', sz: 13, border: false }),
+                createCell('')
+            ]);
+            ws2Merges.push({ s: { r: 0, c: 0 }, e: { r: 0, c: 1 } });
+
+            ws2Data.push([createCell('', {border:false}), createCell('', {border:false})]);
+
+            function addSectionHeader(title) {
+                ws2Data.push([
+                    createCell(title, { bold: true, color: 'FFFFFF', bg: '1E40AF', align: 'left', sz: 11 }),
+                    createCell('', { bg: '1E40AF' })
+                ]);
+                ws2Merges.push({ s: { r: ws2Data.length - 1, c: 0 }, e: { r: ws2Data.length - 1, c: 1 } });
+            }
+
+            function addFieldRow(label, value) {
+                ws2Data.push([
+                    createCell(label, { bold: true, color: '334155', bg: 'F1F5F9', align: 'left' }),
+                    createCell(value || '-', { color: '0F172A', align: 'left' })
+                ]);
+            }
+
+            function addServiceRow(label, isChecked) {
+                const statusText = isChecked ? 'SIM (INCLUSO)' : 'NÃO INCLUSO';
+                const bg = isChecked ? 'DCFCE7' : 'FEE2E2';
+                const color = isChecked ? '15803D' : 'B91C1C';
+                ws2Data.push([
+                    createCell(label, { bold: true, color: '334155', bg: 'F1F5F9' }),
+                    createCell(statusText, { bold: true, color: color, bg: bg, align: 'center' })
+                ]);
+            }
+
+            // 1. Dados do Cliente
+            addSectionHeader('1. DADOS DO CLIENTE E LOCAL DE INSTALAÇÃO');
+            addFieldRow('Razão Social / Cliente', safeGetVal('cli_razao'));
+            addFieldRow('Nome Fantasia', safeGetVal('cli_fantasia'));
+            addFieldRow('CNPJ / CPF', safeGetVal('cli_cnpj'));
+            addFieldRow('Inscrição Estadual (IE)', safeGetVal('cli_ie'));
+            addFieldRow('CEP', safeGetVal('cli_cep'));
+            addFieldRow('Endereço Completo de Instalação', safeGetVal('cli_endereco'));
+            addFieldRow('Cidade / UF', safeGetVal('cli_cidade'));
+            addFieldRow('Contato Comercial', safeGetVal('cli_contato_nome'));
+            addFieldRow('Telefone / WhatsApp Comercial', safeGetVal('cli_contato_fone'));
+            addFieldRow('E-mail Comercial', safeGetVal('cli_contato_email'));
+            addFieldRow('Responsável Técnico Cliente', safeGetVal('cli_tecnico_nome'));
+            addFieldRow('Telefone / Ramal Técnico', safeGetVal('cli_tecnico_fone'));
+            addFieldRow('Transportadora / Redespacho', safeGetVal('cli_transportadora'));
+
+            ws2Data.push([createCell('', {border:false}), createCell('', {border:false})]);
+
+            // 2. Dados Comerciais
+            addSectionHeader('2. DADOS COMERCIAIS DO PEDIDO DE VENDA');
+            addFieldRow('Nº Proposta Comercial', safeGetVal('ven_num_proposta'));
+            addFieldRow('Nº Pedido de Venda', safeGetVal('ven_num_pedido'));
+            addFieldRow('Data da Solicitação', safeGetVal('ven_data_solicitacao'));
+            addFieldRow('Vendedor / Consultor CIJ', safeGetVal('ven_vendedor'));
+            addFieldRow('Modalidade da Venda', safeGetVal('ven_modalidade'));
+            addFieldRow('Condição de Pagamento', safeGetVal('ven_cond_pagto'));
+            addFieldRow('Previsão de Entrega', safeGetVal('ven_previsao_entrega'));
+            addFieldRow('Previsão de Instalação', safeGetVal('ven_previsao_instalacao'));
+
+            ws2Data.push([createCell('', {border:false}), createCell('', {border:false})]);
+
+            // 3. Condições Técnicas
+            addSectionHeader('3. CONDIÇÕES TÉCNICAS DA LINHA DE PRODUÇÃO');
+            addFieldRow('Substrato / Embalagem a Marcar', safeGetVal('lin_substrato'));
+            addFieldRow('Velocidade da Linha', safeGetVal('lin_velocidade'));
+            addFieldRow('Sentido de Passagem dos Produtos', safeGetVal('lin_sentido'));
+            addFieldRow('Ambiente Operacional', safeGetVal('lin_ambiente'));
+            addFieldRow('Ponto de Energia Elétrica Disponível', safeGetVal('lin_energia'));
+            addFieldRow('Suporte Mecânico Existente / Requisitado', safeGetVal('lin_suporte_mecanico'));
+
+            ws2Data.push([createCell('', {border:false}), createCell('', {border:false})]);
+
+            // 4. Escopo de Serviços
+            addSectionHeader('4. ESCOPO DE SERVIÇOS E TREINAMENTO');
+            addServiceRow('Montagem Mecânica / Posicionamento', safeGetChecked('srv_fisica') || safeGetChecked('srv_física'));
+            addServiceRow('Conexão Elétrica, Sensor e Encoder', safeGetChecked('srv_eletrica'));
+            addServiceRow('Parametrização e Mensagens', safeGetChecked('srv_parametrizacao'));
+            addServiceRow('Treinamento Operacional', safeGetChecked('srv_treina_operador'));
+            addServiceRow('Treinamento Manutenção Preventiva', safeGetChecked('srv_treina_manutencao'));
+            addServiceRow('Integração CLP / Automação', safeGetChecked('srv_integracao_clp'));
+
+            ws2Data.push([createCell('', {border:false}), createCell('', {border:false})]);
+
+            // 5. Observações Gerais
+            addSectionHeader('5. OBSERVAÇÕES GERAIS E REQUISITOS');
+            ws2Data.push([
+                createCell(safeGetVal('obs_gerais') || 'Nenhuma observação informada.', { color: '334155', bg: 'FFFFFF' }),
+                createCell('', { bg: 'FFFFFF' })
+            ]);
+            ws2Merges.push({ s: { r: ws2Data.length - 1, c: 0 }, e: { r: ws2Data.length - 1, c: 1 } });
+
+            /* --- MONTAGEM E DOWNLOAD DO ARQUIVO EXCEL --- */
+            function aoaToSheet(data, merges) {
                 const ws = {};
                 const range = { s: { c: 10000, r: 10000 }, e: { c: 0, r: 0 } };
                 for (let R = 0; R < data.length; ++R) {
@@ -2041,431 +1559,340 @@
             }
 
             const wb = XLSX.utils.book_new();
-            const ws1 = aoaToSheetStyled(ws1Data, ws1Merges);
-            ws1['!cols'] = [{ wch: 6 }, { wch: 38 }, { wch: 48 }, { wch: 10 }, { wch: 22 }, { wch: 24 }];
+
+            // Adiciona a 1ª aba: Equipamentos e Insumos
+            const ws1 = aoaToSheet(ws1Data, ws1Merges);
+            ws1['!cols'] = [{ wch: 6 }, { wch: 35 }, { wch: 45 }, { wch: 10 }, { wch: 20 }, { wch: 22 }];
             XLSX.utils.book_append_sheet(wb, ws1, "Equipamentos e Insumos");
 
-            const fileName = `CIJ_Solicitacao_Ped_${pedido}_Prop_${proposta}_${cliente.replace(/\s+/g, '_')}.xlsx`;
-            XLSX.writeFile(wb, fileName);
-            mostrarNotificacao('Planilha Excel gerada com sucesso!');
+            // Adiciona a 2ª aba: Resumo da Solicitação
+            const ws2 = aoaToSheet(ws2Data, ws2Merges);
+            ws2['!cols'] = [{ wch: 38 }, { wch: 65 }];
+            XLSX.utils.book_append_sheet(wb, ws2, "Resumo da Solicitação");
+
+            XLSX.writeFile(wb, `CIJ_Solicitacao_${pedido}_${cliente.replace(/\s+/g, '_')}.xlsx`);
+            mostrarNotificacao('Planilha Excel gerada com sucesso contendo as 2 abas!');
         }
 
-        function copiarLinkPreenchido() {
-            const dados = obterDadosFormulario();
-            const jsonStr = JSON.stringify(dados);
-            const b64Data = utf8_to_b64(jsonStr);
-
-            const baseUrl = window.location.href.split('#')[0];
-            const fullUrl = `${baseUrl}#dados=${b64Data}`;
-
-            const modal = document.getElementById('modalLinkCompartilhar');
-            const inputModal = document.getElementById('inputUrlCompartilhar');
-            const avisoFile = document.getElementById('avisoFileProtocol');
-
-            if (inputModal) inputModal.value = fullUrl;
-
-            if (window.location.protocol === 'file:') {
-                if (avisoFile) avisoFile.classList.remove('hidden');
-            } else {
-                if (avisoFile) avisoFile.classList.add('hidden');
-            }
-
-            if (modal) modal.classList.remove('hidden');
-
-            try {
-                navigator.clipboard.writeText(fullUrl).then(() => {
-                    mostrarNotificacao('Link preenchido copiado!');
-                }).catch(() => {});
-            } catch (e) {}
+        /* LÓGICA DO MÓDULO CONTROLE DE DESPESAS */
+        function obterProximoNumRelatorio() {
+            if (!window.listaDespesas || window.listaDespesas.length === 0) return 'REL-1001';
+            const nums = window.listaDespesas
+                .map(i => i.num_relatorio)
+                .filter(Boolean)
+                .map(n => parseInt(n.replace(/\D/g, '')))
+                .filter(n => !isNaN(n));
+            const max = nums.length > 0 ? Math.max(...nums) : 1000;
+            return `REL-${max + 1}`;
         }
 
-        function fecharModalLink() {
-            const modal = document.getElementById('modalLinkCompartilhar');
-            if (modal) modal.classList.add('hidden');
+        function novoRelatorioSequencial() {
+            const prox = obterProximoNumRelatorio();
+            safeSetVal('desp_num_relatorio', prox);
+            safeSetText('desp-num-badge', prox);
+            mostrarNotificacao(`Novo relatório ${prox} iniciado.`);
         }
 
-        function copiarTextoInputModal() {
-            const inputModal = document.getElementById('inputUrlCompartilhar');
-            if (inputModal) {
-                inputModal.select();
-                document.execCommand('copy');
-                mostrarNotificacao('Link copiado com sucesso!');
-            }
+        function salvarDespesa(e) {
+            e.preventDefault();
+
+            const num_relatorio = safeGetVal('desp_num_relatorio') || 'REL-1001';
+            const tecnico = safeGetVal('desp_tecnico');
+            const cliente = safeGetVal('desp_cliente');
+            const cidade = safeGetVal('desp_cidade');
+            const descricao = safeGetVal('desp_descricao');
+            const valor = parseFloat(safeGetVal('desp_valor')) || 0;
+            const data = safeGetVal('desp_data');
+            const categoria = safeGetVal('desp_categoria');
+            const cartao = safeGetVal('desp_cartao');
+            const observacoes = safeGetVal('desp_observacoes');
+
+            const novaDespesa = {
+                id: Date.now().toString(),
+                num_relatorio,
+                tecnico,
+                cliente,
+                cidade,
+                descricao,
+                valor,
+                data,
+                categoria,
+                cartao,
+                observacoes
+            };
+
+            window.listaDespesas.unshift(novaDespesa);
+            localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
+
+            // Mantém contexto do relatório (Técnico, Cliente, Cidade, Nº Relatório) para novos lançamentos no mesmo relatório
+            safeSetVal('desp_descricao', '');
+            safeSetVal('desp_valor', '');
+            safeSetVal('desp_observacoes', '');
+
+            mostrarNotificacao(`Item adicionado ao relatório ${num_relatorio}!`);
+            renderizarRelatoriosDespesas();
         }
 
-        async function enviarEmailComExcel() {
-            if (typeof XLSX === 'undefined') {
-                mostrarNotificacao('Aguarde o carregamento dos componentes...');
+        function renderizarRelatoriosDespesas() {
+            const tbody = document.getElementById('despesas-grouped-body');
+            if (!tbody) return;
+
+            const filterData = safeGetVal('filter-data-desp');
+            const filterMes = safeGetVal('filter-mes-desp');
+            const filterTecnico = safeGetVal('filter-tecnico-desp');
+            const filterCategoria = safeGetVal('filter-categoria-desp') || 'Todas';
+            const filterSearch = safeGetVal('filter-search-desp').toLowerCase();
+
+            let itensFiltrados = window.listaDespesas.filter(item => {
+                if (filterData && item.data !== filterData) return false;
+                if (filterMes && item.data && !item.data.startsWith(filterMes)) return false;
+                if (filterTecnico !== 'Todos' && item.tecnico !== filterTecnico) return false;
+                if (filterCategoria !== 'Todas' && item.categoria !== filterCategoria) return false;
+                if (filterSearch) {
+                    const matchText = `${item.num_relatorio} ${item.tecnico} ${item.cliente} ${item.cidade} ${item.descricao} ${item.categoria}`.toLowerCase();
+                    if (!matchText.includes(filterSearch)) return false;
+                }
+                return true;
+            });
+
+            const grupos = {};
+            itensFiltrados.forEach(item => {
+                const key = item.num_relatorio || 'REL-1001';
+                if (!grupos[key]) {
+                    grupos[key] = {
+                        num_relatorio: key,
+                        tecnico: item.tecnico,
+                        cliente: item.cliente,
+                        cidade: item.cidade,
+                        data_min: item.data,
+                        data_max: item.data,
+                        total: 0,
+                        itens: []
+                    };
+                }
+                grupos[key].total += item.valor;
+                grupos[key].itens.push(item);
+            });
+
+            tbody.innerHTML = '';
+            let totalGeralExibido = 0;
+
+            const chaves = Object.keys(grupos);
+            if (chaves.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400 font-medium">Nenhum relatório encontrado para os filtros selecionados.</td></tr>`;
+                safeSetText('desp-total-acumulado', 'R$ 0,00');
                 return;
             }
 
-            const cliente = safeGetVal('cli_razao', 'Cliente').trim() || 'Cliente';
-            const proposta = safeGetVal('ven_num_proposta', 'S/N').trim() || 'S/N';
-            const pedido = safeGetVal('ven_num_pedido', 'S/N').trim() || 'S/N';
-            const vendedor = safeGetVal('ven_vendedor', '-');
+            chaves.forEach(num => {
+                const g = grupos[num];
+                totalGeralExibido += g.total;
+                const isExpanded = relatoriosExpandidos.has(num);
 
-            gerarExcel();
-
-            const assunto = encodeURIComponent(`Solicitação de Equipamentos CIJ - Pedido ${pedido} / Proposta ${proposta} - ${cliente}`);
-            const corpo = encodeURIComponent(`Olá,\n\nSegue em anexo a solicitação de equipamentos CIJ referente ao Pedido ${pedido} (Proposta ${proposta}).\n\nCliente: ${cliente}\nVendedor: ${vendedor}\n\nAtenciosamente,`);
-
-            window.location.href = `mailto:?subject=${assunto}&body=${corpo}`;
-            mostrarNotificacao('Janela de e-mail iniciada! Anexe a planilha Excel recém-baixada.');
-        }
-
-        function limparFormulario() {
-            const form = document.getElementById('formVendaInstalacao');
-            if (form) form.reset();
-            const tbody = document.getElementById('corpoTabelaVenda');
-            if (tbody) tbody.innerHTML = '';
-            rowVendaCount = 0;
-            adicionarLinhaVenda();
-            mostrarNotificacao('Formulário limpo com sucesso.');
-        }
-
-        function toggleCategoriaOutros() {
-            const categoriaSelect = document.getElementById('categoria');
-            const outrosContainer = document.getElementById('categoria-outros-container');
-            const outrosInput = document.getElementById('categoria_outros');
-
-            if (categoriaSelect && categoriaSelect.value === 'Outros') {
-                outrosContainer.classList.remove('hidden');
-                outrosInput.setAttribute('required', 'required');
-            } else if (outrosContainer) {
-                outrosContainer.classList.add('hidden');
-                outrosInput.removeAttribute('required');
-                outrosInput.value = '';
-            }
-        }
-
-        function tratarEnvioDespesa(e) {
-            e.preventDefault();
-
-            const idInput = safeGetVal('expense-id');
-            const tecnico = safeGetVal('tecnico');
-            const cliente = formatSentenceCase(safeGetVal('cliente'));
-            const cidade = formatSentenceCase(safeGetVal('cidade'));
-            const descricao = formatSentenceCase(safeGetVal('descricao'));
-            const valor = parseFloat(safeGetVal('valor')) || 0;
-            const data_pagamento = safeGetVal('data_pagamento');
-            const categoria = safeGetVal('categoria');
-            const categoria_outros = formatSentenceCase(safeGetVal('categoria_outros'));
-            const pagamento = safeGetVal('pagamento');
-            const cartao = safeGetVal('cartao');
-            const observacoes = formatSentenceCase(safeGetVal('observacoes'));
-
-            const despesaObj = { 
-                id: idInput || Date.now().toString(), 
-                tecnico, cliente, cidade, descricao, valor, 
-                data_pagamento, categoria, categoria_outros, pagamento, cartao, observacoes 
-            };
-
-            // Save to Firebase Cloud
-            if (window.firebaseSync && window.firebaseSync.saveDespesa) {
-                window.firebaseSync.saveDespesa(despesaObj);
-            }
-
-            if (idInput) {
-                const index = window.expenses.findIndex(item => item.id === idInput);
-                if (index !== -1) {
-                    window.expenses[index] = despesaObj;
-                    mostrarNotificacao('Despesa atualizada com sucesso!');
-                }
-            } else {
-                window.expenses.unshift(despesaObj);
-                mostrarNotificacao('Despesa cadastrada com sucesso!');
-            }
-
-            renderizarDespesas();
-            resetFormDespesas();
-        }
-
-        function renderizarDespesas() {
-            const tableBody = document.getElementById('expense-table-body');
-            const emptyState = document.getElementById('empty-state-despesas');
-            if (!tableBody) return;
-
-            const searchTerm = (safeGetVal('search-input-despesas') || '').toLowerCase();
-            const filterTecnico = safeGetVal('filter-tecnico', 'Todos');
-            const filterCat = safeGetVal('filter-categoria', 'Todas');
-
-            tableBody.innerHTML = '';
-
-            const filtered = window.expenses.filter(item => {
-                const matchesSearch = item.descricao.toLowerCase().includes(searchTerm) || 
-                                     item.cliente.toLowerCase().includes(searchTerm) ||
-                                     item.cidade.toLowerCase().includes(searchTerm) ||
-                                     (item.observacoes && item.observacoes.toLowerCase().includes(searchTerm));
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition border-b border-slate-200 font-medium';
                 
-                const matchesTecnico = filterTecnico === 'Todos' || item.tecnico === filterTecnico;
-                const matchesCat = filterCat === 'Todas' || item.categoria === filterCat;
-                
-                return matchesSearch && matchesTecnico && matchesCat;
-            });
+                tr.innerHTML = `
+                    <td class="p-3">
+                        <span class="inline-block px-2 py-0.5 text-[11px] font-extrabold bg-sky-100 text-sky-900 border border-sky-300 rounded-md mb-1">${g.num_relatorio}</span>
+                        <div class="font-bold text-slate-900">${g.tecnico}</div>
+                    </td>
+                    <td class="p-3">
+                        <div class="font-bold text-slate-800">${g.cliente}</div>
+                        <div class="text-[11px] text-slate-500">${g.cidade}</div>
+                    </td>
+                    <td class="p-3">
+                        <span class="text-xs font-semibold text-slate-700">${g.itens.length} despesa(s)</span>
+                    </td>
+                    <td class="p-3 text-slate-600 text-xs">
+                        ${g.data_min ? g.data_min.split('-').reverse().join('/') : ''}
+                    </td>
+                    <td class="p-3 font-extrabold text-sky-900 text-sm">
+                        ${formatarMoeda(g.total)}
+                    </td>
+                    <td class="p-3 text-center no-print">
+                        <div class="flex items-center justify-center gap-1">
+                            <button onclick="imprimirRelatorioEspecifico('${g.num_relatorio}')" class="px-2.5 py-1 bg-sky-600 hover:bg-sky-700 text-white text-[11px] font-bold rounded-lg transition border border-sky-500 flex items-center gap-1 shadow-sm" title="Salvar/Imprimir PDF (1 Página)">
+                                <i class="fa-solid fa-file-pdf"></i> PDF
+                            </button>
+                            <button onclick="exportarRelatorioExcelEspecifico('${g.num_relatorio}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded-lg transition border border-emerald-500 flex items-center gap-1 shadow-sm" title="Exportar Excel">
+                                <i class="fa-solid fa-file-excel"></i> Excel
+                            </button>
+                            <button onclick="toggleExpandirRelatorio('${g.num_relatorio}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded-lg transition border border-slate-300 flex items-center gap-1">
+                                <i class="fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'}"></i> Detalhes
+                            </button>
+                            <button onclick="excluirRelatorioCompleto('${g.num_relatorio}')" class="p-1.5 text-slate-400 hover:text-red-600 transition" title="Excluir Relatório">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
 
-            atualizarCompiladoDespesas(filtered);
+                if (isExpanded) {
+                    const trDetails = document.createElement('tr');
+                    trDetails.className = 'bg-slate-50 border-b border-slate-300';
+                    
+                    let subRows = g.itens.map(it => `
+                        <tr class="border-b border-slate-200 text-[11px]">
+                            <td class="p-2 font-semibold text-slate-800">${it.descricao}</td>
+                            <td class="p-2 text-slate-600">${it.categoria} (${it.cartao})</td>
+                            <td class="p-2 text-slate-600">${it.data ? it.data.split('-').reverse().join('/') : ''}</td>
+                            <td class="p-2 font-bold text-slate-900">${formatarMoeda(it.valor)}</td>
+                            <td class="p-2 text-center no-print">
+                                <button onclick="excluirItemDespesa('${it.id}')" class="text-red-500 hover:text-red-700" title="Remover item"><i class="fa-solid fa-xmark"></i></button>
+                            </td>
+                        </tr>
+                    `).join('');
 
-            if (filtered.length === 0) {
-                if (emptyState) emptyState.classList.remove('hidden');
-            } else {
-                if (emptyState) emptyState.classList.add('hidden');
-                
-                filtered.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.className = 'hover:bg-slate-800/50 transition border-b border-slate-800 text-xs';
-
-                    const dataPartes = item.data_pagamento.split('-');
-                    const dataFormatada = dataPartes.length === 3 ? `${dataPartes[2]}/${dataPartes[1]}/${dataPartes[0]}` : item.data_pagamento;
-
-                    const categoriaExibida = item.categoria === 'Outros' && item.categoria_outros 
-                        ? `Outros: ${item.categoria_outros}` 
-                        : item.categoria;
-
-                    row.innerHTML = `
-                        <td class="p-3">
-                            <div class="font-bold text-white">${escapeHtml(item.tecnico)}</div>
-                            <div class="text-[10px] text-sky-400 flex items-center gap-1 mt-0.5">
-                                <i class="fa-solid fa-location-dot text-[9px]"></i>
-                                ${escapeHtml(item.cliente)} (${escapeHtml(item.cidade)})
-                            </div>
-                        </td>
-                        <td class="p-3">
-                            <div class="font-medium text-slate-200">${escapeHtml(item.descricao)}</div>
-                            ${item.observacoes ? `<div class="text-[10px] text-slate-400 mt-0.5 truncate max-w-xs" title="${escapeHtml(item.observacoes)}">${escapeHtml(item.observacoes)}</div>` : ''}
-                        </td>
-                        <td class="p-3">
-                            <span class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-500/30 mb-1">${escapeHtml(categoriaExibida)}</span>
-                            <div class="text-[10px] text-slate-400">
-                                <i class="fa-regular fa-credit-card text-[9px] mr-1"></i>${escapeHtml(item.cartao !== 'Não se aplica' ? item.cartao : item.pagamento)}
-                            </div>
-                        </td>
-                        <td class="p-3 whitespace-nowrap text-slate-300 font-medium">${dataFormatada}</td>
-                        <td class="p-3 font-extrabold text-sky-300 whitespace-nowrap">
-                            R$ ${item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </td>
-                        <td class="p-3 text-center whitespace-nowrap no-print">
-                            <div class="flex items-center justify-center gap-1">
-                                <button type="button" onclick="editarDespesa('${item.id}')" title="Editar" class="p-1.5 text-slate-400 hover:text-sky-400 transition">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                                <button type="button" onclick="abrirModalExcluirDespesa('${item.id}')" title="Excluir" class="p-1.5 text-slate-400 hover:text-red-400 transition">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
+                    trDetails.innerHTML = `
+                        <td colspan="6" class="p-3">
+                            <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-inner">
+                                <h4 class="text-xs font-bold text-sky-900 mb-2 border-b border-slate-100 pb-1">Itens do Relatório ${g.num_relatorio}</h4>
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="text-[10px] uppercase font-bold text-slate-500 bg-slate-100">
+                                            <th class="p-2">Descrição</th>
+                                            <th class="p-2">Categoria/Forma</th>
+                                            <th class="p-2">Data</th>
+                                            <th class="p-2">Valor</th>
+                                            <th class="p-2 text-center no-print">Remover</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>${subRows}</tbody>
+                                </table>
                             </div>
                         </td>
                     `;
-                    tableBody.appendChild(row);
-                });
+                    tbody.appendChild(trDetails);
+                }
+            });
+
+            safeSetText('desp-total-acumulado', formatarMoeda(totalGeralExibido));
+        }
+
+        function toggleExpandirRelatorio(num) {
+            if (relatoriosExpandidos.has(num)) {
+                relatoriosExpandidos.delete(num);
+            } else {
+                relatoriosExpandidos.add(num);
+            }
+            renderizarRelatoriosDespesas();
+        }
+
+        function excluirItemDespesa(id) {
+            window.listaDespesas = window.listaDespesas.filter(i => i.id !== id);
+            localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
+            mostrarNotificacao('Item removido!');
+            renderizarRelatoriosDespesas();
+        }
+
+        function excluirRelatorioCompleto(num) {
+            if (confirm(`Deseja remover todas as despesas do relatório ${num}?`)) {
+                window.listaDespesas = window.listaDespesas.filter(i => i.num_relatorio !== num);
+                localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
+                mostrarNotificacao(`Relatório ${num} removido!`);
+                renderizarRelatoriosDespesas();
             }
         }
 
-        function atualizarCompiladoDespesas(filteredList) {
-            const totalGeral = filteredList.reduce((sum, item) => sum + item.valor, 0);
-            safeSetText('total-geral-despesas', formatarMoeda(totalGeral));
+        function imprimirRelatorioEspecifico(numRelatorio) {
+            if (!relatoriosExpandidos.has(numRelatorio)) {
+                relatoriosExpandidos.add(numRelatorio);
+                renderizarRelatoriosDespesas();
+            }
+            setTimeout(() => {
+                window.print();
+            }, 200);
+        }
 
-            const categoryTotals = {};
-            filteredList.forEach(item => {
-                const catKey = item.categoria;
-                categoryTotals[catKey] = (categoryTotals[catKey] || 0) + item.valor;
-            });
-
-            const summaryContainer = document.getElementById('summary-by-category');
-            if (!summaryContainer) return;
-
-            summaryContainer.innerHTML = '';
-            const categories = Object.keys(categoryTotals);
-
-            if (categories.length === 0) {
-                summaryContainer.innerHTML = `<span class="text-slate-400 col-span-3 text-[11px]">Nenhum lançamento no momento.</span>`;
+        function exportarRelatorioExcelEspecifico(numRelatorio) {
+            if (typeof XLSX === 'undefined') {
+                mostrarNotificacao('Biblioteca Excel carregando...');
                 return;
             }
 
-            categories.forEach(cat => {
-                const total = categoryTotals[cat];
-                const card = document.createElement('div');
-                card.className = 'bg-slate-800/80 px-2.5 py-1.5 rounded-xl border border-sky-500/20 flex flex-col justify-between';
-                card.innerHTML = `
-                    <span class="font-semibold text-slate-300 truncate text-[10px]">${escapeHtml(cat)}</span>
-                    <span class="font-extrabold text-sky-300 mt-0.5 text-xs">R$ ${total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                `;
-                summaryContainer.appendChild(card);
+            const itens = window.listaDespesas.filter(i => i.num_relatorio === numRelatorio);
+            if (itens.length === 0) {
+                mostrarNotificacao('Nenhum item encontrado para este relatório.');
+                return;
+            }
+
+            const tec = itens[0].tecnico;
+            const cli = itens[0].cliente;
+
+            function createCell(val, opts = {}) {
+                const { bold = false, color = "1E293B", bg = null, align = "left", sz = 10, border = true } = opts;
+                const cellObj = { v: val !== null && val !== undefined ? val : '', t: typeof val === 'number' ? 'n' : 's' };
+                const s = { font: { name: 'Calibri', sz: sz, bold: bold, color: { rgb: color } }, alignment: { horizontal: align, vertical: 'center' } };
+                if (bg) s.fill = { fgColor: { rgb: bg } };
+                if (border) s.border = { top: { style: 'thin', color: { rgb: 'CBD5E1' } }, bottom: { style: 'thin', color: { rgb: 'CBD5E1' } }, left: { style: 'thin', color: { rgb: 'CBD5E1' } }, right: { style: 'thin', color: { rgb: 'CBD5E1' } } };
+                cellObj.s = s;
+                return cellObj;
+            }
+
+            const wsData = [
+                [createCell(`RELATÓRIO DE DESPESAS - ${numRelatorio}`, { bold: true, color: 'FFFFFF', bg: '1E3A8A', align: 'center', sz: 12 }), createCell(''), createCell(''), createCell(''), createCell('')],
+                [createCell(`TÉCNICO: ${tec}   |   CLIENTE: ${cli}`, { bold: true, color: '1E3A8A', bg: 'DBEAFE', align: 'center', sz: 10 }), createCell(''), createCell(''), createCell(''), createCell('')],
+                [createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false})],
+                ["Descrição", "Categoria", "Forma Pagto", "Data", "Valor (R$)"].map(h => createCell(h, { bold: true, color: 'FFFFFF', bg: '0F172A', align: h === 'Valor (R$)' ? 'right' : 'left', sz: 10 }))
+            ];
+            const merges = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } }];
+
+            let total = 0;
+            itens.forEach((it, idx) => {
+                total += it.valor;
+                const bg = idx % 2 === 0 ? 'FFFFFF' : 'F8FAFC';
+                wsData.push([
+                    createCell(it.descricao, { bg }),
+                    createCell(it.categoria, { bg }),
+                    createCell(it.cartao, { bg }),
+                    createCell(it.data ? it.data.split('-').reverse().join('/') : '', { bg }),
+                    createCell(formatarMoeda(it.valor), { bg, align: 'right', bold: true })
+                ]);
             });
-        }
 
-        function editarDespesa(id) {
-            const item = window.expenses.find(i => i.id === id);
-            if (item) {
-                safeSetVal('expense-id', item.id);
-                safeSetVal('tecnico', item.tecnico);
-                safeSetVal('cliente', item.cliente);
-                safeSetVal('cidade', item.cidade);
-                safeSetVal('descricao', item.descricao);
-                safeSetVal('valor', item.valor);
-                safeSetVal('data_pagamento', item.data_pagamento);
-                safeSetVal('categoria', item.categoria);
-                safeSetVal('categoria_outros', item.categoria_outros || '');
-                safeSetVal('pagamento', item.pagamento);
-                safeSetVal('cartao', item.cartao || 'Não se aplica');
-                safeSetVal('observacoes', item.observacoes || '');
+            wsData.push([
+                createCell('TOTAL DO RELATÓRIO:', { bold: true, bg: 'E2E8F0', align: 'right' }),
+                createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }),
+                createCell(formatarMoeda(total), { bold: true, bg: 'E2E8F0', align: 'right', color: '0958D9' })
+            ]);
 
-                toggleCategoriaOutros();
-
-                safeSetText('form-mode-badge', 'Editando');
-                const badge = document.getElementById('form-mode-badge');
-                if (badge) badge.className = 'text-[10px] px-2.5 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-full font-bold uppercase';
-                safeSetText('btn-save-text', 'Atualizar Despesa');
-
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        function resetFormDespesas() {
-            const form = document.getElementById('expense-form');
-            if (form) form.reset();
-            safeSetVal('expense-id', '');
-            safeSetText('form-mode-badge', 'Novo');
-            const badge = document.getElementById('form-mode-badge');
-            if (badge) badge.className = 'text-[10px] px-2.5 py-1 bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded-full font-bold uppercase';
-            safeSetText('btn-save-text', 'Salvar Despesa');
-            
-            toggleCategoriaOutros();
-
-            const today = new Date().toISOString().split('T')[0];
-            safeSetVal('data_pagamento', today);
-        }
-
-        function abrirModalExcluirDespesa(id) {
-            deleteExpenseTargetId = id;
-            const modal = document.getElementById('delete-despesa-modal');
-            if (modal) modal.classList.remove('hidden');
-            if (modal) modal.classList.add('flex');
-        }
-
-        function fecharModalExcluirDespesa() {
-            deleteExpenseTargetId = null;
-            const modal = document.getElementById('delete-despesa-modal');
-            if (modal) modal.classList.add('hidden');
-            if (modal) modal.classList.remove('flex');
-        }
-
-        document.getElementById('confirm-delete-despesa-btn')?.addEventListener('click', () => {
-            if (deleteExpenseTargetId) {
-                if (window.firebaseSync && window.firebaseSync.deleteDespesa) {
-                    window.firebaseSync.deleteDespesa(deleteExpenseTargetId);
+            function aoaToSheet(data, m) {
+                const ws = {};
+                const range = { s: { c: 10000, r: 10000 }, e: { c: 0, r: 0 } };
+                for (let R = 0; R < data.length; ++R) {
+                    for (let C = 0; C < data[R].length; ++C) {
+                        if (range.s.r > R) range.s.r = R; if (range.s.c > C) range.s.c = C;
+                        if (range.e.r < R) range.e.r = R; if (range.e.c < C) range.e.c = C;
+                        if (data[R][C]) ws[XLSX.utils.encode_cell({ c: C, r: R })] = data[R][C];
+                    }
                 }
-                window.expenses = window.expenses.filter(i => i.id !== deleteExpenseTargetId);
-                renderizarDespesas();
-                mostrarNotificacao('Lançamento removido com sucesso!');
-                fecharModalExcluirDespesa();
+                ws['!ref'] = XLSX.utils.encode_range(range);
+                if (m) ws['!merges'] = m;
+                return ws;
             }
+
+            const wb = XLSX.utils.book_new();
+            const ws = aoaToSheet(wsData, merges);
+            ws['!cols'] = [{ wch: 35 }, { wch: 20 }, { wch: 22 }, { wch: 14 }, { wch: 18 }];
+            XLSX.utils.book_append_sheet(wb, ws, "Despesas");
+
+            XLSX.writeFile(wb, `Relatorio_Despesas_${numRelatorio}_${tec}.xlsx`);
+            mostrarNotificacao(`Relatório ${numRelatorio} baixado em Excel!`);
+        }
+
+        /* INICIALIZAÇÃO DA PÁGINA */
+        window.addEventListener('DOMContentLoaded', () => {
+            const hoje = new Date().toISOString().split('T')[0];
+            safeSetVal('desp_data', hoje);
+
+            adicionarLinhaVenda('Impressora CIJ', '8820', 1, 28500);
+            adicionarLinhaVenda('Tinta', '4101 STANDARD', 5, 350);
+
+            calcularSimuladorOficial();
+            renderizarRelatoriosDespesas();
         });
-
-        function exportarDespesasParaExcel() {
-            if (window.expenses.length === 0) {
-                mostrarNotificacao('Nenhuma despesa registrada para exportar.', true);
-                return;
-            }
-
-            try {
-                const dataToExport = window.expenses.map(item => {
-                    const dataPartes = item.data_pagamento.split('-');
-                    const dataFormatada = dataPartes.length === 3 ? `${dataPartes[2]}/${dataPartes[1]}/${dataPartes[0]}` : item.data_pagamento;
-
-                    return {
-                        "Técnico / Vendedor": item.tecnico,
-                        "Cliente Atendido": item.cliente,
-                        "Cidade": item.cidade,
-                        "Descrição da Compra": item.descricao,
-                        "Categoria": item.categoria === 'Outros' && item.categoria_outros ? `Outros (${item.categoria_outros})` : item.categoria,
-                        "Forma de Pagamento": item.pagamento,
-                        "Cartão Utilizado": item.cartao,
-                        "Data do Pagamento": dataFormatada,
-                        "Valor (R$)": parseFloat(item.valor) || 0,
-                        "Observações": item.observacoes || ''
-                    };
-                });
-
-                const totalGeral = window.expenses.reduce((acc, curr) => acc + curr.valor, 0);
-                dataToExport.push({
-                    "Técnico / Vendedor": "TOTAL GERAL",
-                    "Cliente Atendido": "",
-                    "Cidade": "",
-                    "Descrição da Compra": `${window.expenses.length} compras lançadas`,
-                    "Categoria": "",
-                    "Forma de Pagamento": "",
-                    "Cartão Utilizado": "",
-                    "Data do Pagamento": "",
-                    "Valor (R$)": totalGeral,
-                    "Observações": ""
-                });
-
-                const fileName = `Controle_Despesas_${new Date().toISOString().split('T')[0]}.xlsx`;
-
-                if (typeof XLSX !== 'undefined') {
-                    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-
-                    const range = XLSX.utils.decode_range(worksheet['!ref']);
-                    for (let R = range.s.r + 1; R <= range.e.r; ++R) {
-                        const dataCellRef = XLSX.utils.encode_cell({ r: R, c: 7 });
-                        if (worksheet[dataCellRef]) {
-                            worksheet[dataCellRef].z = 'dd/mm/yyyy';
-                        }
-                        const valorCellRef = XLSX.utils.encode_cell({ r: R, c: 8 });
-                        if (worksheet[valorCellRef]) {
-                            worksheet[valorCellRef].t = 'n';
-                            worksheet[valorCellRef].z = 'R$ #,##0.00';
-                        }
-                    }
-
-                    const workbook = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(workbook, worksheet, "Controle de Despesas");
-
-                    XLSX.writeFile(workbook, fileName);
-                    mostrarNotificacao('Relatório de Despesas baixado em Excel!');
-                }
-            } catch (err) {
-                console.error('Erro na exportação para Excel:', err);
-                mostrarNotificacao('Erro ao exportar planilha.', true);
-            }
-        }
-
-        function carregarDadosDeUrlHash() {
-            try {
-                const fullHref = window.location.href;
-                if (fullHref && fullHref.includes('#dados=')) {
-                    const encodedData = fullHref.split('#dados=')[1];
-                    if (encodedData) {
-                        const cleanEncoded = encodedData.split('&')[0];
-                        const jsonStr = b64_to_utf8(cleanEncoded);
-                        
-                        if (!jsonStr) {
-                            throw new Error('Falha ao decodificar Base64.');
-                        }
-
-                        const dados = JSON.parse(jsonStr);
-                        carregarDadosNoFormulario(dados);
-                        mostrarNotificacao('Dados da solicitação carregados da URL!');
-                    }
-                }
-            } catch (e) {
-                console.error('Erro ao ler dados da URL:', e);
-                mostrarNotificacao('Atenção: O link de dados está incompleto ou cortado.', true);
-            }
-        }
-
-        window.onload = function() {
-            adicionarLinhaVenda();
-            calcularSimulador();
-            atualizarBadgeBanco();
-            
-            const today = new Date().toISOString().split('T')[0];
-            safeSetVal('data_pagamento', today);
-            
-            renderizarDespesas();
-            carregarDadosDeUrlHash();
-        };
-
-        window.addEventListener('hashchange', carregarDadosDeUrlHash);
     </script>
 </body>
 </html>

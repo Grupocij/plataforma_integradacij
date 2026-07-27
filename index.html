@@ -1153,8 +1153,8 @@
 
     <!-- FIREBASE INITIALIZATION & FIRESTORE CLOUD SYNC -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { 
             getFirestore, 
             collection, 
@@ -1162,7 +1162,7 @@
             setDoc, 
             deleteDoc, 
             onSnapshot 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         // Firebase Credentials Provided
         const firebaseConfig = {
@@ -1175,17 +1175,21 @@
             measurementId: "G-PGX7H2R8G2"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // Anonymous auth sign-in for seamless security rule compatibility
-        signInAnonymously(auth).catch(err => console.log("Firebase Auth:", err));
+        let db, auth;
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            signInAnonymously(auth).catch(err => console.warn("Firebase Auth (Anônimo):", err.message));
+        } catch (e) {
+            console.error("Erro de inicialização do Firebase:", e);
+        }
 
         // Global Firebase Bridge Object for legacy script access
         window.firebaseSync = {
             db,
             saveSolicitacao: async (registro) => {
+                if (!db) return;
                 try {
                     await setDoc(doc(db, "solicitacoes", registro.id), registro);
                 } catch (e) {
@@ -1193,6 +1197,7 @@
                 }
             },
             deleteSolicitacao: async (id) => {
+                if (!db) return;
                 try {
                     await deleteDoc(doc(db, "solicitacoes", id));
                 } catch (e) {
@@ -1200,6 +1205,7 @@
                 }
             },
             saveDespesa: async (despesa) => {
+                if (!db) return;
                 try {
                     await setDoc(doc(db, "despesas", despesa.id), despesa);
                 } catch (e) {
@@ -1207,6 +1213,7 @@
                 }
             },
             deleteDespesa: async (id) => {
+                if (!db) return;
                 try {
                     await deleteDoc(doc(db, "despesas", id));
                 } catch (e) {
@@ -1215,45 +1222,46 @@
             }
         };
 
-        // Real-time Firestore Listener for Solicitacoes CIJ
-        onSnapshot(collection(db, "solicitacoes"), (snapshot) => {
-            const list = [];
-            snapshot.forEach((doc) => {
-                list.push(doc.data());
+        if (db) {
+            // Real-time Firestore Listener for Solicitacoes CIJ
+            onSnapshot(collection(db, "solicitacoes"), (snapshot) => {
+                const list = [];
+                snapshot.forEach((doc) => {
+                    list.push(doc.data());
+                });
+                list.sort((a, b) => (b.id > a.id ? 1 : -1));
+                
+                if (typeof salvarBancoLocal === 'function') {
+                    try {
+                        localStorage.setItem('cij_solicitacoes_database_v1', JSON.stringify(list));
+                    } catch (e) {}
+                }
+                if (typeof renderizarTabelaBanco === 'function') {
+                    renderizarTabelaBanco();
+                }
+                if (typeof atualizarBadgeBanco === 'function') {
+                    atualizarBadgeBanco();
+                }
+            }, (error) => {
+                console.warn("Firestore Solicitacoes Error:", error);
             });
-            list.sort((a, b) => (b.id > a.id ? 1 : -1));
-            
-            // Sync with local Storage & UI
-            if (typeof salvarBancoLocal === 'function') {
-                try {
-                    localStorage.setItem('cij_solicitacoes_database_v1', JSON.stringify(list));
-                } catch (e) {}
-            }
-            if (typeof renderizarTabelaBanco === 'function') {
-                renderizarTabelaBanco();
-            }
-            if (typeof atualizarBadgeBanco === 'function') {
-                atualizarBadgeBanco();
-            }
-        }, (error) => {
-            console.warn("Firestore Solicitacoes Error:", error);
-        });
 
-        // Real-time Firestore Listener for Controle de Despesas
-        onSnapshot(collection(db, "despesas"), (snapshot) => {
-            const list = [];
-            snapshot.forEach((doc) => {
-                list.push(doc.data());
+            // Real-time Firestore Listener for Controle de Despesas
+            onSnapshot(collection(db, "despesas"), (snapshot) => {
+                const list = [];
+                snapshot.forEach((doc) => {
+                    list.push(doc.data());
+                });
+                list.sort((a, b) => (b.id > a.id ? 1 : -1));
+                
+                window.expenses = list;
+                if (typeof renderizarDespesas === 'function') {
+                    renderizarDespesas();
+                }
+            }, (error) => {
+                console.warn("Firestore Despesas Error:", error);
             });
-            list.sort((a, b) => (b.id > a.id ? 1 : -1));
-            
-            window.expenses = list;
-            if (typeof renderizarDespesas === 'function') {
-                renderizarDespesas();
-            }
-        }, (error) => {
-            console.warn("Firestore Despesas Error:", error);
-        });
+        }
     </script>
 
     <script>

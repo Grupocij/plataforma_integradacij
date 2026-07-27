@@ -62,7 +62,7 @@
                 display: none !important;
             }
 
-            body > header, nav, footer {
+            body > header, nav, footer, #auth-modal {
                 display: none !important;
             }
 
@@ -140,6 +140,44 @@
 </head>
 <body class="min-h-screen pb-12 flex flex-col">
 
+    <!-- OVERLAY DE LOGIN / AUTENTICAÇÃO -->
+    <div id="auth-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-md w-full p-8 overflow-hidden relative">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-blue-50 border border-blue-100 rounded-2xl mx-auto flex items-center justify-center p-3 shadow-sm mb-3">
+                    <svg class="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
+                        <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
+                        <path d="M 50 25 L 75 50 L 50 75 L 25 50 Z" fill="#ffffff"/>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">Portal Grupo CIJ</h2>
+                <p class="text-xs text-slate-500 mt-1">Acesso exclusivo para colaboradores e equipe técnica</p>
+            </div>
+
+            <form id="auth-form" onsubmit="processarAutenticacao(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">E-mail *</label>
+                    <input type="email" id="auth_email" required class="w-full rounded-xl border border-slate-300 p-3 text-xs text-slate-900 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50" placeholder="seu.email@empresa.com.br">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Senha *</label>
+                    <input type="password" id="auth_password" required minlength="6" class="w-full rounded-xl border border-slate-300 p-3 text-xs text-slate-900 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50" placeholder="••••••••">
+                </div>
+
+                <div id="auth-error-msg" class="hidden p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
+                    E-mail ou senha incorretos.
+                </div>
+
+                <button type="submit" id="auth-submit-btn" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i> Acessar Plataforma
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CABEÇALHO DO SISTEMA -->
     <header class="bg-[#0f172a] text-white shadow-md border-b border-slate-800 no-print sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -155,7 +193,7 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-950 px-2 py-0.5 rounded border border-blue-800">LEADJET CIJ PORTAL</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-950 px-2 py-0.5 rounded border border-blue-800">PORTAL GRUPO CIJ</span>
                             <span id="firebase-status-badge" class="text-[10px] font-semibold text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-800 flex items-center gap-1">
                                 <i class="fa-solid fa-spinner fa-spin text-[9px]" id="firebase-icon"></i> <span id="firebase-status-text">Conectando Nuvem...</span>
                             </span>
@@ -164,7 +202,7 @@
                     </div>
                 </div>
 
-                <nav class="hidden md:flex space-x-1">
+                <nav class="hidden md:flex items-center space-x-1">
                     <button onclick="navegarPara('inicio')" id="nav-inicio" class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 bg-blue-600 text-white shadow">
                         <i class="fa-solid fa-house"></i> Início
                     </button>
@@ -177,6 +215,17 @@
                     <button onclick="navegarPara('despesas')" id="nav-despesas" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-receipt"></i> Controle de Despesas
                     </button>
+
+                    <!-- USUÁRIO CONECTADO / SAIR -->
+                    <div id="user-profile-bar" class="hidden items-center gap-2 pl-3 ml-2 border-l border-slate-700">
+                        <div class="text-right">
+                            <span id="user-display-email" class="block text-[11px] font-bold text-slate-200 leading-none">usuario@email.com</span>
+                            <span class="text-[9px] text-emerald-400 font-semibold">Conectado</span>
+                        </div>
+                        <button onclick="fazerLogout()" class="p-2 bg-slate-800 hover:bg-red-900/60 text-slate-300 hover:text-red-300 rounded-lg transition" title="Sair do Sistema">
+                            <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                        </button>
+                    </div>
                 </nav>
 
                 <div class="md:hidden">
@@ -199,6 +248,9 @@
             </button>
             <button onclick="navegarPara('despesas')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 flex items-center gap-2">
                 <i class="fa-solid fa-receipt"></i> Controle de Despesas
+            </button>
+            <button onclick="fazerLogout()" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-red-400 bg-red-950/40 flex items-center gap-2">
+                <i class="fa-solid fa-right-from-bracket"></i> Sair do Sistema
             </button>
         </div>
     </header>
@@ -633,40 +685,7 @@
             </form>
         </div>
 
-        <!-- 3. MÓDULO BANCO DE DADOS -->
-        <div id="view-banco" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200 pb-4 mb-6">
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-900">Banco de Dados de Solicitações</h2>
-                        <p class="text-xs text-slate-500">Histórico de solicitações salvas na nuvem com atalhos de edição e exportação</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="exportarBackupJSON()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm">
-                            <i class="fa-solid fa-download"></i> Backup Local (.json)
-                        </button>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto border border-slate-200 rounded-xl">
-                    <table class="w-full text-left text-xs">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
-                                <th class="p-3">Data / Código</th>
-                                <th class="p-3">Cliente / CNPJ</th>
-                                <th class="p-3">Proposta / Pedido</th>
-                                <th class="p-3">Valor Total</th>
-                                <th class="p-3 text-center">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="banco-table-body" class="divide-y divide-slate-200">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. MÓDULO SIMULADOR LEADJET (FORMATADO PARA 1 PÁGINA A4) -->
+        <!-- 3. MÓDULO SIMULADOR LEADJET (FORMATADO PARA 1 PÁGINA A4) -->
         <div id="view-calculadora" class="hidden space-y-4">
             <div class="simulador-container max-w-4xl mx-auto space-y-4">
                 
@@ -784,7 +803,7 @@
             </div>
         </div>
 
-        <!-- 5. MÓDULO CONTROLE DE DESPESAS -->
+        <!-- 4. MÓDULO CONTROLE DE DESPESAS -->
         <div id="view-despesas" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
@@ -976,10 +995,15 @@
         <span id="toast-message" class="text-xs font-semibold">Ação executada com sucesso!</span>
     </div>
 
-    <!-- FIREBASE MODULE SDK SETUP -->
+    <!-- FIREBASE MODULE SDK SETUP WITH EMAIL/PASSWORD AUTHENTICATION -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase Configuration
@@ -1002,57 +1026,95 @@
         const solicitacoesCol = collection(db, 'artifacts', appId, 'public', 'data', 'solicitacoes');
         const despesasCol = collection(db, 'artifacts', appId, 'public', 'data', 'despesas');
 
-        // Authenticate Anonymously & Set listeners
-        async function initFirebaseSync() {
+        window.processarAutenticacao = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth_email').value.trim();
+            const password = document.getElementById('auth_password').value.trim();
+            const errBox = document.getElementById('auth-error-msg');
+            const submitBtn = document.getElementById('auth-submit-btn');
+
+            errBox.classList.add('hidden');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processando...`;
+
             try {
-                await signInAnonymously(auth);
-                
-                const statusBadge = document.getElementById('firebase-status-badge');
-                const statusText = document.getElementById('firebase-status-text');
-                const statusIcon = document.getElementById('firebase-icon');
-                
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (err) {
+                console.error("Erro na autenticação:", err);
+                errBox.classList.remove('hidden');
+                errBox.textContent = "E-mail ou senha incorretos.";
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Acessar Plataforma`;
+            }
+        };
+
+        window.fazerLogout = async function() {
+            try {
+                await signOut(auth);
+                mostrarNotificacao('Você saiu do sistema.');
+            } catch (err) {
+                console.error("Erro ao sair:", err);
+            }
+        };
+
+        // Escutador de Mudança de Estado de Autenticação
+        onAuthStateChanged(auth, (user) => {
+            const modal = document.getElementById('auth-modal');
+            const profileBar = document.getElementById('user-profile-bar');
+            const userEmail = document.getElementById('user-display-email');
+            const statusBadge = document.getElementById('firebase-status-badge');
+            const statusText = document.getElementById('firebase-status-text');
+            const statusIcon = document.getElementById('firebase-icon');
+
+            if (user) {
+                // Usuário Autenticado
+                modal.classList.add('hidden');
+                profileBar.classList.remove('hidden');
+                profileBar.classList.add('flex');
+                if (userEmail) userEmail.textContent = user.email || 'Usuário Autenticado';
+
                 if (statusBadge) {
                     statusBadge.className = "text-[10px] font-semibold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800 flex items-center gap-1";
                 }
                 if (statusIcon) statusIcon.className = "fa-solid fa-cloud text-[9px]";
                 if (statusText) statusText.textContent = "Cloud Sync On";
 
-                // Listener para Solicitações CIJ
+                // Iniciar Escutadores Firestore
                 onSnapshot(solicitacoesCol, (snapshot) => {
                     const docsData = [];
-                    snapshot.forEach(docSnap => {
-                        docsData.push(docSnap.data());
-                    });
+                    snapshot.forEach(docSnap => docsData.push(docSnap.data()));
                     if (docsData.length > 0) {
                         window.listaSolicitacoes = docsData;
                         localStorage.setItem('banco_solicitacoes_cij', JSON.stringify(window.listaSolicitacoes));
-                        if (typeof window.renderizarBancoDados === 'function') window.renderizarBancoDados();
                     }
-                }, (err) => {
-                    console.warn("Firestore error on solicitudes listener:", err);
                 });
 
-                // Listener para Despesas
                 onSnapshot(despesasCol, (snapshot) => {
                     const docsData = [];
-                    snapshot.forEach(docSnap => {
-                        docsData.push(docSnap.data());
-                    });
+                    snapshot.forEach(docSnap => docsData.push(docSnap.data()));
                     if (docsData.length > 0) {
                         window.listaDespesas = docsData;
                         localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
                         if (typeof window.renderizarRelatoriosDespesas === 'function') window.renderizarRelatoriosDespesas();
                     }
-                }, (err) => {
-                    console.warn("Firestore error on despesas listener:", err);
                 });
 
-            } catch (err) {
-                console.error("Firebase auth/connection error:", err);
-            }
-        }
+            } else {
+                // Usuário Desconectado
+                modal.classList.remove('hidden');
+                profileBar.classList.add('hidden');
+                profileBar.classList.remove('flex');
 
-        // Funções de salvamento em nuvem expostas globalmente
+                if (statusBadge) {
+                    statusBadge.className = "text-[10px] font-semibold text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-800 flex items-center gap-1";
+                }
+                if (statusIcon) statusIcon.className = "fa-solid fa-lock text-[9px]";
+                if (statusText) statusText.textContent = "Acesso Bloqueado";
+            }
+        });
+
+        // Funções de salvamento na nuvem
         window.salvarSolicitacaoNuvem = async function(reg) {
             try {
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'solicitacoes', reg.id), reg);
@@ -1084,8 +1146,6 @@
                 console.error("Erro ao excluir despesa do Firebase:", err);
             }
         };
-
-        initFirebaseSync();
     </script>
 
     <script>
@@ -1450,54 +1510,6 @@
             }
 
             mostrarNotificacao('Solicitação gravada no Banco de Dados e sincronizada!');
-        }
-
-        function renderizarBancoDados() {
-            const tbody = document.getElementById('banco-table-body');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-
-            safeSetText('banco-count-badge', window.listaSolicitacoes.length.toString());
-
-            if (window.listaSolicitacoes.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400 font-medium">Nenhum registro gravado.</td></tr>`;
-                return;
-            }
-
-            window.listaSolicitacoes.forEach(s => {
-                const tr = document.createElement('tr');
-                tr.className = 'border-b border-slate-200 hover:bg-slate-50';
-                tr.innerHTML = `
-                    <td class="p-3 font-semibold">${s.data_criacao}</td>
-                    <td class="p-3"><strong>${s.cliente}</strong><br><span class="text-slate-400 text-[10px]">${s.cnpj}</span></td>
-                    <td class="p-3">${s.tipo} (${s.numero})</td>
-                    <td class="p-3 font-bold text-blue-900">${s.total}</td>
-                    <td class="p-3 text-center">
-                        <button onclick="excluirSolicitacao('${s.id}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash-can"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function excluirSolicitacao(id) {
-            window.listaSolicitacoes = window.listaSolicitacoes.filter(s => s.id !== id);
-            localStorage.setItem('banco_solicitacoes_cij', JSON.stringify(window.listaSolicitacoes));
-            
-            if (typeof window.excluirSolicitacaoNuvem === 'function') {
-                window.excluirSolicitacaoNuvem(id);
-            }
-
-            renderizarBancoDados();
-            mostrarNotificacao('Solicitação removida!');
-        }
-
-        function exportarBackupJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(window.listaSolicitacoes));
-            const a = document.createElement('a');
-            a.href = dataStr;
-            a.download = `Backup_Plataforma_CIJ_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
         }
 
         /* EXPORTAÇÃO EXCEL DA SOLICITAÇÃO CIJ (DUAS ABAS FORMATADAS) */

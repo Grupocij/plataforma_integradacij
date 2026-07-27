@@ -32,7 +32,6 @@
             border-radius: 4px;
         }
 
-        /* Forçar texto escuro e fundo branco em todos os menus suspensos (select) */
         select, select option {
             color: #0f172a !important;
             background-color: #ffffff !important;
@@ -63,12 +62,10 @@
                 display: none !important;
             }
 
-            /* Garantir que apenas o módulo ativo seja impresso */
             body > header, nav, footer {
                 display: none !important;
             }
 
-            /* Módulo Simulador Leadjet ajustado em exatas 1 página A4 */
             #view-calculadora {
                 display: block !important;
                 width: 100% !important;
@@ -120,7 +117,6 @@
                 margin-bottom: 1px !important;
             }
 
-            /* Módulo Despesas em 1 Página */
             #view-despesas {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
@@ -148,7 +144,6 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 
-                <!-- LOGO E BADGES -->
                 <div class="flex items-center gap-3">
                     <div class="p-2 bg-blue-600 rounded-xl text-white shadow-md">
                         <i class="fa-solid fa-industry text-xl"></i>
@@ -156,15 +151,14 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-950 px-2 py-0.5 rounded border border-blue-800">LEADJET CIJ PORTAL</span>
-                            <span id="firebase-status-badge" class="text-[10px] font-semibold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800 flex items-center gap-1">
-                                <i class="fa-solid fa-cloud text-[9px]"></i> Cloud Sync
+                            <span id="firebase-status-badge" class="text-[10px] font-semibold text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-800 flex items-center gap-1">
+                                <i class="fa-solid fa-spinner fa-spin text-[9px]" id="firebase-icon"></i> <span id="firebase-status-text">Conectando Nuvem...</span>
                             </span>
                         </div>
                         <h1 class="text-lg font-bold tracking-tight text-white leading-tight">Plataforma de Gestão Integrada</h1>
                     </div>
                 </div>
 
-                <!-- NAVEGAÇÃO ENTRE MÓDULOS -->
                 <nav class="hidden md:flex space-x-1">
                     <button onclick="navegarPara('inicio')" id="nav-inicio" class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 bg-blue-600 text-white shadow">
                         <i class="fa-solid fa-house"></i> Início
@@ -184,7 +178,6 @@
                     </button>
                 </nav>
 
-                <!-- MENU MOBILE BUTTON -->
                 <div class="md:hidden">
                     <button onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white p-2">
                         <i class="fa-solid fa-bars text-xl"></i>
@@ -193,7 +186,6 @@
             </div>
         </div>
 
-        <!-- MOBILE MENU DROPDOWN -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 bg-slate-900 px-4 py-3 space-y-2">
             <button onclick="navegarPara('inicio')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-white bg-blue-600 flex items-center gap-2">
                 <i class="fa-solid fa-house"></i> Início
@@ -232,7 +224,6 @@
                 </div>
             </div>
 
-            <!-- CARDS DE MÓDULOS -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
                     <div>
@@ -684,7 +675,6 @@
         <div id="view-calculadora" class="hidden space-y-4">
             <div class="simulador-container max-w-4xl mx-auto space-y-4">
                 
-                <!-- CABEÇALHO DO SIMULADOR -->
                 <div class="card-simulador bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center relative">
                     <h2 class="text-xl font-extrabold text-[#002d72]">Simulador Leadjet</h2>
                     <p class="text-xs text-slate-500 mt-0.5">Projeção de Custos Operacionais e Consumo de Insumos</p>
@@ -693,7 +683,6 @@
                     </button>
                 </div>
 
-                <!-- CARD FORMULÁRIO DE ENTRADA -->
                 <div class="card-simulador bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -770,7 +759,6 @@
                     </div>
                 </div>
 
-                <!-- CARDS DE RESULTADOS RESUMO -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div class="bg-[#002d72] text-white p-4 rounded-2xl text-center shadow-sm card-simulador-resumo">
                         <label class="block text-slate-300 text-xs font-medium mb-0.5">Custo Diário</label>
@@ -786,7 +774,6 @@
                     </div>
                 </div>
 
-                <!-- FOOTER DETALHAMENTO TÉCNICO -->
                 <div class="card-simulador bg-white p-4 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed shadow-sm">
                     <strong class="text-[#002d72] text-xs block mb-1">Detalhamento Técnico (Mensal):</strong>
                     • Total de Impressões: <span id="res-total-imp" class="font-bold text-slate-900">0</span> unidades<br>
@@ -800,7 +787,6 @@
         <div id="view-despesas" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
-                <!-- FORMULÁRIO DE LANÇAMENTO DE DESPESAS -->
                 <section class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 no-print h-fit">
                     <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
                         <div class="flex items-center gap-2">
@@ -895,7 +881,6 @@
                     </form>
                 </section>
 
-                <!-- TABELA E FILTROS DO CONTROLE DE DESPESAS -->
                 <section class="lg:col-span-7 space-y-4">
                     <div class="bg-gradient-to-r from-slate-900 to-sky-950 text-white p-5 rounded-2xl shadow-md flex justify-between items-center border border-slate-800">
                         <div>
@@ -907,7 +892,6 @@
                         </div>
                     </div>
 
-                    <!-- BARRA DE FILTROS -->
                     <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 grid grid-cols-1 sm:grid-cols-5 gap-3 no-print">
                         <div>
                             <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Filtrar Dia Exato</label>
@@ -947,7 +931,6 @@
                         </div>
                     </div>
 
-                    <!-- TABELA AGRUPADA DE RELATÓRIOS -->
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs">
@@ -976,6 +959,118 @@
         <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
         <span id="toast-message" class="text-xs font-semibold">Ação executada com sucesso!</span>
     </div>
+
+    <!-- FIREBASE MODULE SDK SETUP -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW05GuYDxXUCmtWfSxhfap1-l6_qkNspw",
+            authDomain: "plataforma-cij.firebaseapp.com",
+            projectId: "plataforma-cij",
+            storageBucket: "plataforma-cij.firebasestorage.app",
+            messagingSenderId: "949985395100",
+            appId: "1:949985395100:web:cf881e0c91c63175228859",
+            measurementId: "G-PGX7H2R8G2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'plataforma-cij';
+        
+        const solicitacoesCol = collection(db, 'artifacts', appId, 'public', 'data', 'solicitacoes');
+        const despesasCol = collection(db, 'artifacts', appId, 'public', 'data', 'despesas');
+
+        // Authenticate Anonymously & Set listeners
+        async function initFirebaseSync() {
+            try {
+                await signInAnonymously(auth);
+                
+                const statusBadge = document.getElementById('firebase-status-badge');
+                const statusText = document.getElementById('firebase-status-text');
+                const statusIcon = document.getElementById('firebase-icon');
+                
+                if (statusBadge) {
+                    statusBadge.className = "text-[10px] font-semibold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800 flex items-center gap-1";
+                }
+                if (statusIcon) statusIcon.className = "fa-solid fa-cloud text-[9px]";
+                if (statusText) statusText.textContent = "Cloud Sync On";
+
+                // Listener para Solicitações CIJ
+                onSnapshot(solicitacoesCol, (snapshot) => {
+                    const docsData = [];
+                    snapshot.forEach(docSnap => {
+                        docsData.push(docSnap.data());
+                    });
+                    if (docsData.length > 0) {
+                        window.listaSolicitacoes = docsData;
+                        localStorage.setItem('banco_solicitacoes_cij', JSON.stringify(window.listaSolicitacoes));
+                        if (typeof window.renderizarBancoDados === 'function') window.renderizarBancoDados();
+                    }
+                }, (err) => {
+                    console.warn("Firestore error on solicitudes listener:", err);
+                });
+
+                // Listener para Despesas
+                onSnapshot(despesasCol, (snapshot) => {
+                    const docsData = [];
+                    snapshot.forEach(docSnap => {
+                        docsData.push(docSnap.data());
+                    });
+                    if (docsData.length > 0) {
+                        window.listaDespesas = docsData;
+                        localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
+                        if (typeof window.renderizarRelatoriosDespesas === 'function') window.renderizarRelatoriosDespesas();
+                    }
+                }, (err) => {
+                    console.warn("Firestore error on despesas listener:", err);
+                });
+
+            } catch (err) {
+                console.error("Firebase auth/connection error:", err);
+            }
+        }
+
+        // Funções de salvamento em nuvem expostas globalmente
+        window.salvarSolicitacaoNuvem = async function(reg) {
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'solicitacoes', reg.id), reg);
+            } catch (err) {
+                console.error("Erro ao salvar solicitação no Firebase:", err);
+            }
+        };
+
+        window.excluirSolicitacaoNuvem = async function(id) {
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'solicitacoes', id));
+            } catch (err) {
+                console.error("Erro ao excluir solicitação do Firebase:", err);
+            }
+        };
+
+        window.salvarDespesaNuvem = async function(item) {
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'despesas', item.id), item);
+            } catch (err) {
+                console.error("Erro ao salvar despesa no Firebase:", err);
+            }
+        };
+
+        window.excluirDespesaNuvem = async function(id) {
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'despesas', id));
+            } catch (err) {
+                console.error("Erro ao excluir despesa do Firebase:", err);
+            }
+        };
+
+        initFirebaseSync();
+    </script>
 
     <script>
         /* VARIÁVEIS E ESTADOS GLOBAIS DA APLICAÇÃO */
@@ -1334,7 +1429,12 @@
 
             window.listaSolicitacoes.unshift(reg);
             localStorage.setItem('banco_solicitacoes_cij', JSON.stringify(window.listaSolicitacoes));
-            mostrarNotificacao('Solicitação gravada no Banco de Dados!');
+            
+            if (typeof window.salvarSolicitacaoNuvem === 'function') {
+                window.salvarSolicitacaoNuvem(reg);
+            }
+
+            mostrarNotificacao('Solicitação gravada no Banco de Dados e sincronizada!');
         }
 
         function renderizarBancoDados() {
@@ -1368,6 +1468,11 @@
         function excluirSolicitacao(id) {
             window.listaSolicitacoes = window.listaSolicitacoes.filter(s => s.id !== id);
             localStorage.setItem('banco_solicitacoes_cij', JSON.stringify(window.listaSolicitacoes));
+            
+            if (typeof window.excluirSolicitacaoNuvem === 'function') {
+                window.excluirSolicitacaoNuvem(id);
+            }
+
             renderizarBancoDados();
             mostrarNotificacao('Solicitação removida!');
         }
@@ -1380,7 +1485,7 @@
             a.click();
         }
 
-        /* EXPORTAÇÃO EXCEL DA SOLICITAÇÃO CIJ */
+        /* EXPORTAÇÃO EXCEL DA SOLICITAÇÃO CIJ (DUAS ABAS FORMATADAS) */
         function gerarExcel() {
             if (typeof XLSX === 'undefined') {
                 mostrarNotificacao('A biblioteca Excel está carregando...');
@@ -1525,7 +1630,7 @@
 
             // 4. Escopo de Serviços
             addSectionHeader('4. ESCOPO DE SERVIÇOS E TREINAMENTO');
-            addServiceRow('Montagem Mecânica / Posicionamento', safeGetChecked('srv_fisica') || safeGetChecked('srv_física'));
+            addServiceRow('Montagem Mecânica / Posicionamento', safeGetChecked('srv_fisica'));
             addServiceRow('Conexão Elétrica, Sensor e Encoder', safeGetChecked('srv_eletrica'));
             addServiceRow('Parametrização e Mensagens', safeGetChecked('srv_parametrizacao'));
             addServiceRow('Treinamento Operacional', safeGetChecked('srv_treina_operador'));
@@ -1542,7 +1647,6 @@
             ]);
             ws2Merges.push({ s: { r: ws2Data.length - 1, c: 0 }, e: { r: ws2Data.length - 1, c: 1 } });
 
-            /* --- MONTAGEM E DOWNLOAD DO ARQUIVO EXCEL --- */
             function aoaToSheet(data, merges) {
                 const ws = {};
                 const range = { s: { c: 10000, r: 10000 }, e: { c: 0, r: 0 } };
@@ -1560,12 +1664,10 @@
 
             const wb = XLSX.utils.book_new();
 
-            // Adiciona a 1ª aba: Equipamentos e Insumos
             const ws1 = aoaToSheet(ws1Data, ws1Merges);
             ws1['!cols'] = [{ wch: 6 }, { wch: 35 }, { wch: 45 }, { wch: 10 }, { wch: 20 }, { wch: 22 }];
             XLSX.utils.book_append_sheet(wb, ws1, "Equipamentos e Insumos");
 
-            // Adiciona a 2ª aba: Resumo da Solicitação
             const ws2 = aoaToSheet(ws2Data, ws2Merges);
             ws2['!cols'] = [{ wch: 38 }, { wch: 65 }];
             XLSX.utils.book_append_sheet(wb, ws2, "Resumo da Solicitação");
@@ -1624,7 +1726,10 @@
             window.listaDespesas.unshift(novaDespesa);
             localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
 
-            // Mantém contexto do relatório (Técnico, Cliente, Cidade, Nº Relatório) para novos lançamentos no mesmo relatório
+            if (typeof window.salvarDespesaNuvem === 'function') {
+                window.salvarDespesaNuvem(novaDespesa);
+            }
+
             safeSetVal('desp_descricao', '');
             safeSetVal('desp_valor', '');
             safeSetVal('desp_observacoes', '');
@@ -1783,14 +1888,26 @@
         function excluirItemDespesa(id) {
             window.listaDespesas = window.listaDespesas.filter(i => i.id !== id);
             localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
+            
+            if (typeof window.excluirDespesaNuvem === 'function') {
+                window.excluirDespesaNuvem(id);
+            }
+
             mostrarNotificacao('Item removido!');
             renderizarRelatoriosDespesas();
         }
 
         function excluirRelatorioCompleto(num) {
             if (confirm(`Deseja remover todas as despesas do relatório ${num}?`)) {
+                const itensExcluir = window.listaDespesas.filter(i => i.num_relatorio === num);
+                
                 window.listaDespesas = window.listaDespesas.filter(i => i.num_relatorio !== num);
                 localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
+                
+                if (typeof window.excluirDespesaNuvem === 'function') {
+                    itensExcluir.forEach(it => window.excluirDespesaNuvem(it.id));
+                }
+
                 mostrarNotificacao(`Relatório ${num} removido!`);
                 renderizarRelatoriosDespesas();
             }

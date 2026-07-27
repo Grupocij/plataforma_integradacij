@@ -145,8 +145,13 @@
             <div class="flex items-center justify-between h-16">
                 
                 <div class="flex items-center gap-3">
-                    <div class="p-2 bg-blue-600 rounded-xl text-white shadow-md">
-                        <i class="fa-solid fa-industry text-xl"></i>
+                    <!-- LOGOTIPO OFICIAL LEADJET EMBEDDED -->
+                    <div class="p-1.5 bg-white rounded-xl shadow-md flex items-center justify-center">
+                        <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
+                            <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
+                            <path d="M 50 25 L 75 50 L 50 75 L 25 50 Z" fill="#ffffff"/>
+                        </svg>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
@@ -165,10 +170,6 @@
                     </button>
                     <button onclick="navegarPara('solicitacao')" id="nav-solicitacao" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-file-signature"></i> Solicitação CIJ
-                    </button>
-                    <button onclick="navegarPara('banco')" id="nav-banco" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-database"></i> Banco de Dados
-                        <span id="banco-count-badge" class="bg-blue-500 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
                     </button>
                     <button onclick="navegarPara('calculadora')" id="nav-calculadora" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-calculator"></i> Simulador Leadjet
@@ -193,9 +194,6 @@
             <button onclick="navegarPara('solicitacao')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 flex items-center gap-2">
                 <i class="fa-solid fa-file-signature"></i> Solicitação CIJ
             </button>
-            <button onclick="navegarPara('banco')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 flex items-center gap-2">
-                <i class="fa-solid fa-database"></i> Banco de Dados
-            </button>
             <button onclick="navegarPara('calculadora')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 flex items-center gap-2">
                 <i class="fa-solid fa-calculator"></i> Simulador Leadjet
             </button>
@@ -216,20 +214,26 @@
                         Gestão Comercial, Análise Financeira e Controle Operacional
                     </h2>
                     <p class="text-slate-300 text-sm mt-2 leading-relaxed">
-                        Acesse as ferramentas integradas para elaboração de pedidos de venda, consulta de histórico em nuvem, simulação de custos de insumos e controle de despesas de viagens.
+                        Acesse as ferramentas integradas para elaboração de pedidos de venda, simulação de custos de insumos e controle de despesas de viagens.
                     </p>
                 </div>
-                <div class="absolute right-6 -bottom-10 opacity-10 text-slate-100 hidden lg:block">
-                    <i class="fa-solid fa-industry text-[220px]"></i>
+                <div class="absolute right-6 -bottom-6 opacity-25 hidden lg:block">
+                    <svg class="w-64 h-64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
+                        <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
+                    </svg>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-file-signature"></i>
+                            <div class="p-2 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                                <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
+                                    <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
+                                </svg>
                             </div>
                             <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">Nova Solicitação</span>
                         </div>
@@ -246,26 +250,11 @@
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-database"></i>
-                            </div>
-                            <span class="text-[11px] font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-200">Nuvem Sync</span>
-                        </div>
-                        <h3 class="text-base font-bold text-slate-900">Banco de Dados</h3>
-                        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
-                            Gerencie solicitações salvas na nuvem, recarregue para edição, gere planilhas Excel ou compartilhe links.
-                        </p>
-                    </div>
-                    <button onclick="navegarPara('banco')" class="mt-6 w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
-                        Acessar Registros <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-teal-100 text-teal-600 rounded-xl flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-calculator"></i>
+                            <div class="p-2 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center">
+                                <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
+                                    <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
+                                </svg>
                             </div>
                             <span class="text-[11px] font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-full border border-teal-200">Projeção Leadjet</span>
                         </div>
@@ -282,8 +271,11 @@
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-receipt"></i>
+                            <div class="p-2 bg-sky-50 text-sky-600 rounded-xl flex items-center justify-center">
+                                <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
+                                    <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
+                                </svg>
                             </div>
                             <span class="text-[11px] font-bold text-sky-700 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-200">Viagens e Compras</span>
                         </div>
@@ -303,12 +295,15 @@
         <div id="view-solicitacao" class="hidden space-y-6">
             <div class="bg-blue-900 text-white p-4 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border border-blue-800">
                 <div class="flex items-center gap-3">
-                    <div class="p-3 bg-blue-800/80 rounded-xl text-blue-200">
-                        <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                    <div class="p-2 bg-white rounded-xl text-blue-900 flex items-center justify-center">
+                        <svg class="w-7 h-7" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
+                            <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
+                        </svg>
                     </div>
                     <div>
                         <h3 class="text-base font-bold text-white leading-tight">Gestão Rápida da Solicitação</h3>
-                        <p class="text-xs text-blue-200 mt-0.5">Salve no seu banco de dados na nuvem para acessar ou editar em qualquer computador.</p>
+                        <p class="text-xs text-blue-200 mt-0.5">Preencha e salve no seu banco de dados na nuvem para acessar em qualquer dispositivo.</p>
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-2 w-full sm:w-auto justify-end no-print">
@@ -675,8 +670,14 @@
         <div id="view-calculadora" class="hidden space-y-4">
             <div class="simulador-container max-w-4xl mx-auto space-y-4">
                 
-                <div class="card-simulador bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center relative">
-                    <h2 class="text-xl font-extrabold text-[#002d72]">Simulador Leadjet</h2>
+                <div class="card-simulador bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center relative flex flex-col items-center justify-center">
+                    <div class="flex items-center gap-3 mb-1">
+                        <svg class="w-7 h-7" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
+                            <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
+                        </svg>
+                        <h2 class="text-xl font-extrabold text-[#002d72]">Simulador Leadjet</h2>
+                    </div>
                     <p class="text-xs text-slate-500 mt-0.5">Projeção de Custos Operacionais e Consumo de Insumos</p>
                     <button onclick="window.print()" class="absolute right-5 top-5 no-print px-3 py-1.5 bg-[#002d72] hover:bg-blue-900 text-white font-semibold rounded-xl text-xs transition flex items-center gap-1.5 shadow-md">
                         <i class="fa-solid fa-file-pdf"></i> Salvar PDF (1 Página)
@@ -790,7 +791,10 @@
                 <section class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 no-print h-fit">
                     <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
                         <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-receipt text-sky-600 text-lg"></i>
+                            <svg class="w-6 h-6" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
+                                <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
+                            </svg>
                             <h2 class="text-lg font-bold text-slate-900">Lançamento de Despesa</h2>
                         </div>
                         <span id="desp-num-badge" class="text-xs px-2.5 py-1 bg-sky-100 text-sky-800 font-bold rounded-full border border-sky-300">REL-1001</span>
@@ -878,17 +882,29 @@
                         <button type="submit" class="w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
                             <i class="fa-solid fa-plus-circle"></i> Adicionar Despesa ao Relatório
                         </button>
+                        <button type="button" onclick="finalizarRelatorioAtual()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-check-circle"></i> Finalizar
+                        </button>
                     </form>
                 </section>
 
                 <section class="lg:col-span-7 space-y-4">
-                    <div class="bg-gradient-to-r from-slate-900 to-sky-950 text-white p-5 rounded-2xl shadow-md flex justify-between items-center border border-slate-800">
+                    <div class="bg-gradient-to-r from-slate-900 to-sky-950 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border border-slate-800">
                         <div>
                             <span class="text-xs uppercase tracking-wider text-sky-300 font-bold">Total Acumulado Exibido</span>
                             <h3 class="text-xs text-slate-300 mt-0.5">Resumo acumulado conforme filtros ativos</h3>
                         </div>
-                        <div class="text-right">
-                            <div id="desp-total-acumulado" class="text-3xl font-black text-white">R$ 0,00</div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <div id="desp-total-acumulado" class="text-2xl sm:text-3xl font-black text-white mr-2">R$ 0,00</div>
+                            <button type="button" onclick="exportarRelatorioFiltradoExcel()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition border border-emerald-500/50 flex items-center gap-1.5 shadow-md no-print" title="Exportar todas as despesas filtradas para Excel">
+                                <i class="fa-solid fa-file-excel"></i> Exportar Filtro (Excel)
+                            </button>
+                            <button type="button" onclick="imprimirRelatorioFiltradoPDF()" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl transition border border-sky-500/50 flex items-center gap-1.5 shadow-md no-print" title="Imprimir / Salvar PDF do relatório filtrado">
+                                <i class="fa-solid fa-file-pdf"></i> Imprimir Filtro (PDF)
+                            </button>
+                            <button type="button" onclick="excluirDespesasFiltradas()" class="px-3.5 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl transition border border-red-500/50 flex items-center gap-1.5 shadow-md no-print" title="Excluir permanentemente todas as despesas filtradas na tela">
+                                <i class="fa-solid fa-trash-can"></i> Excluir Filtro (Tudo)
+                            </button>
                         </div>
                     </div>
 
@@ -1150,7 +1166,7 @@
         }
 
         function navegarPara(moduloId) {
-            const modulos = ['inicio', 'solicitacao', 'banco', 'calculadora', 'despesas'];
+            const modulos = ['inicio', 'solicitacao', 'calculadora', 'despesas'];
             modulos.forEach(m => {
                 const view = document.getElementById(`view-${m}`);
                 const nav = document.getElementById(`nav-${m}`);
@@ -1170,7 +1186,6 @@
             }
 
             if (moduloId === 'despesas') renderizarRelatoriosDespesas();
-            if (moduloId === 'banco') renderizarBancoDados();
             if (moduloId === 'calculadora') calcularSimuladorOficial();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1695,6 +1710,15 @@
             mostrarNotificacao(`Novo relatório ${prox} iniciado.`);
         }
 
+        function finalizarRelatorioAtual() {
+            const form = document.getElementById('expense-form');
+            if (form) form.reset();
+            const hoje = new Date().toISOString().split('T')[0];
+            safeSetVal('desp_data', hoje);
+            novoRelatorioSequencial();
+            mostrarNotificacao('Relatório finalizado! Campos limpos e novo relatório iniciado.');
+        }
+
         function salvarDespesa(e) {
             e.preventDefault();
 
@@ -1923,57 +1947,98 @@
             }, 200);
         }
 
-        function exportarRelatorioExcelEspecifico(numRelatorio) {
+        /* OBTER DESPESAS FILTRADAS DA LISTA ATUAL */
+        function obterDespesasFiltradas() {
+            const filterData = safeGetVal('filter-data-desp');
+            const filterMes = safeGetVal('filter-mes-desp');
+            const filterTecnico = safeGetVal('filter-tecnico-desp');
+            const filterCategoria = safeGetVal('filter-categoria-desp') || 'Todas';
+            const filterSearch = safeGetVal('filter-search-desp').toLowerCase();
+
+            return window.listaDespesas.filter(item => {
+                if (filterData && item.data !== filterData) return false;
+                if (filterMes && item.data && !item.data.startsWith(filterMes)) return false;
+                if (filterTecnico !== 'Todos' && item.tecnico !== filterTecnico) return false;
+                if (filterCategoria !== 'Todas' && item.categoria !== filterCategoria) return false;
+                if (filterSearch) {
+                    const matchText = `${item.num_relatorio} ${item.tecnico} ${item.cliente} ${item.cidade} ${item.descricao} ${item.categoria} ${item.observacoes || ''}`.toLowerCase();
+                    if (!matchText.includes(filterSearch)) return false;
+                }
+                return true;
+            });
+        }
+
+        /* EXPORTAR RELATÓRIO COMPLETO CONFORME OS FILTROS SELECIONADOS (EXCEL) */
+        function exportarRelatorioFiltradoExcel() {
             if (typeof XLSX === 'undefined') {
                 mostrarNotificacao('Biblioteca Excel carregando...');
                 return;
             }
 
-            const itens = window.listaDespesas.filter(i => i.num_relatorio === numRelatorio);
+            const itens = obterDespesasFiltradas();
             if (itens.length === 0) {
-                mostrarNotificacao('Nenhum item encontrado para este relatório.');
+                mostrarNotificacao('Nenhum item encontrado para os filtros selecionados.');
                 return;
             }
 
-            const tec = itens[0].tecnico;
-            const cli = itens[0].cliente;
+            const filterData = safeGetVal('filter-data-desp');
+            const filterMes = safeGetVal('filter-mes-desp');
+            const filterTecnico = safeGetVal('filter-tecnico-desp');
+            const filterCategoria = safeGetVal('filter-categoria-desp');
+
+            let descFiltro = `Filtros Aplicados - `;
+            if (filterTecnico && filterTecnico !== 'Todos') descFiltro += `Técnico: ${filterTecnico} | `;
+            if (filterCategoria && filterCategoria !== 'Todas') descFiltro += `Categoria: ${filterCategoria} | `;
+            if (filterData) descFiltro += `Data: ${filterData.split('-').reverse().join('/')} | `;
+            if (filterMes) descFiltro += `Mês: ${filterMes} | `;
+            descFiltro += `Total Itens: ${itens.length}`;
 
             function createCell(val, opts = {}) {
                 const { bold = false, color = "1E293B", bg = null, align = "left", sz = 10, border = true } = opts;
                 const cellObj = { v: val !== null && val !== undefined ? val : '', t: typeof val === 'number' ? 'n' : 's' };
-                const s = { font: { name: 'Calibri', sz: sz, bold: bold, color: { rgb: color } }, alignment: { horizontal: align, vertical: 'center' } };
+                const s = { font: { name: 'Calibri', sz: sz, bold: bold, color: { rgb: color } }, alignment: { horizontal: align, vertical: 'center', wrapText: true } };
                 if (bg) s.fill = { fgColor: { rgb: bg } };
                 if (border) s.border = { top: { style: 'thin', color: { rgb: 'CBD5E1' } }, bottom: { style: 'thin', color: { rgb: 'CBD5E1' } }, left: { style: 'thin', color: { rgb: 'CBD5E1' } }, right: { style: 'thin', color: { rgb: 'CBD5E1' } } };
                 cellObj.s = s;
                 return cellObj;
             }
 
-            const wsData = [
-                [createCell(`RELATÓRIO DE DESPESAS - ${numRelatorio}`, { bold: true, color: 'FFFFFF', bg: '1E3A8A', align: 'center', sz: 12 }), createCell(''), createCell(''), createCell(''), createCell('')],
-                [createCell(`TÉCNICO: ${tec}   |   CLIENTE: ${cli}`, { bold: true, color: '1E3A8A', bg: 'DBEAFE', align: 'center', sz: 10 }), createCell(''), createCell(''), createCell(''), createCell('')],
-                [createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false})],
-                ["Descrição", "Categoria", "Forma Pagto", "Data", "Valor (R$)"].map(h => createCell(h, { bold: true, color: 'FFFFFF', bg: '0F172A', align: h === 'Valor (R$)' ? 'right' : 'left', sz: 10 }))
-            ];
-            const merges = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } }];
+            const headers = ["#", "Nº Relatório", "Técnico", "Cliente", "Cidade", "Data Pagto", "Descrição do Item / Compra", "Categoria", "Forma / Cartão", "Observações", "Valor (R$)"];
 
-            let total = 0;
+            const wsData = [
+                [createCell('RELATÓRIO CONSOLIDADO DE DESPESAS (FILTRADO)', { bold: true, color: 'FFFFFF', bg: '1E3A8A', align: 'center', sz: 12 }), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell('')],
+                [createCell(descFiltro, { bold: true, color: '1E3A8A', bg: 'DBEAFE', align: 'center', sz: 10 }), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell('')],
+                [createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false})],
+                headers.map(h => createCell(h, { bold: true, color: 'FFFFFF', bg: '0F172A', align: h === 'Valor (R$)' ? 'right' : (h === '#' || h === 'Data Pagto' || h === 'Nº Relatório' ? 'center' : 'left'), sz: 10 }))
+            ];
+            const merges = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 10 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 10 } }];
+
+            let totalGeral = 0;
             itens.forEach((it, idx) => {
-                total += it.valor;
+                const val = (parseFloat(it.valor) || 0);
+                totalGeral += val;
                 const bg = idx % 2 === 0 ? 'FFFFFF' : 'F8FAFC';
                 wsData.push([
-                    createCell(it.descricao, { bg }),
-                    createCell(it.categoria, { bg }),
-                    createCell(it.cartao, { bg }),
-                    createCell(it.data ? it.data.split('-').reverse().join('/') : '', { bg }),
-                    createCell(formatarMoeda(it.valor), { bg, align: 'right', bold: true })
+                    createCell(idx + 1, { bg, align: 'center', bold: true, color: '64748B' }),
+                    createCell(it.num_relatorio || '-', { bg, align: 'center', bold: true, color: '1E3A8A' }),
+                    createCell(it.tecnico || '-', { bg }),
+                    createCell(it.cliente || '-', { bg }),
+                    createCell(it.cidade || '-', { bg }),
+                    createCell(it.data ? it.data.split('-').reverse().join('/') : '-', { bg, align: 'center' }),
+                    createCell(it.descricao || '-', { bg }),
+                    createCell(it.categoria || '-', { bg }),
+                    createCell(it.cartao || '-', { bg }),
+                    createCell(it.observacoes || '-', { bg }),
+                    createCell(formatarMoeda(val), { bg, align: 'right', bold: true, color: '0958D9' })
                 ]);
             });
 
             wsData.push([
-                createCell('TOTAL DO RELATÓRIO:', { bold: true, bg: 'E2E8F0', align: 'right' }),
-                createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }),
-                createCell(formatarMoeda(total), { bold: true, bg: 'E2E8F0', align: 'right', color: '0958D9' })
+                createCell('TOTAL GERAL DOS ITENS FILTRADOS:', { bold: true, bg: 'E2E8F0', align: 'right', color: '1E3A8A' }),
+                createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }),
+                createCell(formatarMoeda(totalGeral), { bold: true, bg: 'E2E8F0', align: 'right', color: '0958D9' })
             ]);
+            merges.push({ s: { r: wsData.length - 1, c: 0 }, e: { r: wsData.length - 1, c: 9 } });
 
             function aoaToSheet(data, m) {
                 const ws = {};
@@ -1992,11 +2057,140 @@
 
             const wb = XLSX.utils.book_new();
             const ws = aoaToSheet(wsData, merges);
-            ws['!cols'] = [{ wch: 35 }, { wch: 20 }, { wch: 22 }, { wch: 14 }, { wch: 18 }];
+            ws['!cols'] = [{ wch: 5 }, { wch: 15 }, { wch: 18 }, { wch: 25 }, { wch: 18 }, { wch: 14 }, { wch: 35 }, { wch: 20 }, { wch: 22 }, { wch: 30 }, { wch: 18 }];
+            XLSX.utils.book_append_sheet(wb, ws, "Relatório Filtrado");
+
+            const dataHoje = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(wb, `Relatorio_Despesas_Filtrado_${dataHoje}.xlsx`);
+            mostrarNotificacao(`Relatório consolidado dos filtros baixado em Excel!`);
+        }
+
+        /* IMPRIMIR / SALVAR PDF DO RELATÓRIO FILTRADO */
+        function imprimirRelatorioFiltradoPDF() {
+            const itens = obterDespesasFiltradas();
+            if (itens.length === 0) {
+                mostrarNotificacao('Nenhum item encontrado para os filtros selecionados.');
+                return;
+            }
+            itens.forEach(it => {
+                if (it.num_relatorio) relatoriosExpandidos.add(it.num_relatorio);
+            });
+            renderizarRelatoriosDespesas();
+            setTimeout(() => {
+                window.print();
+            }, 200);
+        }
+
+        /* EXCLUIR TODAS AS DESPESAS CORRESPONDENTES AO FILTRO ATUAL */
+        function excluirDespesasFiltradas() {
+            const itens = obterDespesasFiltradas();
+            if (itens.length === 0) {
+                mostrarNotificacao('Nenhum item encontrado para os filtros selecionados.');
+                return;
+            }
+
+            const confirmacao = confirm(`Atenção: Deseja realmente EXCLUIR as ${itens.length} despesa(s) selecionada(s) pelo filtro atual?\n\nEsta ação removerá todos os lançamentos do filtro e não poderá ser desfeita!`);
+
+            if (confirmacao) {
+                const idsParaExcluir = new Set(itens.map(it => it.id));
+
+                // Remove da memória e LocalStorage
+                window.listaDespesas = window.listaDespesas.filter(it => !idsParaExcluir.has(it.id));
+                localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
+
+                // Remove do banco de dados na nuvem (Firebase)
+                if (typeof window.excluirDespesaNuvem === 'function') {
+                    itens.forEach(it => window.excluirDespesaNuvem(it.id));
+                }
+
+                mostrarNotificacao(`${itens.length} despesa(s) excluída(s) com sucesso!`);
+                renderizarRelatoriosDespesas();
+            }
+        }
+
+        function exportarRelatorioExcelEspecifico(numRelatorio) {
+            if (typeof XLSX === 'undefined') {
+                mostrarNotificacao('Biblioteca Excel carregando...');
+                return;
+            }
+
+            const itens = window.listaDespesas.filter(i => i.num_relatorio === numRelatorio);
+            if (itens.length === 0) {
+                mostrarNotificacao('Nenhum item encontrado para este relatório.');
+                return;
+            }
+
+            const tec = itens[0].tecnico || '-';
+            const cli = itens[0].cliente || '-';
+            const cidade = itens[0].cidade || '-';
+
+            function createCell(val, opts = {}) {
+                const { bold = false, color = "1E293B", bg = null, align = "left", sz = 10, border = true } = opts;
+                const cellObj = { v: val !== null && val !== undefined ? val : '', t: typeof val === 'number' ? 'n' : 's' };
+                const s = { font: { name: 'Calibri', sz: sz, bold: bold, color: { rgb: color } }, alignment: { horizontal: align, vertical: 'center', wrapText: true } };
+                if (bg) s.fill = { fgColor: { rgb: bg } };
+                if (border) s.border = { top: { style: 'thin', color: { rgb: 'CBD5E1' } }, bottom: { style: 'thin', color: { rgb: 'CBD5E1' } }, left: { style: 'thin', color: { rgb: 'CBD5E1' } }, right: { style: 'thin', color: { rgb: 'CBD5E1' } } };
+                cellObj.s = s;
+                return cellObj;
+            }
+
+            const headers = ["#", "Técnico", "Cliente", "Cidade", "Data Pagto", "Descrição do Item / Compra", "Categoria", "Forma / Cartão", "Observações", "Valor (R$)"];
+
+            const wsData = [
+                [createCell(`RELATÓRIO DE DESPESAS - ${numRelatorio}`, { bold: true, color: 'FFFFFF', bg: '1E3A8A', align: 'center', sz: 12 }), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell('')],
+                [createCell(`TÉCNICO: ${tec}   |   CLIENTE: ${cli}   |   CIDADE: ${cidade}`, { bold: true, color: '1E3A8A', bg: 'DBEAFE', align: 'center', sz: 10 }), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell('')],
+                [createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false})],
+                headers.map(h => createCell(h, { bold: true, color: 'FFFFFF', bg: '0F172A', align: h === 'Valor (R$)' ? 'right' : (h === '#' || h === 'Data Pagto' ? 'center' : 'left'), sz: 10 }))
+            ];
+            const merges = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 9 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 9 } }];
+
+            let total = 0;
+            itens.forEach((it, idx) => {
+                total += (parseFloat(it.valor) || 0);
+                const bg = idx % 2 === 0 ? 'FFFFFF' : 'F8FAFC';
+                wsData.push([
+                    createCell(idx + 1, { bg, align: 'center', bold: true, color: '64748B' }),
+                    createCell(it.tecnico || tec, { bg }),
+                    createCell(it.cliente || cli, { bg }),
+                    createCell(it.cidade || cidade, { bg }),
+                    createCell(it.data ? it.data.split('-').reverse().join('/') : '-', { bg, align: 'center' }),
+                    createCell(it.descricao || '-', { bg }),
+                    createCell(it.categoria || '-', { bg }),
+                    createCell(it.cartao || '-', { bg }),
+                    createCell(it.observacoes || '-', { bg }),
+                    createCell(formatarMoeda(it.valor), { bg, align: 'right', bold: true, color: '0958D9' })
+                ]);
+            });
+
+            wsData.push([
+                createCell('TOTAL DO RELATÓRIO:', { bold: true, bg: 'E2E8F0', align: 'right', color: '1E3A8A' }),
+                createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }),
+                createCell(formatarMoeda(total), { bold: true, bg: 'E2E8F0', align: 'right', color: '0958D9' })
+            ]);
+            merges.push({ s: { r: wsData.length - 1, c: 0 }, e: { r: wsData.length - 1, c: 8 } });
+
+            function aoaToSheet(data, m) {
+                const ws = {};
+                const range = { s: { c: 10000, r: 10000 }, e: { c: 0, r: 0 } };
+                for (let R = 0; R < data.length; ++R) {
+                    for (let C = 0; C < data[R].length; ++C) {
+                        if (range.s.r > R) range.s.r = R; if (range.s.c > C) range.s.c = C;
+                        if (range.e.r < R) range.e.r = R; if (range.e.c < C) range.e.c = C;
+                        if (data[R][C]) ws[XLSX.utils.encode_cell({ c: C, r: R })] = data[R][C];
+                    }
+                }
+                ws['!ref'] = XLSX.utils.encode_range(range);
+                if (m) ws['!merges'] = m;
+                return ws;
+            }
+
+            const wb = XLSX.utils.book_new();
+            const ws = aoaToSheet(wsData, merges);
+            ws['!cols'] = [{ wch: 5 }, { wch: 18 }, { wch: 25 }, { wch: 18 }, { wch: 14 }, { wch: 35 }, { wch: 20 }, { wch: 22 }, { wch: 30 }, { wch: 18 }];
             XLSX.utils.book_append_sheet(wb, ws, "Despesas");
 
             XLSX.writeFile(wb, `Relatorio_Despesas_${numRelatorio}_${tec}.xlsx`);
-            mostrarNotificacao(`Relatório ${numRelatorio} baixado em Excel!`);
+            mostrarNotificacao(`Relatório ${numRelatorio} baixado em Excel com todas as informações!`);
         }
 
         /* INICIALIZAÇÃO DA PÁGINA */

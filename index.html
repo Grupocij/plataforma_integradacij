@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma Integrada CIJ - Gestão Comercial, Financeira e Despesas</title>
+    <title>Portal Grupo CIJ - Gestão Integrada</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js para renderização de gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- SheetJS with full cell styling support -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 
@@ -41,7 +43,12 @@
             background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
         }
 
-        /* ESTILOS DE IMPRESSÃO (PDF EM 1 PÁGINA A4 RIGOROSA) */
+        .leadjet-logo-icon {
+            width: 28px;
+            height: 28px;
+            display: inline-block;
+        }
+
         @media print {
             @page {
                 size: A4 portrait;
@@ -62,7 +69,7 @@
                 display: none !important;
             }
 
-            body > header, nav, footer, #auth-modal {
+            body > header, nav, footer {
                 display: none !important;
             }
 
@@ -140,118 +147,193 @@
 </head>
 <body class="min-h-screen pb-12 flex flex-col">
 
-    <!-- OVERLAY DE LOGIN / AUTENTICAÇÃO -->
-    <div id="auth-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-md w-full p-8 overflow-hidden relative">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-blue-50 border border-blue-100 rounded-2xl mx-auto flex items-center justify-center p-3 shadow-sm mb-3">
-                    <svg class="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
-                        <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
-                        <path d="M 50 25 L 75 50 L 50 75 L 25 50 Z" fill="#ffffff"/>
-                    </svg>
-                </div>
-                <h2 class="text-2xl font-black text-slate-900 tracking-tight">Portal Grupo CIJ</h2>
-                <p class="text-xs text-slate-500 mt-1">Acesso exclusivo para colaboradores e equipe técnica</p>
+    <!-- TELA DE LOGIN -->
+    <div id="login-screen" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full border border-slate-200 text-center space-y-6">
+            
+            <div class="flex flex-col items-center justify-center gap-2">
+                <svg class="w-16 h-16" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 10 L85 45 L50 80 L15 45 Z" fill="#002D72"/>
+                    <path d="M50 20 L75 45 L50 70 L25 45 Z" fill="#0077C8" fill-opacity="0.8"/>
+                    <path d="M50 30 L65 45 L50 60 L35 45 Z" fill="#64B5F6"/>
+                </svg>
+                <h1 class="text-2xl font-black text-[#002d72] tracking-tight mt-1">PORTAL GRUPO CIJ</h1>
+                <p class="text-xs font-semibold text-slate-500">Portal de Gestão Integrada</p>
             </div>
 
-            <form id="auth-form" onsubmit="processarAutenticacao(event)" class="space-y-4">
+            <form id="auth-form" class="space-y-4 text-left" onsubmit="handleLogin(event)">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">E-mail *</label>
-                    <input type="email" id="auth_email" required class="w-full rounded-xl border border-slate-300 p-3 text-xs text-slate-900 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50" placeholder="seu.email@empresa.com.br">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">E-mail Corporativo</label>
+                    <input type="email" id="auth-email" required placeholder="seu.nome@grupocij.com.br" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 outline-none focus:border-blue-600 font-medium">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Senha *</label>
-                    <input type="password" id="auth_password" required minlength="6" class="w-full rounded-xl border border-slate-300 p-3 text-xs text-slate-900 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 bg-slate-50" placeholder="••••••••">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Senha</label>
+                    <input type="password" id="auth-password" required placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 outline-none focus:border-blue-600">
                 </div>
 
-                <div id="auth-error-msg" class="hidden p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
-                    E-mail ou senha incorretos.
+                <div class="flex items-center justify-between text-xs">
+                    <label class="flex items-center gap-2 cursor-pointer text-slate-600 font-medium">
+                        <input type="checkbox" id="auth-remember" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+                        <span>Lembrar-me neste dispositivo</span>
+                    </label>
+
+                    <button type="button" onclick="abrirModalResetSenha()" class="text-blue-600 hover:text-blue-800 font-bold transition">
+                        Esqueci minha senha
+                    </button>
                 </div>
 
-                <button type="submit" id="auth-submit-btn" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-right-to-bracket"></i> Acessar Plataforma
+                <button type="submit" id="btn-auth-submit" class="w-full py-3 bg-[#002d72] hover:bg-blue-900 text-white font-extrabold rounded-xl text-xs transition shadow-lg flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i> Entrar na Plataforma
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- CABEÇALHO DO SISTEMA -->
+    <!-- MODAL ESQUECI MINHA SENHA -->
+    <div id="modal-reset-senha" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-slate-200 text-left space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-key text-blue-600"></i> Redefinir Senha
+                </h3>
+                <button onclick="fecharModalResetSenha()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+                Informe o seu e-mail cadastrado para receber um link oficial de redefinição de senha.
+            </p>
+            <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">E-mail Cadastrado</label>
+                <input type="email" id="reset-email" placeholder="seu.nome@grupocij.com.br" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs outline-none focus:border-blue-600">
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" onclick="fecharModalResetSenha()" class="px-3 py-2 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl">Cancelar</button>
+                <button type="button" onclick="enviarEmailRedefinicao()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md">Enviar Link</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PREVIEW TABELA DE PREÇOS NO NAVEGADOR -->
+    <div id="modal-preview-tabela" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm hidden flex flex-col items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-5xl h-[85vh] shadow-2xl border border-slate-200 flex flex-col overflow-hidden">
+            <div class="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-eye text-amber-400"></i>
+                    <h3 id="preview-tabela-titulo" class="text-sm font-bold text-white">Visualização da Tabela</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a id="preview-tabela-download-btn" href="#" download class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-download"></i> Baixar Arquivo
+                    </a>
+                    <button onclick="fecharModalPreviewTabela()" class="px-2 py-1 text-slate-400 hover:text-white text-lg transition">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="preview-tabela-container" class="flex-1 w-full bg-slate-100 flex items-center justify-center p-2 overflow-auto">
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRMAÇÃO GENÉRICO -->
+    <div id="modal-confirm" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-slate-200 text-left space-y-4">
+            <div class="flex items-center gap-3 text-amber-600">
+                <div class="p-2 bg-amber-100 rounded-xl"><i class="fa-solid fa-triangle-exclamation text-xl"></i></div>
+                <h3 class="text-sm font-bold text-slate-900" id="confirm-title">Confirmação</h3>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed" id="confirm-message">Tem certeza que deseja executar esta ação?</p>
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" onclick="fecharModalConfirm(false)" class="px-3.5 py-2 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl hover:bg-slate-200 transition">Cancelar</button>
+                <button type="button" id="btn-confirm-action" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-md transition">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAIS DO CONTROLE DE COMISSÕES (ADMIN) -->
+    <div id="modal-confirmacao-comissao" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-slate-200 text-left space-y-4">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-rotate text-blue-600"></i> Cliente já cadastrado</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Este cliente já existe na base. Deseja atualizar a data e renovar a comissão?</p>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="confirmarRenovacaoComissao(false)" class="px-3.5 py-2 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl transition">Cancelar</button>
+                <button onclick="confirmarRenovacaoComissao(true)" class="px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow-md transition">Sim, Renovar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-apagar-comissao" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border-t-4 border-red-500 text-left space-y-4">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation text-red-600"></i> Apagar Registro</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Tem certeza que deseja apagar permanentemente o registro de <strong id="nomeClienteApagarComissao" class="text-slate-900"></strong>?</p>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="fecharModalApagarComissao()" class="px-3.5 py-2 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl transition">Cancelar</button>
+                <button onclick="confirmarApagarComissao()" class="px-4 py-2 bg-red-600 text-white font-bold text-xs rounded-xl shadow-md transition">Sim, Apagar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-renovar-comissao" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border-t-4 border-blue-500 text-left space-y-4">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-blue-600"></i> Renovar Comissão</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">Deseja reiniciar a contagem de tempo para <strong id="nomeClienteRenovarComissao" class="text-slate-900"></strong>?<br><br>A nova data base será <strong>Hoje</strong>, estendendo por mais 12 meses.</p>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="fecharModalRenovarComissao()" class="px-3.5 py-2 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl transition">Cancelar</button>
+                <button onclick="confirmarRenovacaoDiretaComissao()" class="px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow-md transition">Sim, Renovar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CABEÇALHO DO PORTAL -->
     <header class="bg-[#0f172a] text-white shadow-md border-b border-slate-800 no-print sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 
                 <div class="flex items-center gap-3">
-                    <!-- LOGOTIPO OFICIAL LEADJET EMBEDDED -->
-                    <div class="p-1.5 bg-white rounded-xl shadow-md flex items-center justify-center">
-                        <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
-                            <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
-                            <path d="M 50 25 L 75 50 L 50 75 L 25 50 Z" fill="#ffffff"/>
+                    <div class="p-1.5 bg-white/10 rounded-xl flex items-center justify-center border border-white/20">
+                        <svg class="leadjet-logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M50 10 L85 45 L50 80 L15 45 Z" fill="#0077C8"/>
+                            <path d="M50 20 L75 45 L50 70 L25 45 Z" fill="#64B5F6"/>
                         </svg>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-950 px-2 py-0.5 rounded border border-blue-800">PORTAL GRUPO CIJ</span>
-                            <span id="firebase-status-badge" class="text-[10px] font-semibold text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-800 flex items-center gap-1">
-                                <i class="fa-solid fa-spinner fa-spin text-[9px]" id="firebase-icon"></i> <span id="firebase-status-text">Conectando Nuvem...</span>
+                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-blue-300 bg-blue-950 px-2 py-0.5 rounded border border-blue-800">PORTAL GRUPO CIJ</span>
+                            <span id="user-role-badge" class="text-[10px] font-bold px-2 py-0.5 rounded border flex items-center gap-1 bg-emerald-950 text-emerald-300 border-emerald-800">
+                                Admin / Financeiro
                             </span>
                         </div>
-                        <h1 class="text-lg font-bold tracking-tight text-white leading-tight">Plataforma de Gestão Integrada</h1>
+                        <h1 class="text-base font-bold tracking-tight text-white leading-tight">Plataforma de Gestão Integrada</h1>
                     </div>
                 </div>
 
-                <nav class="hidden md:flex items-center space-x-1">
+                <nav class="hidden lg:flex space-x-1 items-center">
                     <button onclick="navegarPara('inicio')" id="nav-inicio" class="px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 bg-blue-600 text-white shadow">
                         <i class="fa-solid fa-house"></i> Início
                     </button>
                     <button onclick="navegarPara('solicitacao')" id="nav-solicitacao" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-file-signature"></i> Solicitação CIJ
+                        <i class="fa-solid fa-file-signature"></i> Solicitação
                     </button>
                     <button onclick="navegarPara('calculadora')" id="nav-calculadora" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-calculator"></i> Simulador Leadjet
+                        <i class="fa-solid fa-calculator"></i> Simulador
                     </button>
                     <button onclick="navegarPara('despesas')" id="nav-despesas" class="px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-receipt"></i> Controle de Despesas
+                        <i class="fa-solid fa-receipt"></i> Despesas
                     </button>
 
-                    <!-- USUÁRIO CONECTADO / SAIR -->
-                    <div id="user-profile-bar" class="hidden items-center gap-2 pl-3 ml-2 border-l border-slate-700">
-                        <div class="text-right">
-                            <span id="user-display-email" class="block text-[11px] font-bold text-slate-200 leading-none">usuario@email.com</span>
-                            <span class="text-[9px] text-emerald-400 font-semibold">Conectado</span>
-                        </div>
-                        <button onclick="fazerLogout()" class="p-2 bg-slate-800 hover:bg-red-900/60 text-slate-300 hover:text-red-300 rounded-lg transition" title="Sair do Sistema">
-                            <i class="fa-solid fa-right-from-bracket text-xs"></i>
-                        </button>
-                    </div>
+                    <button onclick="navegarPara('tabelas')" id="nav-tabelas" class="hidden px-3 py-2 rounded-lg text-xs font-semibold text-amber-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5 border border-amber-500/30">
+                        <i class="fa-solid fa-tags"></i> Tabelas
+                    </button>
+
+                    <button onclick="navegarPara('admin')" id="nav-admin" class="hidden px-3 py-2 rounded-lg text-xs font-semibold text-purple-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5 border border-purple-500/30">
+                        <i class="fa-solid fa-shield-halved"></i> Painel Admin
+                    </button>
+
+                    <button onclick="fazerLogout()" class="ml-2 px-3 py-2 rounded-lg text-xs font-bold bg-red-950/60 hover:bg-red-900 text-red-300 border border-red-800 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-right-from-bracket"></i> Sair
+                    </button>
                 </nav>
-
-                <div class="md:hidden">
-                    <button onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white p-2">
-                        <i class="fa-solid fa-bars text-xl"></i>
-                    </button>
-                </div>
             </div>
-        </div>
-
-        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 bg-slate-900 px-4 py-3 space-y-2">
-            <button onclick="navegarPara('inicio')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-white bg-blue-600 flex items-center gap-2">
-                <i class="fa-solid fa-house"></i> Início
-            </button>
-            <button onclick="navegarPara('solicitacao')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 flex items-center gap-2">
-                <i class="fa-solid fa-file-signature"></i> Solicitação CIJ
-            </button>
-            <button onclick="navegarPara('calculadora')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 flex items-center gap-2">
-                <i class="fa-solid fa-calculator"></i> Simulador Leadjet
-            </button>
-            <button onclick="navegarPara('despesas')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 flex items-center gap-2">
-                <i class="fa-solid fa-receipt"></i> Controle de Despesas
-            </button>
-            <button onclick="fazerLogout()" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-red-400 bg-red-950/40 flex items-center gap-2">
-                <i class="fa-solid fa-right-from-bracket"></i> Sair do Sistema
-            </button>
         </div>
     </header>
 
@@ -261,7 +343,7 @@
         <div id="view-inicio" class="space-y-8">
             <div class="bg-gradient-to-r from-[#1b2559] via-[#111827] to-[#0f172a] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden border border-slate-800">
                 <div class="relative z-10 max-w-2xl">
-                    <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-900/50 px-3 py-1 rounded-full border border-blue-700/50">Sistemas Unificados</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-900/50 px-3 py-1 rounded-full border border-blue-700/50">Leadjet CIJ Systems</span>
                     <h2 class="text-3xl font-extrabold tracking-tight mt-3 text-white leading-tight">
                         Gestão Comercial, Análise Financeira e Controle Operacional
                     </h2>
@@ -269,23 +351,14 @@
                         Acesse as ferramentas integradas para elaboração de pedidos de venda, simulação de custos de insumos e controle de despesas de viagens.
                     </p>
                 </div>
-                <div class="absolute right-6 -bottom-6 opacity-25 hidden lg:block">
-                    <svg class="w-64 h-64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
-                        <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
-                    </svg>
-                </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="grid-cards-inicio">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-4">
-                            <div class="p-2 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
-                                <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
-                                    <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
-                                </svg>
+                            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-file-signature"></i>
                             </div>
                             <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">Nova Solicitação</span>
                         </div>
@@ -302,11 +375,8 @@
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-4">
-                            <div class="p-2 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center">
-                                <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
-                                    <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
-                                </svg>
+                            <div class="w-12 h-12 bg-teal-100 text-teal-600 rounded-xl flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-calculator"></i>
                             </div>
                             <span class="text-[11px] font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-full border border-teal-200">Projeção Leadjet</span>
                         </div>
@@ -323,11 +393,8 @@
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-4">
-                            <div class="p-2 bg-sky-50 text-sky-600 rounded-xl flex items-center justify-center">
-                                <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
-                                    <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
-                                </svg>
+                            <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-receipt"></i>
                             </div>
                             <span class="text-[11px] font-bold text-sky-700 bg-sky-50 px-2.5 py-1 rounded-full border border-sky-200">Viagens e Compras</span>
                         </div>
@@ -340,34 +407,49 @@
                         Controle de Despesas <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
+
+                <div id="card-tabelas-inicio" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-amber-200 hover:shadow-md transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-tags"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-300">Comercial & Gestão</span>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900">Tabelas de Preços</h3>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                            Consulta, visualização e download de arquivos das tabelas de preços oficiais de equipamentos e insumos.
+                        </p>
+                    </div>
+                    <button onclick="navegarPara('tabelas')" class="mt-6 w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
+                        Acessar Tabelas <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div id="card-admin-inicio" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-purple-200 hover:shadow-md transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-purple-100 text-purple-700 rounded-xl flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-purple-800 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-300">Gestão Global</span>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900">Painel Administrativo</h3>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                            Controle de comissões de consumíveis e ferramentas exclusivas da diretoria.
+                        </p>
+                    </div>
+                    <button onclick="navegarPara('admin')" class="mt-6 w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
+                        Acessar Painel <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- 2. MÓDULO SOLICITAÇÃO CIJ -->
         <div id="view-solicitacao" class="hidden space-y-6">
-            <div class="bg-blue-900 text-white p-4 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border border-blue-800">
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-white rounded-xl text-blue-900 flex items-center justify-center">
-                        <svg class="w-7 h-7" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
-                            <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-bold text-white leading-tight">Gestão Rápida da Solicitação</h3>
-                        <p class="text-xs text-blue-200 mt-0.5">Preencha e salve no seu banco de dados na nuvem para acessar em qualquer dispositivo.</p>
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-2 w-full sm:w-auto justify-end no-print">
-                    <button type="button" onclick="salvarFormularioBanco()" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold rounded-xl text-xs transition flex items-center gap-2 shadow-md">
-                        <i class="fa-solid fa-plus text-sm"></i> Salvar no Banco
-                    </button>
-                </div>
-            </div>
-
             <form id="formVendaInstalacao" class="space-y-6" onsubmit="event.preventDefault();">
                 
-                <!-- 1. DADOS DO CLIENTE E LOCAL DE INSTALAÇÃO -->
                 <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="section-header px-6 py-4 text-white flex items-center justify-between">
                         <div class="flex items-center gap-3">
@@ -447,7 +529,6 @@
                     </div>
                 </section>
 
-                <!-- 2. DADOS COMERCIAIS DO PEDIDO DE VENDA -->
                 <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="section-header px-6 py-4 text-white flex items-center justify-between">
                         <div class="flex items-center gap-3">
@@ -507,7 +588,6 @@
                     </div>
                 </section>
 
-                <!-- 3. RELAÇÃO COMPLETA DE EQUIPAMENTOS E INSUMOS -->
                 <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="section-header px-6 py-4 text-white flex items-center justify-between">
                         <div class="flex items-center gap-3">
@@ -552,7 +632,6 @@
                     </div>
                 </section>
 
-                <!-- 4. CONDIÇÕES TÉCNICAS DA LINHA DE PRODUÇÃO -->
                 <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="section-header px-6 py-4 text-white flex items-center justify-between">
                         <div class="flex items-center gap-3">
@@ -602,7 +681,6 @@
                     </div>
                 </section>
 
-                <!-- 5. ESCOPO DE SERVIÇOS -->
                 <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="section-header px-6 py-4 text-white flex items-center justify-between">
                         <div class="flex items-center gap-3">
@@ -647,7 +725,6 @@
                     </div>
                 </section>
 
-                <!-- 6. OBSERVAÇÕES GERAIS -->
                 <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="section-header px-6 py-4 text-white flex items-center justify-between">
                         <div class="flex items-center gap-3">
@@ -664,15 +741,14 @@
                     </div>
                 </section>
 
-                <!-- BARRAS DE AÇÃO -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col lg:flex-row items-center justify-between gap-4 no-print">
                     <button type="button" onclick="limparFormulario()" class="text-xs font-bold bg-red-50 hover:bg-red-100 text-red-700 px-4 py-3 rounded-xl border border-red-200 transition">
                         <i class="fa-solid fa-trash-can mr-1"></i> Limpar Todos os Campos
                     </button>
 
                     <div class="flex flex-wrap items-center justify-center gap-3">
-                        <button type="button" onclick="salvarFormularioBanco()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md transition flex items-center gap-2 border border-emerald-400/30">
-                            <i class="fa-solid fa-cloud-arrow-up text-sm"></i> Salvar no Banco
+                        <button type="button" onclick="salvarSolicitacao()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md transition flex items-center gap-2 border border-emerald-400/30">
+                            <i class="fa-solid fa-cloud-arrow-up text-sm"></i> Salvar Solicitação
                         </button>
                         <button type="button" onclick="gerarExcel()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-5 py-3 rounded-xl shadow-md transition flex items-center gap-2 border border-blue-400/30">
                             <i class="fa-solid fa-file-excel text-sm"></i> Exportar para Excel (.xlsx)
@@ -689,14 +765,8 @@
         <div id="view-calculadora" class="hidden space-y-4">
             <div class="simulador-container max-w-4xl mx-auto space-y-4">
                 
-                <div class="card-simulador bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center relative flex flex-col items-center justify-center">
-                    <div class="flex items-center gap-3 mb-1">
-                        <svg class="w-7 h-7" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
-                            <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
-                        </svg>
-                        <h2 class="text-xl font-extrabold text-[#002d72]">Simulador Leadjet</h2>
-                    </div>
+                <div class="card-simulador bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center relative">
+                    <h2 class="text-xl font-extrabold text-[#002d72]">Simulador Leadjet</h2>
                     <p class="text-xs text-slate-500 mt-0.5">Projeção de Custos Operacionais e Consumo de Insumos</p>
                     <button onclick="window.print()" class="absolute right-5 top-5 no-print px-3 py-1.5 bg-[#002d72] hover:bg-blue-900 text-white font-semibold rounded-xl text-xs transition flex items-center gap-1.5 shadow-md">
                         <i class="fa-solid fa-file-pdf"></i> Salvar PDF (1 Página)
@@ -810,10 +880,7 @@
                 <section class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 no-print h-fit">
                     <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
                         <div class="flex items-center gap-2">
-                            <svg class="w-6 h-6" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M 50 12 L 83 45 C 87 49 87 51 83 55 L 55 83 C 51 87 49 87 45 83 L 17 55 C 13 51 13 49 17 45 L 45 17 C 47 15 48 13 50 12 Z" fill="#004e7c"/>
-                                <path d="M 46 16 L 80 50 L 50 80 L 76 54 C 80 50 80 48 76 44 L 52 20 Q 48 16 46 16 Z" fill="#88d1f1"/>
-                            </svg>
+                            <i class="fa-solid fa-receipt text-sky-600 text-lg"></i>
                             <h2 class="text-lg font-bold text-slate-900">Lançamento de Despesa</h2>
                         </div>
                         <span id="desp-num-badge" class="text-xs px-2.5 py-1 bg-sky-100 text-sky-800 font-bold rounded-full border border-sky-300">REL-1001</span>
@@ -898,32 +965,27 @@
                             <input type="text" id="desp_observacoes" placeholder="Nº NF ou observações da viagem" class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs">
                         </div>
 
-                        <button type="submit" class="w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-plus-circle"></i> Adicionar Despesa ao Relatório
-                        </button>
-                        <button type="button" onclick="finalizarRelatorioAtual()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-check-circle"></i> Finalizar
-                        </button>
+                        <div class="space-y-2 pt-2">
+                            <button type="submit" class="w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-plus-circle"></i> Adicionar Despesa ao Relatório
+                            </button>
+
+                            <button type="button" onclick="finalizarRelatorioAtual()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-check-double"></i> Finalizar Relatório
+                            </button>
+                        </div>
                     </form>
                 </section>
 
                 <section class="lg:col-span-7 space-y-4">
-                    <div class="bg-gradient-to-r from-slate-900 to-sky-950 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border border-slate-800">
+                    
+                    <div id="card-total-admin" class="bg-gradient-to-r from-slate-900 to-sky-950 text-white p-5 rounded-2xl shadow-md flex justify-between items-center border border-slate-800">
                         <div>
                             <span class="text-xs uppercase tracking-wider text-sky-300 font-bold">Total Acumulado Exibido</span>
                             <h3 class="text-xs text-slate-300 mt-0.5">Resumo acumulado conforme filtros ativos</h3>
                         </div>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <div id="desp-total-acumulado" class="text-2xl sm:text-3xl font-black text-white mr-2">R$ 0,00</div>
-                            <button type="button" onclick="exportarRelatorioFiltradoExcel()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition border border-emerald-500/50 flex items-center gap-1.5 shadow-md no-print" title="Exportar todas as despesas filtradas para Excel">
-                                <i class="fa-solid fa-file-excel"></i> Exportar Filtro (Excel)
-                            </button>
-                            <button type="button" onclick="imprimirRelatorioFiltradoPDF()" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl transition border border-sky-500/50 flex items-center gap-1.5 shadow-md no-print" title="Imprimir / Salvar PDF do relatório filtrado">
-                                <i class="fa-solid fa-file-pdf"></i> Imprimir Filtro (PDF)
-                            </button>
-                            <button type="button" onclick="excluirDespesasFiltradas()" class="px-3.5 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl transition border border-red-500/50 flex items-center gap-1.5 shadow-md no-print" title="Excluir permanentemente todas as despesas filtradas na tela">
-                                <i class="fa-solid fa-trash-can"></i> Excluir Filtro (Tudo)
-                            </button>
+                        <div class="text-right">
+                            <div id="desp-total-acumulado" class="text-3xl font-black text-white">R$ 0,00</div>
                         </div>
                     </div>
 
@@ -966,6 +1028,18 @@
                         </div>
                     </div>
 
+                    <div id="filter-actions-admin" class="flex flex-wrap items-center justify-end gap-2 no-print">
+                        <button onclick="exportarRelatorioExcelFiltro()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition shadow-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-file-excel"></i> Exportar Filtro (Excel)
+                        </button>
+                        <button onclick="imprimirRelatorioFiltroPDF()" class="px-3 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl transition shadow-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-file-pdf"></i> Imprimir Filtro (PDF)
+                        </button>
+                        <button onclick="confirmarExcluirTudoFiltro()" class="px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl transition shadow-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-trash-can"></i> Excluir Filtro (Tudo)
+                        </button>
+                    </div>
+
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs">
@@ -976,7 +1050,7 @@
                                         <th class="p-3">ITENS</th>
                                         <th class="p-3">DATA</th>
                                         <th class="p-3">TOTAL (R$)</th>
-                                        <th class="p-3 text-center no-print">AÇÕES / EXPORTAR</th>
+                                        <th class="p-3 text-center no-print">AÇÕES</th>
                                     </tr>
                                 </thead>
                                 <tbody id="despesas-grouped-body" class="divide-y divide-slate-200">
@@ -987,6 +1061,289 @@
                 </section>
             </div>
         </div>
+
+        <!-- 5. MÓDULO TABELAS DE PREÇOS -->
+        <div id="view-tabelas" class="hidden space-y-6">
+            <div class="bg-gradient-to-r from-amber-900 via-amber-950 to-slate-900 text-white p-6 rounded-3xl shadow-lg border border-amber-800/40 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-300 bg-amber-950 px-2.5 py-0.5 rounded border border-amber-800">Comercial & Gestão</span>
+                    </div>
+                    <h2 class="text-2xl font-black mt-1 text-white">Tabelas de Preços Oficiais</h2>
+                    <p class="text-xs text-amber-200/80 mt-1">Consulta, visualização no navegador e upload de tabelas de preços oficiais de equipamentos e insumos.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Formulário de Upload (Apenas Admin) -->
+                <section id="sec-upload-tabela" class="lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
+                    <div class="flex items-center gap-2 border-b border-slate-200 pb-3 mb-5">
+                        <i class="fa-solid fa-cloud-arrow-up text-amber-600 text-lg"></i>
+                        <h3 class="text-base font-bold text-slate-900">Nova Tabela de Preços</h3>
+                    </div>
+
+                    <form id="form-upload-tabela" class="space-y-4" onsubmit="salvarNovaTabelaPrecos(event)">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Título / Nome da Tabela *</label>
+                            <input type="text" id="tab_nome" required placeholder="Ex: Tabela CIJ Insumos 2026 V1" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-medium outline-none focus:border-amber-600">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Categoria *</label>
+                            <select id="tab_categoria" required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-semibold outline-none focus:border-amber-600">
+                                <option value="Equipamentos CIJ / TIJ / Laser">Equipamentos CIJ / TIJ / Laser</option>
+                                <option value="Insumos e Fluidos">Insumos e Fluidos</option>
+                                <option value="Peças e Acessórios">Peças e Acessórios</option>
+                                <option value="Geral / Consolidada">Geral / Consolidada</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Arquivo da Tabela *</label>
+                            <input type="file" id="tab_arquivo" required accept=".pdf,.xlsx,.xls,.csv,.doc,.docx,.png,.jpg,.jpeg" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-800 hover:file:bg-amber-200 cursor-pointer">
+                            <p class="text-[10px] text-slate-400 mt-1">Tamanho máximo recomendado: 3MB</p>
+                        </div>
+
+                        <button type="submit" id="btn-upload-tab" class="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Salvar e Publicar
+                        </button>
+                    </form>
+                </section>
+
+                <!-- Lista de Tabelas -->
+                <section id="sec-list-tabelas" class="lg:col-span-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-5">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-file-invoice text-amber-600 text-lg"></i>
+                            <h3 class="text-base font-bold text-slate-900">Tabelas Disponíveis</h3>
+                        </div>
+                        <span id="tab-count-badge" class="text-xs px-2.5 py-1 bg-amber-100 text-amber-900 font-bold rounded-full border border-amber-300">0 tabela(s)</span>
+                    </div>
+
+                    <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="bg-slate-900 text-white font-bold border-b border-slate-800">
+                                    <th class="p-3">NOME DA TABELA</th>
+                                    <th class="p-3">CATEGORIA</th>
+                                    <th class="p-3">DATA UPLOAD</th>
+                                    <th class="p-3 text-center">AÇÃO / VISUALIZAR</th>
+                                    <th class="p-3 text-center">EXCLUIR</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelas-table-body" class="divide-y divide-slate-200 font-medium">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- 6. MÓDULO PAINEL ADMIN E COMISSÕES -->
+        <div id="view-admin" class="hidden space-y-6">
+            <div class="bg-gradient-to-r from-purple-900 via-slate-900 to-slate-800 text-white p-6 rounded-3xl shadow-lg border border-purple-800/40 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-purple-300 bg-purple-950 px-2.5 py-0.5 rounded border border-purple-800">Módulo Restrito</span>
+                    </div>
+                    <h2 class="text-2xl font-black mt-1 text-white">Painel Administrativo</h2>
+                    <p class="text-xs text-purple-200/80 mt-1">Gestão de comissões, métricas e visão global do sistema.</p>
+                </div>
+            </div>
+
+            <!-- Menus de Navegação Interna do Admin -->
+            <div class="flex flex-col sm:flex-row items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-slate-200">
+                <button onclick="alternarAbaAdmin('dashboard')" id="btn-tab-dashboard" class="flex-1 w-full py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 bg-purple-600 text-white shadow-md">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard Financeiro
+                </button>
+                <button onclick="alternarAbaAdmin('comissoes')" id="btn-tab-comissoes" class="flex-1 w-full py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                    <i class="fa-solid fa-hand-holding-dollar"></i> Controle de Comissões
+                </button>
+            </div>
+
+            <!-- Controle de Comissões -->
+            <section id="admin-tab-comissoes" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-2 border-b border-slate-200 pb-3 mb-5">
+                    <i class="fa-solid fa-hand-holding-dollar text-purple-600 text-lg"></i>
+                    <h3 class="text-base font-bold text-slate-900">Controle de Comissões (Consumíveis)</h3>
+                </div>
+
+                <div class="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Registrar Nova Venda / Base</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+                        <input type="text" id="comissao_vendedor" placeholder="Nome do Vendedor" class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs font-medium outline-none focus:border-purple-600">
+                        
+                        <div class="relative">
+                            <input type="text" id="comissao_cliente" placeholder="Nome do Cliente" oninput="filtrarDropdownClientes(this.value)" class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs font-medium outline-none focus:border-purple-600">
+                            <div id="dropdownClientesComissao" class="absolute z-10 top-full mt-1 bg-white border border-slate-300 w-full rounded-xl shadow-xl hidden max-h-48 overflow-y-auto custom-scrollbar"></div>
+                        </div>
+
+                        <input type="date" id="comissao_data" class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs font-medium outline-none focus:border-purple-600">
+                        <button onclick="tentarAdicionarComissao()" class="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Registrar Base
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-4 flex flex-col md:flex-row gap-3">
+                    <div class="relative w-full md:w-1/2">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="filtroComissaoVendedor" placeholder="Filtrar por Vendedor" oninput="renderizarTabelaComissoes()" class="w-full pl-8 pr-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs outline-none focus:border-purple-600">
+                    </div>
+                    <div class="relative w-full md:w-1/2">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="filtroComissaoCliente" placeholder="Filtrar por Cliente" oninput="renderizarTabelaComissoes()" class="w-full pl-8 pr-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-xl text-xs outline-none focus:border-purple-600">
+                    </div>
+                </div>
+
+                <!-- Gráficos de Comissões -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-4 flex items-center gap-2"><i class="fa-solid fa-users text-purple-600"></i> Comissões Ativas por Vendedor</h4>
+                        <div class="relative h-64 w-full">
+                            <canvas id="chartComissoesVendedor"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-4 flex items-center gap-2"><i class="fa-solid fa-signal text-purple-600"></i> Status Global das Comissões</h4>
+                        <div class="relative h-64 w-full">
+                            <canvas id="chartComissoesStatus"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="bg-slate-900 text-white font-bold border-b border-slate-800">
+                                <th class="p-3">VENDEDOR</th>
+                                <th class="p-3">CLIENTE</th>
+                                <th class="p-3">DATA BASE</th>
+                                <th class="p-3">STATUS (RESTANTE)</th>
+                                <th class="p-3 text-center">AÇÕES</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaComissoesBody" class="divide-y divide-slate-200 font-medium">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Dashboard de Análise de Despesas -->
+            <section id="admin-tab-dashboard" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center gap-2 border-b border-slate-200 pb-3 mb-5">
+                    <i class="fa-solid fa-chart-pie text-purple-600 text-lg"></i>
+                    <h3 class="text-base font-bold text-slate-900">Dashboard Financeiro (Despesas e Viagens)</h3>
+                </div>
+
+                <!-- Filtros do Dashboard -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-sm mb-6 flex flex-wrap gap-3 items-end no-print">
+                    <div class="flex-1 min-w-[140px]">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Técnico/Vendedor</label>
+                        <select id="dash-filter-tecnico" onchange="renderizarDashboardDespesas()" class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-lg text-xs font-medium outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 transition">
+                            <option value="">Todos</option>
+                            <option value="Filipe">Filipe</option>
+                            <option value="Anderson">Anderson</option>
+                            <option value="Adriano">Adriano</option>
+                            <option value="Rafael">Rafael</option>
+                            <option value="Gabriel">Gabriel</option>
+                            <option value="Sidnei">Sidnei</option>
+                        </select>
+                    </div>
+                    <div class="flex-1 min-w-[140px]">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Categoria</label>
+                        <select id="dash-filter-categoria" onchange="renderizarDashboardDespesas()" class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-lg text-xs font-medium outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 transition">
+                            <option value="">Todas</option>
+                            <option value="Combustível">Combustível</option>
+                            <option value="Pedágio">Pedágio</option>
+                            <option value="Alimentação/Bebida">Alimentação/Bebida</option>
+                            <option value="Peças/Ferramentas">Peças/Ferramentas</option>
+                            <option value="Hotel">Hotel</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                    <div class="flex-1 min-w-[140px]">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Cliente / Busca</label>
+                        <input type="text" id="dash-filter-cliente" onkeyup="renderizarDashboardDespesas()" placeholder="Nome do cliente..." class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-lg text-xs outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 transition">
+                    </div>
+                    <div class="flex-1 min-w-[120px]">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Data Início</label>
+                        <input type="date" id="dash-filter-data-inicio" onchange="renderizarDashboardDespesas()" class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-lg text-xs outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 transition">
+                    </div>
+                    <div class="flex-1 min-w-[120px]">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Data Fim</label>
+                        <input type="date" id="dash-filter-data-fim" onchange="renderizarDashboardDespesas()" class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 rounded-lg text-xs outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 transition">
+                    </div>
+                    <div>
+                        <button onclick="limparFiltrosDashboard()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-lg transition border border-slate-300 h-[38px] flex items-center justify-center gap-1 shadow-sm" title="Limpar Filtros">
+                            <i class="fa-solid fa-eraser"></i> Limpar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 opacity-10 text-slate-900 text-5xl"><i class="fa-solid fa-money-bill-wave"></i></div>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Gasto</span>
+                        <div id="dash-total-gasto" class="text-xl font-black text-red-600 mt-1 truncate">R$ 0,00</div>
+                    </div>
+                    
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 opacity-10 text-slate-900 text-5xl"><i class="fa-solid fa-receipt"></i></div>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Qtd. Transações</span>
+                        <div id="dash-transacoes" class="text-xl font-black text-slate-800 mt-1">0</div>
+                    </div>
+                    
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 opacity-10 text-slate-900 text-5xl"><i class="fa-solid fa-layer-group"></i></div>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Maior Gasto (Categoria)</span>
+                        <div id="dash-maior-categoria" class="text-sm font-bold text-slate-800 mt-1 truncate">-</div>
+                        <div id="dash-valor-categoria" class="text-xs text-slate-500 font-semibold mt-0.5">R$ 0,00</div>
+                    </div>
+                    
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 opacity-10 text-slate-900 text-5xl"><i class="fa-solid fa-building"></i></div>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Maior Gasto (Cliente)</span>
+                        <div id="dash-maior-cliente" class="text-sm font-bold text-slate-800 mt-1 truncate">-</div>
+                        <div id="dash-valor-cliente" class="text-xs text-slate-500 font-semibold mt-0.5">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <!-- Gráficos de Despesas -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-4 flex items-center gap-2"><i class="fa-solid fa-chart-pie text-purple-600"></i> Despesas por Categoria</h4>
+                        <div class="relative h-64 w-full">
+                            <canvas id="chartDespesasCategoria"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-4 flex items-center gap-2"><i class="fa-solid fa-chart-line text-purple-600"></i> Evolução Diária</h4>
+                        <div class="relative h-64 w-full">
+                            <canvas id="chartDespesasEvolucao"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Detalhamento das Despesas Registradas</h4>
+                <div class="overflow-y-auto overflow-x-auto border border-slate-200 rounded-xl max-h-96 custom-scrollbar">
+                    <table class="w-full text-left text-xs">
+                        <thead class="sticky top-0 bg-slate-900 text-white z-10">
+                            <tr>
+                                <th class="p-3 font-bold uppercase tracking-wider border-b border-slate-800">Data</th>
+                                <th class="p-3 font-bold uppercase tracking-wider border-b border-slate-800">Técnico/Vendedor</th>
+                                <th class="p-3 font-bold uppercase tracking-wider border-b border-slate-800">Cliente</th>
+                                <th class="p-3 font-bold uppercase tracking-wider border-b border-slate-800">Descrição</th>
+                                <th class="p-3 font-bold uppercase tracking-wider border-b border-slate-800">Categoria</th>
+                                <th class="p-3 font-bold uppercase tracking-wider border-b border-slate-800 text-right">Valor (R$)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboard-despesas-body" class="divide-y divide-slate-200 bg-white">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
     </main>
 
     <!-- NOTIFICAÇÃO TOAST -->
@@ -995,18 +1352,12 @@
         <span id="toast-message" class="text-xs font-semibold">Ação executada com sucesso!</span>
     </div>
 
-    <!-- FIREBASE MODULE SDK SETUP WITH EMAIL/PASSWORD AUTHENTICATION -->
+    <!-- FIREBASE MODULE SDK SETUP -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, 
-            signInWithEmailAndPassword, 
-            signOut, 
-            onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDW05GuYDxXUCmtWfSxhfap1-l6_qkNspw",
             authDomain: "plataforma-cij.firebaseapp.com",
@@ -1022,138 +1373,322 @@
         const db = getFirestore(app);
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'plataforma-cij';
-        
-        const solicitacoesCol = collection(db, 'artifacts', appId, 'public', 'data', 'solicitacoes');
         const despesasCol = collection(db, 'artifacts', appId, 'public', 'data', 'despesas');
+        const tabelasCol = collection(db, 'artifacts', appId, 'public', 'data', 'tabelas_precos');
+        const comissoesCol = collection(db, 'artifacts', appId, 'public', 'data', 'comissoes');
+        const solicitacoesCol = collection(db, 'artifacts', appId, 'public', 'data', 'solicitacoes');
 
-        window.processarAutenticacao = async function(e) {
+        let unsubDespesas = null;
+        let unsubTabelas = null;
+        let unsubComissoes = null;
+        let unsubSolicitacoes = null;
+        let isFirstLoadSolicitacoes = true;
+
+        function attachFirestoreListeners() {
+            unsubDespesas = onSnapshot(despesasCol, (snapshot) => {
+                const docsData = [];
+                snapshot.forEach(docSnap => docsData.push(docSnap.data()));
+                window.listaDespesas = docsData;
+                localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
+                if (typeof window.renderizarRelatoriosDespesas === 'function') window.renderizarRelatoriosDespesas();
+                if (typeof window.renderizarDashboardDespesas === 'function') window.renderizarDashboardDespesas();
+            }, (error) => { console.warn("Aviso Firestore (Despesas):", error.message); });
+
+            unsubTabelas = onSnapshot(tabelasCol, (snapshot) => {
+                const docsData = [];
+                snapshot.forEach(docSnap => docsData.push(docSnap.data()));
+                window.listaTabelas = docsData;
+                localStorage.setItem('banco_tabelas_precos_cij', JSON.stringify(window.listaTabelas));
+                if (typeof window.renderizarTabelasPrecos === 'function') window.renderizarTabelasPrecos();
+            }, (error) => { console.warn("Aviso Firestore (Tabelas):", error.message); });
+
+            unsubComissoes = onSnapshot(comissoesCol, (snapshot) => {
+                const docsData = [];
+                snapshot.forEach(docSnap => docsData.push(docSnap.data()));
+                window.listaComissoes = docsData;
+                localStorage.setItem('banco_comissoes_cij', JSON.stringify(window.listaComissoes));
+                if (typeof window.renderizarTabelaComissoes === 'function') window.renderizarTabelaComissoes();
+            }, (error) => { console.warn("Aviso Firestore (Comissoes):", error.message); });
+
+            unsubSolicitacoes = onSnapshot(solicitacoesCol, (snapshot) => {
+                const docsData = [];
+                snapshot.forEach(docSnap => docsData.push(docSnap.data()));
+                
+                // Notificar administradores se houver novas solicitações
+                if (!isFirstLoadSolicitacoes && window.isUserAdminOrFinance) {
+                    const currentIds = new Set(window.listaSolicitacoes.map(s => s.id));
+                    docsData.forEach(doc => {
+                        if (!currentIds.has(doc.id)) {
+                            // Ignora o alerta se foi o próprio usuário que criou
+                            if (window.currentUser && doc.autor !== window.currentUser.email) {
+                                if (typeof window.mostrarNotificacao === 'function') {
+                                    window.mostrarNotificacao(`Nova Solicitação Recebida: ${doc.numero_seq} - ${doc.cli_razao}`);
+                                }
+                            }
+                        }
+                    });
+                }
+                isFirstLoadSolicitacoes = false;
+
+                window.listaSolicitacoes = docsData;
+                localStorage.setItem('banco_solicitacoes_cij', JSON.stringify(window.listaSolicitacoes));
+            }, (error) => { console.warn("Aviso Firestore (Solicitações):", error.message); });
+        }
+
+        function detachFirestoreListeners() {
+            if (unsubDespesas) unsubDespesas();
+            if (unsubTabelas) unsubTabelas();
+            if (unsubComissoes) unsubComissoes();
+            if (unsubSolicitacoes) unsubSolicitacoes();
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            const loginScreen = document.getElementById('login-screen');
+            if (user) {
+                if (loginScreen) loginScreen.classList.add('hidden');
+                window.currentUser = user;
+                if (typeof window.verificarPermissoesUsuario === 'function') {
+                    window.verificarPermissoesUsuario(user.email);
+                }
+                attachFirestoreListeners();
+            } else {
+                if (loginScreen) loginScreen.classList.remove('hidden');
+                window.currentUser = null;
+                detachFirestoreListeners();
+            }
+        });
+
+        window.handleLogin = async function(e) {
             e.preventDefault();
-            const email = document.getElementById('auth_email').value.trim();
-            const password = document.getElementById('auth_password').value.trim();
-            const errBox = document.getElementById('auth-error-msg');
-            const submitBtn = document.getElementById('auth-submit-btn');
-
-            errBox.classList.add('hidden');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processando...`;
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const remember = document.getElementById('auth-remember').checked;
 
             try {
+                if (remember) {
+                    localStorage.setItem('remember_email', email);
+                } else {
+                    localStorage.removeItem('remember_email');
+                }
                 await signInWithEmailAndPassword(auth, email, password);
+                if (typeof window.mostrarNotificacao === 'function') window.mostrarNotificacao("Login efetuado com sucesso!");
             } catch (err) {
-                console.error("Erro na autenticação:", err);
-                errBox.classList.remove('hidden');
-                errBox.textContent = "E-mail ou senha incorretos.";
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Acessar Plataforma`;
+                if (typeof window.mostrarNotificacao === 'function') window.mostrarNotificacao("Erro ao fazer login: " + err.message, true);
             }
         };
 
         window.fazerLogout = async function() {
+            await signOut(auth);
+            if (typeof window.mostrarNotificacao === 'function') window.mostrarNotificacao("Sessão encerrada.");
+        };
+
+        window.enviarEmailRedefinicao = async function() {
+            const email = document.getElementById('reset-email').value.trim();
+            if (!email) {
+                if (typeof window.mostrarNotificacao === 'function') window.mostrarNotificacao("Por favor, digite seu e-mail.", true);
+                return;
+            }
             try {
-                await signOut(auth);
-                mostrarNotificacao('Você saiu do sistema.');
+                await sendPasswordResetEmail(auth, email);
+                if (typeof window.mostrarNotificacao === 'function') window.mostrarNotificacao("Link de redefinição enviado para o e-mail " + email);
+                if (typeof window.fecharModalResetSenha === 'function') window.fecharModalResetSenha();
             } catch (err) {
-                console.error("Erro ao sair:", err);
+                if (typeof window.mostrarNotificacao === 'function') window.mostrarNotificacao("Erro ao enviar e-mail: " + err.message, true);
             }
         };
 
-        // Escutador de Mudança de Estado de Autenticação
-        onAuthStateChanged(auth, (user) => {
-            const modal = document.getElementById('auth-modal');
-            const profileBar = document.getElementById('user-profile-bar');
-            const userEmail = document.getElementById('user-display-email');
-            const statusBadge = document.getElementById('firebase-status-badge');
-            const statusText = document.getElementById('firebase-status-text');
-            const statusIcon = document.getElementById('firebase-icon');
-
-            if (user) {
-                // Usuário Autenticado
-                modal.classList.add('hidden');
-                profileBar.classList.remove('hidden');
-                profileBar.classList.add('flex');
-                if (userEmail) userEmail.textContent = user.email || 'Usuário Autenticado';
-
-                if (statusBadge) {
-                    statusBadge.className = "text-[10px] font-semibold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800 flex items-center gap-1";
-                }
-                if (statusIcon) statusIcon.className = "fa-solid fa-cloud text-[9px]";
-                if (statusText) statusText.textContent = "Cloud Sync On";
-
-                // Iniciar Escutadores Firestore
-                onSnapshot(solicitacoesCol, (snapshot) => {
-                    const docsData = [];
-                    snapshot.forEach(docSnap => docsData.push(docSnap.data()));
-                    if (docsData.length > 0) {
-                        window.listaSolicitacoes = docsData;
-                        localStorage.setItem('banco_solicitacoes_cij', JSON.stringify(window.listaSolicitacoes));
-                    }
-                });
-
-                onSnapshot(despesasCol, (snapshot) => {
-                    const docsData = [];
-                    snapshot.forEach(docSnap => docsData.push(docSnap.data()));
-                    if (docsData.length > 0) {
-                        window.listaDespesas = docsData;
-                        localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
-                        if (typeof window.renderizarRelatoriosDespesas === 'function') window.renderizarRelatoriosDespesas();
-                    }
-                });
-
-            } else {
-                // Usuário Desconectado
-                modal.classList.remove('hidden');
-                profileBar.classList.add('hidden');
-                profileBar.classList.remove('flex');
-
-                if (statusBadge) {
-                    statusBadge.className = "text-[10px] font-semibold text-amber-400 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-800 flex items-center gap-1";
-                }
-                if (statusIcon) statusIcon.className = "fa-solid fa-lock text-[9px]";
-                if (statusText) statusText.textContent = "Acesso Bloqueado";
-            }
-        });
-
-        // Funções de salvamento na nuvem
-        window.salvarSolicitacaoNuvem = async function(reg) {
-            try {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'solicitacoes', reg.id), reg);
-            } catch (err) {
-                console.error("Erro ao salvar solicitação no Firebase:", err);
-            }
-        };
-
-        window.excluirSolicitacaoNuvem = async function(id) {
-            try {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'solicitacoes', id));
-            } catch (err) {
-                console.error("Erro ao excluir solicitação do Firebase:", err);
-            }
-        };
-
+        // Métodos de Nuvem Exportados Globalmente
         window.salvarDespesaNuvem = async function(item) {
-            try {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'despesas', item.id), item);
-            } catch (err) {
-                console.error("Erro ao salvar despesa no Firebase:", err);
-            }
+            try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'despesas', item.id), item); } 
+            catch (err) { console.error("Erro no salvar despesa:", err); }
         };
-
         window.excluirDespesaNuvem = async function(id) {
-            try {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'despesas', id));
-            } catch (err) {
-                console.error("Erro ao excluir despesa do Firebase:", err);
-            }
+            try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'despesas', id)); } 
+            catch (err) { console.error("Erro no excluir despesa:", err); }
+        };
+        window.salvarTabelaNuvem = async function(item) {
+            try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tabelas_precos', item.id), item); } 
+            catch (err) { console.error("Erro no salvar tabela:", err); }
+        };
+        window.excluirTabelaNuvem = async function(id) {
+            try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tabelas_precos', id)); } 
+            catch (err) { console.error("Erro no excluir tabela:", err); }
+        };
+        window.salvarComissaoNuvem = async function(item) {
+            try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'comissoes', item.id), item); } 
+            catch (err) { console.error("Erro no salvar comissão:", err); }
+        };
+        window.excluirComissaoNuvem = async function(id) {
+            try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'comissoes', id)); } 
+            catch (err) { console.error("Erro no excluir comissão:", err); }
+        };
+        window.salvarSolicitacaoNuvem = async function(item) {
+            try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'solicitacoes', item.id), item); } 
+            catch (err) { console.error("Erro no salvar solicitação:", err); }
         };
     </script>
 
     <script>
-        /* VARIÁVEIS E ESTADOS GLOBAIS DA APLICAÇÃO */
+        /* CONFIGURAÇÃO DE PERMISSÕES DA PLATAFORMA */
+        
+        // 1. E-mails com acesso total (Admin / Financeiro)
+        window.EMAILS_ADMIN_FINANCEIRO = [
+            'admin@grupocij.com.br',
+            'financeiro@grupocij.com.br',
+            'faturamento@grupocij.com',
+            'faturamento@grupocij.com.br',
+            'marcos@grupocij.com',
+            'marcos@grupocij.com.br',
+            'filipe@grupocij.com.br',
+            'filipe@leadjet.com.br',
+            'adm@grupocij.com.br'
+        ];
+
+        // 2. E-mails da equipe técnica (NÃO vêm Tabelas de Preços, Comissões ou Totais)
+        window.EMAILS_TECNICOS = [
+            'tecnico@grupocij.com.br',
+            'anderson@grupocij.com.br',
+            'adriano@grupocij.com.br',
+            'rafael@grupocij.com.br',
+            'gabriel@grupocij.com.br',
+            'sidnei@grupocij.com.br'
+        ];
+
+        // 3. E-mails da equipe de vendas (VÊM Tabelas de Preços, mas NÃO upload nem Comissões)
+        window.EMAILS_VENDEDORES = [
+            'vendedor@grupocij.com.br',
+            'vendas@grupocij.com.br',
+            'marcos@grupocij.com.br'
+        ];
+
+        window.userRole = 'VENDEDOR'; 
+        window.isUserAdminOrFinance = false;
+
+        function verificarPermissoesUsuario(email) {
+            const cleanEmail = (email || '').toLowerCase().trim();
+            
+            let role = 'VENDEDOR';
+
+            if (window.EMAILS_ADMIN_FINANCEIRO.includes(cleanEmail) || cleanEmail.includes('admin') || cleanEmail.includes('financeiro')) {
+                role = 'ADMIN_FINANCEIRO';
+            } else if (window.EMAILS_TECNICOS.includes(cleanEmail) || cleanEmail.includes('tecnico') || cleanEmail.includes('técnico')) {
+                role = 'TECNICO';
+            } else if (window.EMAILS_VENDEDORES.includes(cleanEmail) || cleanEmail.includes('vendedor') || cleanEmail.includes('vendas')) {
+                role = 'VENDEDOR';
+            }
+
+            window.userRole = role;
+            window.isUserAdminOrFinance = (role === 'ADMIN_FINANCEIRO');
+
+            const badge = document.getElementById('user-role-badge');
+            const cardTotal = document.getElementById('card-total-admin');
+            const filterActions = document.getElementById('filter-actions-admin');
+            
+            const navTabelas = document.getElementById('nav-tabelas');
+            const cardTabelasInicio = document.getElementById('card-tabelas-inicio');
+            const formUploadSection = document.getElementById('sec-upload-tabela');
+            const listTabelasSection = document.getElementById('sec-list-tabelas');
+            
+            const navAdmin = document.getElementById('nav-admin');
+            const cardAdminInicio = document.getElementById('card-admin-inicio');
+
+            if (badge) {
+                if (role === 'ADMIN_FINANCEIRO') {
+                    badge.textContent = "Financeiro / Admin";
+                    badge.className = "text-[10px] font-bold px-2 py-0.5 rounded border flex items-center gap-1 bg-emerald-950 text-emerald-300 border-emerald-800";
+                } else if (role === 'VENDEDOR') {
+                    badge.textContent = "Vendedor";
+                    badge.className = "text-[10px] font-bold px-2 py-0.5 rounded border flex items-center gap-1 bg-blue-950 text-blue-300 border-blue-800";
+                } else {
+                    badge.textContent = "Técnico";
+                    badge.className = "text-[10px] font-bold px-2 py-0.5 rounded border flex items-center gap-1 bg-sky-950 text-sky-300 border-sky-800";
+                }
+            }
+
+            if (cardTotal) {
+                if (role === 'ADMIN_FINANCEIRO') cardTotal.classList.remove('hidden');
+                else cardTotal.classList.add('hidden');
+            }
+
+            if (filterActions) {
+                if (role === 'ADMIN_FINANCEIRO') filterActions.classList.remove('hidden');
+                else filterActions.classList.add('hidden');
+            }
+
+            const podeVerTabelas = (role === 'ADMIN_FINANCEIRO' || role === 'VENDEDOR');
+            if (navTabelas) {
+                if (podeVerTabelas) navTabelas.classList.remove('hidden');
+                else navTabelas.classList.add('hidden');
+            }
+
+            if (cardTabelasInicio) {
+                if (podeVerTabelas) cardTabelasInicio.classList.remove('hidden');
+                else cardTabelasInicio.classList.add('hidden');
+            }
+
+            if (formUploadSection) {
+                if (role === 'ADMIN_FINANCEIRO') formUploadSection.classList.remove('hidden');
+                else formUploadSection.classList.add('hidden');
+            }
+
+            if (listTabelasSection) {
+                if (role === 'ADMIN_FINANCEIRO') {
+                    listTabelasSection.className = "lg:col-span-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200";
+                } else {
+                    listTabelasSection.className = "lg:col-span-12 bg-white p-6 rounded-2xl shadow-sm border border-slate-200";
+                }
+            }
+
+            if (navAdmin) {
+                if (role === 'ADMIN_FINANCEIRO') navAdmin.classList.remove('hidden');
+                else navAdmin.classList.add('hidden');
+            }
+
+            if (cardAdminInicio) {
+                if (role === 'ADMIN_FINANCEIRO') cardAdminInicio.classList.remove('hidden');
+                else cardAdminInicio.classList.add('hidden');
+            }
+
+            renderizarRelatoriosDespesas();
+            if (podeVerTabelas) renderizarTabelasPrecos();
+            if (role === 'ADMIN_FINANCEIRO') {
+                renderizarTabelaComissoes();
+                if (typeof window.renderizarDashboardDespesas === 'function') window.renderizarDashboardDespesas();
+            }
+        }
+
+        /* MODAL E LEMBRAR SENHA */
+        function abrirModalResetSenha() { document.getElementById('modal-reset-senha').classList.remove('hidden'); }
+        function fecharModalResetSenha() { document.getElementById('modal-reset-senha').classList.add('hidden'); }
+
+        let confirmCallback = null;
+        function mostrarModalConfirm(titulo, mensagem, callback) {
+            document.getElementById('confirm-title').textContent = titulo;
+            document.getElementById('confirm-message').textContent = mensagem;
+            confirmCallback = callback;
+            document.getElementById('modal-confirm').classList.remove('hidden');
+        }
+
+        function fecharModalConfirm(confirmado) {
+            document.getElementById('modal-confirm').classList.add('hidden');
+            if (confirmado && typeof confirmCallback === 'function') confirmCallback();
+            confirmCallback = null;
+        }
+        document.getElementById('btn-confirm-action').addEventListener('click', () => fecharModalConfirm(true));
+
+        /* VARIÁVEIS GLOBAIS DA APLICAÇÃO */
         window.listaDespesas = JSON.parse(localStorage.getItem('banco_despesas_cij') || '[]');
+        window.listaTabelas = JSON.parse(localStorage.getItem('banco_tabelas_precos_cij') || '[]');
+        window.listaComissoes = JSON.parse(localStorage.getItem('banco_comissoes_cij') || '[]');
         window.listaSolicitacoes = JSON.parse(localStorage.getItem('banco_solicitacoes_cij') || '[]');
         let relatoriosExpandidos = new Set();
         let rowVendaCount = 0;
+
+        // Instâncias Globais do Chart.js
+        let chartDespesasCatInst = null;
+        let chartDespesasEvoInst = null;
+        let chartComissoesVendInst = null;
+        let chartComissoesStatInst = null;
 
         const MODELOS_POR_CATEGORIA = {
             "Impressora CIJ": ["8820", "8860", "8860P", "8910", "8610", "Outro (Digitar)"],
@@ -1168,57 +1703,39 @@
             "Sensor / Encoder / Automação": ["Sensor Fotoelétrico NPN/PNP", "Encoder Rotativo com Roda", "Cabo de Sinal / Comunicação CLP", "Outro (Digitar)"]
         };
 
-        function safeSetVal(id, val) {
-            const el = document.getElementById(id);
-            if (el) el.value = val !== undefined && val !== null ? val : '';
-        }
-
-        function safeGetVal(id, defaultVal = '') {
-            const el = document.getElementById(id);
-            return el ? el.value.trim() : defaultVal;
-        }
-
-        function safeSetText(id, txt) {
-            const el = document.getElementById(id);
-            if (el) el.innerText = txt !== undefined && txt !== null ? txt : '';
-        }
-
-        function safeGetText(id) {
-            const el = document.getElementById(id);
-            return el ? el.innerText.trim() : '';
-        }
-
-        function safeGetChecked(id) {
-            const el = document.getElementById(id);
-            return el ? el.checked : false;
-        }
+        function safeSetVal(id, val) { const el = document.getElementById(id); if (el) el.value = val !== undefined && val !== null ? val : ''; }
+        function safeGetVal(id, defaultVal = '') { const el = document.getElementById(id); return el ? el.value.trim() : defaultVal; }
+        function safeSetText(id, txt) { const el = document.getElementById(id); if (el) el.innerText = txt !== undefined && txt !== null ? txt : ''; }
+        function safeGetChecked(id) { const el = document.getElementById(id); return el ? el.checked : false; }
 
         function parseValorMoeda(val) {
             if (val === null || val === undefined || val === '') return 0;
             if (typeof val === 'number') return isNaN(val) ? 0 : val;
             let str = val.toString().trim().replace(/R\$\s?/gi, '');
-            if (str.includes('.') && str.includes(',')) {
-                str = str.replace(/\./g, '').replace(',', '.');
-            } else if (str.includes(',')) {
-                str = str.replace(',', '.');
-            } else if (str.includes('.')) {
+            if (str.includes('.') && str.includes(',')) str = str.replace(/\./g, '').replace(',', '.');
+            else if (str.includes(',')) str = str.replace(',', '.');
+            else if (str.includes('.')) {
                 const parts = str.split('.');
-                if (parts.length > 2 || (parts.length === 2 && parts[1].length === 3)) {
-                    str = str.replace(/\./g, '');
-                }
+                if (parts.length > 2 || (parts.length === 2 && parts[1].length === 3)) str = str.replace(/\./g, '');
             }
             str = str.replace(/[^0-9.]/g, '');
             let parsed = parseFloat(str);
             return isNaN(parsed) ? 0 : parsed;
         }
 
-        function formatarMoeda(val) {
-            return (parseFloat(val) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
+        function formatarMoeda(val) { return (parseFloat(val) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
 
-        function mostrarNotificacao(msg) {
+        function mostrarNotificacao(msg, isError = false) {
             const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
             safeSetText('toast-message', msg);
+            if (icon) {
+                if (isError) {
+                    icon.className = "fa-solid fa-triangle-exclamation text-amber-400";
+                } else {
+                    icon.className = "fa-solid fa-circle-check text-emerald-400";
+                }
+            }
             if (toast) {
                 toast.classList.remove('hidden');
                 setTimeout(() => toast.classList.add('hidden'), 3500);
@@ -1226,7 +1743,16 @@
         }
 
         function navegarPara(moduloId) {
-            const modulos = ['inicio', 'solicitacao', 'calculadora', 'despesas'];
+            if (moduloId === 'tabelas' && window.userRole === 'TECNICO') {
+                mostrarNotificacao('Acesso restrito. Módulo disponível para Comercial e Gestão.');
+                return;
+            }
+            if (moduloId === 'admin' && !window.isUserAdminOrFinance) {
+                mostrarNotificacao('Acesso restrito ao perfil de Administrador / Financeiro.');
+                return;
+            }
+
+            const modulos = ['inicio', 'solicitacao', 'calculadora', 'despesas', 'tabelas', 'admin'];
             modulos.forEach(m => {
                 const view = document.getElementById(`view-${m}`);
                 const nav = document.getElementById(`nav-${m}`);
@@ -1246,16 +1772,16 @@
             }
 
             if (moduloId === 'despesas') renderizarRelatoriosDespesas();
+            if (moduloId === 'tabelas') renderizarTabelasPrecos();
+            if (moduloId === 'admin') {
+                renderizarTabelaComissoes();
+                if (typeof window.renderizarDashboardDespesas === 'function') window.renderizarDashboardDespesas();
+            }
             if (moduloId === 'calculadora') calcularSimuladorOficial();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            if (menu) menu.classList.toggle('hidden');
-        }
-
-        /* LÓGICA DO SIMULADOR LEADJET (CÁLCULO OFICIAL) */
+        /* LÓGICA DO SIMULADOR LEADJET */
         function calcularSimuladorOficial() {
             const ptsMatriz = parseInt(safeGetVal('tipoMatriz', '16')) || 16;
             const chars = parseInt(safeGetVal('caracteres', '150')) || 0;
@@ -1300,9 +1826,7 @@
             const selectModelo = tr.querySelector('.venda-desc-select');
             const inputCustom = tr.querySelector('.venda-desc-custom');
             if (!selectModelo) return '';
-            if (selectModelo.value === "Outro (Digitar)") {
-                return inputCustom ? inputCustom.value.trim() : '';
-            }
+            if (selectModelo.value === "Outro (Digitar)") return inputCustom ? inputCustom.value.trim() : '';
             return selectModelo.value;
         }
 
@@ -1333,9 +1857,8 @@
                 </td>
                 <td class="py-2 px-2">
                     <div class="flex flex-col gap-1">
-                        <select class="venda-desc-select w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 outline-none focus:border-blue-600 bg-white font-medium" onchange="tratarSelecaoModeloCustom(this)">
-                        </select>
-                        <input type="text" class="venda-desc-custom hidden w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 outline-none focus:border-blue-600 bg-white font-medium" placeholder="Digite o modelo/descrição customizado">
+                        <select class="venda-desc-select w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 outline-none focus:border-blue-600 bg-white font-medium" onchange="tratarSelecaoModeloCustom(this)"></select>
+                        <input type="text" class="venda-desc-custom hidden w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 outline-none focus:border-blue-600 bg-white font-medium" placeholder="Digite o modelo customizado">
                     </div>
                 </td>
                 <td class="py-2 px-1 text-center">
@@ -1345,7 +1868,7 @@
                     <input type="text" class="venda-preco-unit w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 outline-none focus:border-blue-600 font-semibold text-right" value="${precoUnit ? (typeof precoUnit === 'number' ? formatarMoeda(precoUnit) : precoUnit) : ''}" placeholder="Ex: R$ 28.500,00" oninput="calcularLinhaVenda(this)" onblur="formatarCampoPrecoUnit(this)">
                 </td>
                 <td class="py-2 px-2">
-                    <input type="text" readonly class="venda-preco-total w-full rounded-lg border border-slate-200 p-2 text-xs text-blue-900 font-extrabold text-right bg-slate-100 outline-none" value="R$ 0,00" placeholder="R$ 0,00">
+                    <input type="text" readonly class="venda-preco-total w-full rounded-lg border border-slate-200 p-2 text-xs text-blue-900 font-extrabold text-right bg-slate-100 outline-none" value="R$ 0,00">
                 </td>
                 <td class="py-2 px-2 text-center no-print">
                     <button type="button" onclick="removerLinhaVenda('row-venda-${rowVendaCount}')" class="text-red-500 hover:text-red-700 p-1.5 rounded-lg transition" title="Excluir Linha">
@@ -1355,26 +1878,19 @@
             `;
 
             tbody.appendChild(tr);
-            
             const catSelect = tr.querySelector('.venda-cat');
-            if (catSelect) {
-                atualizarModelosDaLinha(catSelect, descricao);
-            }
-
+            if (catSelect) atualizarModelosDaLinha(catSelect, descricao);
             calcularLinhaVenda(tr.querySelector('.venda-qtd'));
         }
 
         function atualizarModelosDaLinha(catSelect, valorDescricaoExistente = '') {
             const tr = catSelect.closest('tr');
             if (!tr) return;
-
             const selectModelo = tr.querySelector('.venda-desc-select');
             const inputCustom = tr.querySelector('.venda-desc-custom');
             if (!selectModelo) return;
 
-            const categoria = catSelect.value;
-            const modelos = MODELOS_POR_CATEGORIA[categoria] || ["Outro (Digitar)"];
-
+            const modelos = MODELOS_POR_CATEGORIA[catSelect.value] || ["Outro (Digitar)"];
             selectModelo.innerHTML = '';
             modelos.forEach(m => {
                 const opt = document.createElement('option');
@@ -1401,10 +1917,8 @@
 
         function tratarSelecaoModeloCustom(selectModelo) {
             const tr = selectModelo.closest('tr');
-            if (!tr) return;
-            const inputCustom = tr.querySelector('.venda-desc-custom');
+            const inputCustom = tr?.querySelector('.venda-desc-custom');
             if (!inputCustom) return;
-
             if (selectModelo.value === "Outro (Digitar)") {
                 inputCustom.classList.remove('hidden');
                 inputCustom.focus();
@@ -1417,28 +1931,16 @@
         function calcularLinhaVenda(elementInRow) {
             const tr = elementInRow.closest('tr');
             if (!tr) return;
-
             const qtdVal = parseInt(tr.querySelector('.venda-qtd')?.value || '1', 10) || 1;
-            const precoUnitRaw = tr.querySelector('.venda-preco-unit')?.value || '0';
-            const numUnit = parseValorMoeda(precoUnitRaw);
-
-            const numTotal = qtdVal * numUnit;
-
+            const numUnit = parseValorMoeda(tr.querySelector('.venda-preco-unit')?.value || '0');
             const inputTotal = tr.querySelector('.venda-preco-total');
-            if (inputTotal) {
-                inputTotal.value = formatarMoeda(numTotal);
-            }
-
+            if (inputTotal) inputTotal.value = formatarMoeda(qtdVal * numUnit);
             atualizarContadoresETotais();
         }
 
         function formatarCampoPrecoUnit(input) {
             const num = parseValorMoeda(input.value);
-            if (num > 0) {
-                input.value = formatarMoeda(num);
-            } else {
-                input.value = '';
-            }
+            input.value = num > 0 ? formatarMoeda(num) : '';
             calcularLinhaVenda(input);
         }
 
@@ -1452,8 +1954,7 @@
         }
 
         function reindexarVenda() {
-            const rows = document.querySelectorAll('#corpoTabelaVenda tr');
-            rows.forEach((row, idx) => {
+            document.querySelectorAll('#corpoTabelaVenda tr').forEach((row, idx) => {
                 const cellIndex = row.querySelector('.num-index-venda');
                 if (cellIndex) cellIndex.textContent = idx + 1;
             });
@@ -1462,62 +1963,121 @@
         function atualizarContadoresETotais() {
             const rows = document.querySelectorAll('#corpoTabelaVenda tr');
             safeSetText('totalItensVenda', rows.length);
-
             let somaGeral = 0;
-            rows.forEach(row => {
-                const totalRow = parseValorMoeda(row.querySelector('.venda-preco-total')?.value || '0');
-                somaGeral += totalRow;
-            });
-
+            rows.forEach(row => somaGeral += parseValorMoeda(row.querySelector('.venda-preco-total')?.value || '0'));
             safeSetText('valorTotalGeral', formatarMoeda(somaGeral));
         }
 
         function limparFormulario() {
-            const form = document.getElementById('formVendaInstalacao');
-            if (form) form.reset();
-            const tbody = document.getElementById('corpoTabelaVenda');
-            if (tbody) tbody.innerHTML = '';
+            document.getElementById('formVendaInstalacao')?.reset();
+            document.getElementById('corpoTabelaVenda').innerHTML = '';
             rowVendaCount = 0;
             adicionarLinhaVenda();
             mostrarNotificacao('Formulário limpo.');
         }
 
-        function salvarFormularioBanco() {
-            const cliente = safeGetVal('cli_razao');
-            const pedido = safeGetVal('ven_num_pedido') || 'S/N';
+        function salvarSolicitacao() {
+            // Validar campos obrigatórios
+            const razao = safeGetVal('cli_razao');
             const cnpj = safeGetVal('cli_cnpj');
-
-            if (!cliente) {
-                mostrarNotificacao('Preencha a Razão Social / Cliente para salvar.');
+            const pedido = safeGetVal('ven_num_pedido');
+            
+            if(!razao || !cnpj || !pedido) {
+                mostrarNotificacao('Preencha os campos obrigatórios (*): Razão Social, CNPJ e Nº Pedido', true);
                 return;
             }
 
-            const reg = {
+            // Gerar numeração sequencial
+            const nums = window.listaSolicitacoes
+                .map(i => i.numero_seq)
+                .filter(Boolean)
+                .map(n => parseInt(n.replace(/\D/g, '')))
+                .filter(n => !isNaN(n));
+            const proxSeq = `SOL-${(nums.length > 0 ? Math.max(...nums) : 1000) + 1}`;
+
+            // Coletar itens da tabela
+            const itensVenda = [];
+            document.querySelectorAll('#corpoTabelaVenda tr').forEach((row) => {
+                itensVenda.push({
+                    categoria: row.querySelector('.venda-cat')?.value || '',
+                    descricao: obterDescricaoDaLinha(row),
+                    qtd: parseInt(row.querySelector('.venda-qtd')?.value || '1', 10),
+                    preco_unit: parseValorMoeda(row.querySelector('.venda-preco-unit')?.value || '0'),
+                    preco_total: parseValorMoeda(row.querySelector('.venda-preco-total')?.value || '0')
+                });
+            });
+
+            // Montar objeto da solicitação
+            const solicitacaoObj = {
                 id: Date.now().toString(),
-                data_criacao: new Date().toLocaleDateString('pt-BR'),
-                tipo: 'Solicitação CIJ',
-                numero: pedido,
-                cliente,
-                cnpj,
-                total: safeGetText('valorTotalGeral')
+                numero_seq: proxSeq,
+                data_registro: new Date().toISOString(),
+                autor: window.currentUser ? window.currentUser.email : 'Desconhecido',
+                
+                // Cliente
+                cli_razao: razao,
+                cli_fantasia: safeGetVal('cli_fantasia'),
+                cli_cnpj: cnpj,
+                cli_ie: safeGetVal('cli_ie'),
+                cli_cep: safeGetVal('cli_cep'),
+                cli_endereco: safeGetVal('cli_endereco'),
+                cli_cidade: safeGetVal('cli_cidade'),
+                cli_contato_nome: safeGetVal('cli_contato_nome'),
+                cli_contato_fone: safeGetVal('cli_contato_fone'),
+                cli_contato_email: safeGetVal('cli_contato_email'),
+                cli_tecnico_nome: safeGetVal('cli_tecnico_nome'),
+                cli_tecnico_fone: safeGetVal('cli_tecnico_fone'),
+                cli_transportadora: safeGetVal('cli_transportadora'),
+
+                // Comercial
+                ven_num_proposta: safeGetVal('ven_num_proposta'),
+                ven_num_pedido: pedido,
+                ven_data_solicitacao: safeGetVal('ven_data_solicitacao'),
+                ven_vendedor: safeGetVal('ven_vendedor'),
+                ven_modalidade: safeGetVal('ven_modalidade'),
+                ven_cond_pagto: safeGetVal('ven_cond_pagto'),
+                ven_previsao_entrega: safeGetVal('ven_previsao_entrega'),
+                ven_previsao_instalacao: safeGetVal('ven_previsao_instalacao'),
+
+                // Itens
+                itens: itensVenda,
+                valor_total: parseValorMoeda(document.getElementById('valorTotalGeral').innerText),
+
+                // Linha
+                lin_substrato: safeGetVal('lin_substrato'),
+                lin_velocidade: safeGetVal('lin_velocidade'),
+                lin_sentido: safeGetVal('lin_sentido'),
+                lin_ambiente: safeGetVal('lin_ambiente'),
+                lin_energia: safeGetVal('lin_energia'),
+                lin_suporte_mecanico: safeGetVal('lin_suporte_mecanico'),
+
+                // Serviços
+                srv_fisica: safeGetChecked('srv_fisica'),
+                srv_eletrica: safeGetChecked('srv_eletrica'),
+                srv_parametrizacao: safeGetChecked('srv_parametrizacao'),
+                srv_treina_operador: safeGetChecked('srv_treina_operador'),
+                srv_treina_manutencao: safeGetChecked('srv_treina_manutencao'),
+                srv_integracao_clp: safeGetChecked('srv_integracao_clp'),
+
+                // Observações
+                obs_gerais: safeGetVal('obs_gerais')
             };
 
-            window.listaSolicitacoes.unshift(reg);
+            // Salvar local e na nuvem
+            window.listaSolicitacoes.unshift(solicitacaoObj);
             localStorage.setItem('banco_solicitacoes_cij', JSON.stringify(window.listaSolicitacoes));
             
             if (typeof window.salvarSolicitacaoNuvem === 'function') {
-                window.salvarSolicitacaoNuvem(reg);
+                window.salvarSolicitacaoNuvem(solicitacaoObj);
             }
 
-            mostrarNotificacao('Solicitação gravada no Banco de Dados e sincronizada!');
+            mostrarNotificacao(`Solicitação ${proxSeq} salva com sucesso!`);
+            limparFormulario();
         }
 
-        /* EXPORTAÇÃO EXCEL DA SOLICITAÇÃO CIJ (DUAS ABAS FORMATADAS) */
+        /* EXPORTAÇÃO EXCEL DA SOLICITAÇÃO CIJ */
         function gerarExcel() {
-            if (typeof XLSX === 'undefined') {
-                mostrarNotificacao('A biblioteca Excel está carregando...');
-                return;
-            }
+            if (typeof XLSX === 'undefined') { mostrarNotificacao('Biblioteca Excel carregando...'); return; }
 
             const cliente = safeGetVal('cli_razao', 'Cliente').trim() || 'Cliente';
             const proposta = safeGetVal('ven_num_proposta', 'S/N').trim() || 'S/N';
@@ -1533,32 +2093,25 @@
                 return cellObj;
             }
 
-            /* --- ABA 1: EQUIPAMENTOS E INSUMOS --- */
             const ws1Data = [
-                [createCell('SOLICITAÇÃO DE EQUIPAMENTOS CIJ - VENDA E INSTALAÇÃO', { bold: true, color: 'FFFFFF', bg: '1E3A8A', align: 'center', sz: 13 }), createCell(''), createCell(''), createCell(''), createCell(''), createCell('')],
-                [createCell(`PROPOSTA: ${proposta}   |   PEDIDO: ${pedido}   |   CLIENTE: ${cliente}`, { bold: true, color: '1E3A8A', bg: 'DBEAFE', align: 'center', sz: 10 }), createCell(''), createCell(''), createCell(''), createCell(''), createCell('')],
+                [createCell('SOLICITAÇÃO DE EQUIPAMENTOS CIJ', { bold: true, color: 'FFFFFF', bg: '1E3A8A', align: 'center', sz: 13 }), createCell(''), createCell(''), createCell(''), createCell(''), createCell('')],
+                [createCell(`PROPOSTA: ${proposta} | PEDIDO: ${pedido} | CLIENTE: ${cliente}`, { bold: true, color: '1E3A8A', bg: 'DBEAFE', align: 'center', sz: 10 }), createCell(''), createCell(''), createCell(''), createCell(''), createCell('')],
                 [createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false})],
-                ["#", "Tecnologia / Categoria", "Modelo / Descrição", "Qtd", "Preço Unit. (R$)", "Preço Total (R$)"].map(h => createCell(h, { bold: true, color: 'FFFFFF', bg: '0F172A', align: h.includes('Preço') ? 'right' : 'left', sz: 11 }))
+                ["#", "Tecnologia / Categoria", "Modelo / Descrição", "Qtd", "Preço Unit.", "Preço Total"].map(h => createCell(h, { bold: true, color: 'FFFFFF', bg: '0F172A', align: h.includes('Preço') ? 'right' : 'left' }))
             ];
             const ws1Merges = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 5 } }];
 
-            const rows = document.querySelectorAll('#corpoTabelaVenda tr');
-            let totalItens = 0;
-            let valorGeralAcumulado = 0;
-
-            rows.forEach((row, idx) => {
+            let totalItens = 0; let valorGeralAcumulado = 0;
+            document.querySelectorAll('#corpoTabelaVenda tr').forEach((row, idx) => {
                 const cat = row.querySelector('.venda-cat')?.value || '-';
                 const desc = obterDescricaoDaLinha(row) || '-';
                 const qtd = parseInt(row.querySelector('.venda-qtd')?.value || '1', 10);
                 const precoUnitStr = row.querySelector('.venda-preco-unit')?.value || 'R$ 0,00';
                 const precoTotalStr = row.querySelector('.venda-preco-total')?.value || 'R$ 0,00';
-
-                totalItens += qtd;
-                valorGeralAcumulado += parseValorMoeda(precoTotalStr);
-
+                totalItens += qtd; valorGeralAcumulado += parseValorMoeda(precoTotalStr);
                 const bg = idx % 2 === 0 ? 'FFFFFF' : 'F8FAFC';
                 ws1Data.push([
-                    createCell(idx + 1, { align: 'center', bold: true, color: '64748B', bg }),
+                    createCell(idx + 1, { align: 'center', bold: true, bg }),
                     createCell(cat, { bold: true, color: '1E3A8A', bg }),
                     createCell(desc, { bg }),
                     createCell(qtd, { align: 'center', bold: true, bg }),
@@ -1568,115 +2121,38 @@
             });
 
             ws1Data.push([
-                createCell('TOTAL:', { bold: true, color: '1E3A8A', bg: 'E2E8F0', align: 'right' }),
-                createCell(''), createCell(''),
-                createCell(totalItens, { bold: true, color: '1E3A8A', bg: 'E2E8F0', align: 'center' }),
-                createCell('VALOR TOTAL:', { bold: true, color: '1E3A8A', bg: 'E2E8F0', align: 'right' }), 
+                createCell('TOTAL:', { bold: true, bg: 'E2E8F0', align: 'right' }), createCell(''), createCell(''),
+                createCell(totalItens, { bold: true, bg: 'E2E8F0', align: 'center' }),
+                createCell('VALOR TOTAL:', { bold: true, bg: 'E2E8F0', align: 'right' }), 
                 createCell(formatarMoeda(valorGeralAcumulado), { bold: true, color: '0958D9', bg: 'E2E8F0', align: 'right' })
             ]);
             ws1Merges.push({ s: { r: ws1Data.length - 1, c: 0 }, e: { r: ws1Data.length - 1, c: 2 } });
 
-            /* --- ABA 2: RESUMO COMPLETO DA SOLICITAÇÃO --- */
-            const ws2Data = [];
-            const ws2Merges = [];
-
-            ws2Data.push([
-                createCell('RELATÓRIO TÉCNICO E COMERCIAL DA SOLICITAÇÃO', { bold: true, color: 'FFFFFF', bg: '1E3A8A', align: 'center', sz: 13, border: false }),
-                createCell('')
-            ]);
+            const ws2Data = []; const ws2Merges = [];
+            ws2Data.push([createCell('RELATÓRIO TÉCNICO E COMERCIAL', { bold: true, color: 'FFFFFF', bg: '1E3A8A', align: 'center', sz: 13, border: false }), createCell('')]);
             ws2Merges.push({ s: { r: 0, c: 0 }, e: { r: 0, c: 1 } });
-
             ws2Data.push([createCell('', {border:false}), createCell('', {border:false})]);
 
-            function addSectionHeader(title) {
-                ws2Data.push([
-                    createCell(title, { bold: true, color: 'FFFFFF', bg: '1E40AF', align: 'left', sz: 11 }),
-                    createCell('', { bg: '1E40AF' })
-                ]);
+            function addSection(title) {
+                ws2Data.push([createCell(title, { bold: true, color: 'FFFFFF', bg: '1E40AF', align: 'left', sz: 11 }), createCell('', { bg: '1E40AF' })]);
                 ws2Merges.push({ s: { r: ws2Data.length - 1, c: 0 }, e: { r: ws2Data.length - 1, c: 1 } });
             }
+            function addField(label, value) { ws2Data.push([createCell(label, { bold: true, bg: 'F1F5F9' }), createCell(value || '-', { align: 'left' })]); }
 
-            function addFieldRow(label, value) {
-                ws2Data.push([
-                    createCell(label, { bold: true, color: '334155', bg: 'F1F5F9', align: 'left' }),
-                    createCell(value || '-', { color: '0F172A', align: 'left' })
-                ]);
-            }
-
-            function addServiceRow(label, isChecked) {
-                const statusText = isChecked ? 'SIM (INCLUSO)' : 'NÃO INCLUSO';
-                const bg = isChecked ? 'DCFCE7' : 'FEE2E2';
-                const color = isChecked ? '15803D' : 'B91C1C';
-                ws2Data.push([
-                    createCell(label, { bold: true, color: '334155', bg: 'F1F5F9' }),
-                    createCell(statusText, { bold: true, color: color, bg: bg, align: 'center' })
-                ]);
-            }
-
-            // 1. Dados do Cliente
-            addSectionHeader('1. DADOS DO CLIENTE E LOCAL DE INSTALAÇÃO');
-            addFieldRow('Razão Social / Cliente', safeGetVal('cli_razao'));
-            addFieldRow('Nome Fantasia', safeGetVal('cli_fantasia'));
-            addFieldRow('CNPJ / CPF', safeGetVal('cli_cnpj'));
-            addFieldRow('Inscrição Estadual (IE)', safeGetVal('cli_ie'));
-            addFieldRow('CEP', safeGetVal('cli_cep'));
-            addFieldRow('Endereço Completo de Instalação', safeGetVal('cli_endereco'));
-            addFieldRow('Cidade / UF', safeGetVal('cli_cidade'));
-            addFieldRow('Contato Comercial', safeGetVal('cli_contato_nome'));
-            addFieldRow('Telefone / WhatsApp Comercial', safeGetVal('cli_contato_fone'));
-            addFieldRow('E-mail Comercial', safeGetVal('cli_contato_email'));
-            addFieldRow('Responsável Técnico Cliente', safeGetVal('cli_tecnico_nome'));
-            addFieldRow('Telefone / Ramal Técnico', safeGetVal('cli_tecnico_fone'));
-            addFieldRow('Transportadora / Redespacho', safeGetVal('cli_transportadora'));
-
+            addSection('1. DADOS DO CLIENTE E LOCAL');
+            addField('Razão Social', safeGetVal('cli_razao')); addField('CNPJ', safeGetVal('cli_cnpj')); addField('Cidade', safeGetVal('cli_cidade'));
             ws2Data.push([createCell('', {border:false}), createCell('', {border:false})]);
 
-            // 2. Dados Comerciais
-            addSectionHeader('2. DADOS COMERCIAIS DO PEDIDO DE VENDA');
-            addFieldRow('Nº Proposta Comercial', safeGetVal('ven_num_proposta'));
-            addFieldRow('Nº Pedido de Venda', safeGetVal('ven_num_pedido'));
-            addFieldRow('Data da Solicitação', safeGetVal('ven_data_solicitacao'));
-            addFieldRow('Vendedor / Consultor CIJ', safeGetVal('ven_vendedor'));
-            addFieldRow('Modalidade da Venda', safeGetVal('ven_modalidade'));
-            addFieldRow('Condição de Pagamento', safeGetVal('ven_cond_pagto'));
-            addFieldRow('Previsão de Entrega', safeGetVal('ven_previsao_entrega'));
-            addFieldRow('Previsão de Instalação', safeGetVal('ven_previsao_instalacao'));
-
+            addSection('2. DADOS COMERCIAIS');
+            addField('Proposta', safeGetVal('ven_num_proposta')); addField('Pedido', safeGetVal('ven_num_pedido')); addField('Vendedor', safeGetVal('ven_vendedor'));
             ws2Data.push([createCell('', {border:false}), createCell('', {border:false})]);
 
-            // 3. Condições Técnicas
-            addSectionHeader('3. CONDIÇÕES TÉCNICAS DA LINHA DE PRODUÇÃO');
-            addFieldRow('Substrato / Embalagem a Marcar', safeGetVal('lin_substrato'));
-            addFieldRow('Velocidade da Linha', safeGetVal('lin_velocidade'));
-            addFieldRow('Sentido de Passagem dos Produtos', safeGetVal('lin_sentido'));
-            addFieldRow('Ambiente Operacional', safeGetVal('lin_ambiente'));
-            addFieldRow('Ponto de Energia Elétrica Disponível', safeGetVal('lin_energia'));
-            addFieldRow('Suporte Mecânico Existente / Requisitado', safeGetVal('lin_suporte_mecanico'));
-
-            ws2Data.push([createCell('', {border:false}), createCell('', {border:false})]);
-
-            // 4. Escopo de Serviços
-            addSectionHeader('4. ESCOPO DE SERVIÇOS E TREINAMENTO');
-            addServiceRow('Montagem Mecânica / Posicionamento', safeGetChecked('srv_fisica'));
-            addServiceRow('Conexão Elétrica, Sensor e Encoder', safeGetChecked('srv_eletrica'));
-            addServiceRow('Parametrização e Mensagens', safeGetChecked('srv_parametrizacao'));
-            addServiceRow('Treinamento Operacional', safeGetChecked('srv_treina_operador'));
-            addServiceRow('Treinamento Manutenção Preventiva', safeGetChecked('srv_treina_manutencao'));
-            addServiceRow('Integração CLP / Automação', safeGetChecked('srv_integracao_clp'));
-
-            ws2Data.push([createCell('', {border:false}), createCell('', {border:false})]);
-
-            // 5. Observações Gerais
-            addSectionHeader('5. OBSERVAÇÕES GERAIS E REQUISITOS');
-            ws2Data.push([
-                createCell(safeGetVal('obs_gerais') || 'Nenhuma observação informada.', { color: '334155', bg: 'FFFFFF' }),
-                createCell('', { bg: 'FFFFFF' })
-            ]);
+            addSection('3. OBSERVAÇÕES');
+            ws2Data.push([createCell(safeGetVal('obs_gerais') || 'Nenhuma observação.', { bg: 'FFFFFF' }), createCell('', { bg: 'FFFFFF' })]);
             ws2Merges.push({ s: { r: ws2Data.length - 1, c: 0 }, e: { r: ws2Data.length - 1, c: 1 } });
 
             function aoaToSheet(data, merges) {
-                const ws = {};
-                const range = { s: { c: 10000, r: 10000 }, e: { c: 0, r: 0 } };
+                const ws = {}; const range = { s: { c: 10000, r: 10000 }, e: { c: 0, r: 0 } };
                 for (let R = 0; R < data.length; ++R) {
                     for (let C = 0; C < data[R].length; ++C) {
                         if (range.s.r > R) range.s.r = R; if (range.s.c > C) range.s.c = C;
@@ -1690,281 +2166,56 @@
             }
 
             const wb = XLSX.utils.book_new();
-
-            const ws1 = aoaToSheet(ws1Data, ws1Merges);
-            ws1['!cols'] = [{ wch: 6 }, { wch: 35 }, { wch: 45 }, { wch: 10 }, { wch: 20 }, { wch: 22 }];
+            const ws1 = aoaToSheet(ws1Data, ws1Merges); ws1['!cols'] = [{ wch: 6 }, { wch: 35 }, { wch: 45 }, { wch: 10 }, { wch: 20 }, { wch: 22 }];
             XLSX.utils.book_append_sheet(wb, ws1, "Equipamentos e Insumos");
-
-            const ws2 = aoaToSheet(ws2Data, ws2Merges);
-            ws2['!cols'] = [{ wch: 38 }, { wch: 65 }];
-            XLSX.utils.book_append_sheet(wb, ws2, "Resumo da Solicitação");
+            const ws2 = aoaToSheet(ws2Data, ws2Merges); ws2['!cols'] = [{ wch: 38 }, { wch: 65 }];
+            XLSX.utils.book_append_sheet(wb, ws2, "Resumo");
 
             XLSX.writeFile(wb, `CIJ_Solicitacao_${pedido}_${cliente.replace(/\s+/g, '_')}.xlsx`);
-            mostrarNotificacao('Planilha Excel gerada com sucesso contendo as 2 abas!');
+            mostrarNotificacao('Planilha Excel gerada com sucesso!');
         }
 
-        /* LÓGICA DO MÓDULO CONTROLE DE DESPESAS */
-        function obterProximoNumRelatorio() {
-            if (!window.listaDespesas || window.listaDespesas.length === 0) return 'REL-1001';
-            const nums = window.listaDespesas
-                .map(i => i.num_relatorio)
-                .filter(Boolean)
-                .map(n => parseInt(n.replace(/\D/g, '')))
-                .filter(n => !isNaN(n));
-            const max = nums.length > 0 ? Math.max(...nums) : 1000;
-            return `REL-${max + 1}`;
-        }
-
+        /* LÓGICA DE DESPESAS */
         function novoRelatorioSequencial() {
-            const prox = obterProximoNumRelatorio();
-            safeSetVal('desp_num_relatorio', prox);
-            safeSetText('desp-num-badge', prox);
+            const nums = window.listaDespesas.map(i => i.num_relatorio).filter(Boolean).map(n => parseInt(n.replace(/\D/g, ''))).filter(n => !isNaN(n));
+            const prox = `REL-${(nums.length > 0 ? Math.max(...nums) : 1000) + 1}`;
+            safeSetVal('desp_num_relatorio', prox); safeSetText('desp-num-badge', prox);
             mostrarNotificacao(`Novo relatório ${prox} iniciado.`);
         }
 
         function finalizarRelatorioAtual() {
-            const form = document.getElementById('expense-form');
-            if (form) form.reset();
-            const hoje = new Date().toISOString().split('T')[0];
-            safeSetVal('desp_data', hoje);
+            const relAtual = safeGetVal('desp_num_relatorio');
+            safeSetVal('desp_tecnico', ''); safeSetVal('desp_cliente', ''); safeSetVal('desp_cidade', '');
+            safeSetVal('desp_descricao', ''); safeSetVal('desp_valor', ''); safeSetVal('desp_observacoes', '');
+            safeSetVal('desp_data', new Date().toISOString().split('T')[0]);
             novoRelatorioSequencial();
-            mostrarNotificacao('Relatório finalizado! Campos limpos e novo relatório iniciado.');
+            mostrarNotificacao(`Relatório ${relAtual} finalizado!`);
         }
 
         function salvarDespesa(e) {
             e.preventDefault();
-
             const num_relatorio = safeGetVal('desp_num_relatorio') || 'REL-1001';
-            const tecnico = safeGetVal('desp_tecnico');
-            const cliente = safeGetVal('desp_cliente');
-            const cidade = safeGetVal('desp_cidade');
-            const descricao = safeGetVal('desp_descricao');
-            const valor = parseFloat(safeGetVal('desp_valor')) || 0;
-            const data = safeGetVal('desp_data');
-            const categoria = safeGetVal('desp_categoria');
-            const cartao = safeGetVal('desp_cartao');
-            const observacoes = safeGetVal('desp_observacoes');
-
             const novaDespesa = {
-                id: Date.now().toString(),
-                num_relatorio,
-                tecnico,
-                cliente,
-                cidade,
-                descricao,
-                valor,
-                data,
-                categoria,
-                cartao,
-                observacoes
+                id: Date.now().toString(), num_relatorio,
+                tecnico: safeGetVal('desp_tecnico'), cliente: safeGetVal('desp_cliente'),
+                cidade: safeGetVal('desp_cidade'), descricao: safeGetVal('desp_descricao'),
+                valor: parseFloat(safeGetVal('desp_valor')) || 0, data: safeGetVal('desp_data'),
+                categoria: safeGetVal('desp_categoria'), cartao: safeGetVal('desp_cartao'),
+                observacoes: safeGetVal('desp_observacoes')
             };
 
             window.listaDespesas.unshift(novaDespesa);
             localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
+            if (typeof window.salvarDespesaNuvem === 'function') window.salvarDespesaNuvem(novaDespesa);
 
-            if (typeof window.salvarDespesaNuvem === 'function') {
-                window.salvarDespesaNuvem(novaDespesa);
-            }
-
-            safeSetVal('desp_descricao', '');
-            safeSetVal('desp_valor', '');
-            safeSetVal('desp_observacoes', '');
-
+            safeSetVal('desp_descricao', ''); safeSetVal('desp_valor', ''); safeSetVal('desp_observacoes', '');
             mostrarNotificacao(`Item adicionado ao relatório ${num_relatorio}!`);
             renderizarRelatoriosDespesas();
         }
 
-        function renderizarRelatoriosDespesas() {
-            const tbody = document.getElementById('despesas-grouped-body');
-            if (!tbody) return;
-
-            const filterData = safeGetVal('filter-data-desp');
-            const filterMes = safeGetVal('filter-mes-desp');
-            const filterTecnico = safeGetVal('filter-tecnico-desp');
-            const filterCategoria = safeGetVal('filter-categoria-desp') || 'Todas';
-            const filterSearch = safeGetVal('filter-search-desp').toLowerCase();
-
-            let itensFiltrados = window.listaDespesas.filter(item => {
-                if (filterData && item.data !== filterData) return false;
-                if (filterMes && item.data && !item.data.startsWith(filterMes)) return false;
-                if (filterTecnico !== 'Todos' && item.tecnico !== filterTecnico) return false;
-                if (filterCategoria !== 'Todas' && item.categoria !== filterCategoria) return false;
-                if (filterSearch) {
-                    const matchText = `${item.num_relatorio} ${item.tecnico} ${item.cliente} ${item.cidade} ${item.descricao} ${item.categoria}`.toLowerCase();
-                    if (!matchText.includes(filterSearch)) return false;
-                }
-                return true;
-            });
-
-            const grupos = {};
-            itensFiltrados.forEach(item => {
-                const key = item.num_relatorio || 'REL-1001';
-                if (!grupos[key]) {
-                    grupos[key] = {
-                        num_relatorio: key,
-                        tecnico: item.tecnico,
-                        cliente: item.cliente,
-                        cidade: item.cidade,
-                        data_min: item.data,
-                        data_max: item.data,
-                        total: 0,
-                        itens: []
-                    };
-                }
-                grupos[key].total += item.valor;
-                grupos[key].itens.push(item);
-            });
-
-            tbody.innerHTML = '';
-            let totalGeralExibido = 0;
-
-            const chaves = Object.keys(grupos);
-            if (chaves.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400 font-medium">Nenhum relatório encontrado para os filtros selecionados.</td></tr>`;
-                safeSetText('desp-total-acumulado', 'R$ 0,00');
-                return;
-            }
-
-            chaves.forEach(num => {
-                const g = grupos[num];
-                totalGeralExibido += g.total;
-                const isExpanded = relatoriosExpandidos.has(num);
-
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50 transition border-b border-slate-200 font-medium';
-                
-                tr.innerHTML = `
-                    <td class="p-3">
-                        <span class="inline-block px-2 py-0.5 text-[11px] font-extrabold bg-sky-100 text-sky-900 border border-sky-300 rounded-md mb-1">${g.num_relatorio}</span>
-                        <div class="font-bold text-slate-900">${g.tecnico}</div>
-                    </td>
-                    <td class="p-3">
-                        <div class="font-bold text-slate-800">${g.cliente}</div>
-                        <div class="text-[11px] text-slate-500">${g.cidade}</div>
-                    </td>
-                    <td class="p-3">
-                        <span class="text-xs font-semibold text-slate-700">${g.itens.length} despesa(s)</span>
-                    </td>
-                    <td class="p-3 text-slate-600 text-xs">
-                        ${g.data_min ? g.data_min.split('-').reverse().join('/') : ''}
-                    </td>
-                    <td class="p-3 font-extrabold text-sky-900 text-sm">
-                        ${formatarMoeda(g.total)}
-                    </td>
-                    <td class="p-3 text-center no-print">
-                        <div class="flex items-center justify-center gap-1">
-                            <button onclick="imprimirRelatorioEspecifico('${g.num_relatorio}')" class="px-2.5 py-1 bg-sky-600 hover:bg-sky-700 text-white text-[11px] font-bold rounded-lg transition border border-sky-500 flex items-center gap-1 shadow-sm" title="Salvar/Imprimir PDF (1 Página)">
-                                <i class="fa-solid fa-file-pdf"></i> PDF
-                            </button>
-                            <button onclick="exportarRelatorioExcelEspecifico('${g.num_relatorio}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded-lg transition border border-emerald-500 flex items-center gap-1 shadow-sm" title="Exportar Excel">
-                                <i class="fa-solid fa-file-excel"></i> Excel
-                            </button>
-                            <button onclick="toggleExpandirRelatorio('${g.num_relatorio}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded-lg transition border border-slate-300 flex items-center gap-1">
-                                <i class="fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'}"></i> Detalhes
-                            </button>
-                            <button onclick="excluirRelatorioCompleto('${g.num_relatorio}')" class="p-1.5 text-slate-400 hover:text-red-600 transition" title="Excluir Relatório">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-
-                if (isExpanded) {
-                    const trDetails = document.createElement('tr');
-                    trDetails.className = 'bg-slate-50 border-b border-slate-300';
-                    
-                    let subRows = g.itens.map(it => `
-                        <tr class="border-b border-slate-200 text-[11px]">
-                            <td class="p-2 font-semibold text-slate-800">${it.descricao}</td>
-                            <td class="p-2 text-slate-600">${it.categoria} (${it.cartao})</td>
-                            <td class="p-2 text-slate-600">${it.data ? it.data.split('-').reverse().join('/') : ''}</td>
-                            <td class="p-2 font-bold text-slate-900">${formatarMoeda(it.valor)}</td>
-                            <td class="p-2 text-center no-print">
-                                <button onclick="excluirItemDespesa('${it.id}')" class="text-red-500 hover:text-red-700" title="Remover item"><i class="fa-solid fa-xmark"></i></button>
-                            </td>
-                        </tr>
-                    `).join('');
-
-                    trDetails.innerHTML = `
-                        <td colspan="6" class="p-3">
-                            <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-inner">
-                                <h4 class="text-xs font-bold text-sky-900 mb-2 border-b border-slate-100 pb-1">Itens do Relatório ${g.num_relatorio}</h4>
-                                <table class="w-full text-left">
-                                    <thead>
-                                        <tr class="text-[10px] uppercase font-bold text-slate-500 bg-slate-100">
-                                            <th class="p-2">Descrição</th>
-                                            <th class="p-2">Categoria/Forma</th>
-                                            <th class="p-2">Data</th>
-                                            <th class="p-2">Valor</th>
-                                            <th class="p-2 text-center no-print">Remover</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>${subRows}</tbody>
-                                </table>
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(trDetails);
-                }
-            });
-
-            safeSetText('desp-total-acumulado', formatarMoeda(totalGeralExibido));
-        }
-
-        function toggleExpandirRelatorio(num) {
-            if (relatoriosExpandidos.has(num)) {
-                relatoriosExpandidos.delete(num);
-            } else {
-                relatoriosExpandidos.add(num);
-            }
-            renderizarRelatoriosDespesas();
-        }
-
-        function excluirItemDespesa(id) {
-            window.listaDespesas = window.listaDespesas.filter(i => i.id !== id);
-            localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
-            
-            if (typeof window.excluirDespesaNuvem === 'function') {
-                window.excluirDespesaNuvem(id);
-            }
-
-            mostrarNotificacao('Item removido!');
-            renderizarRelatoriosDespesas();
-        }
-
-        function excluirRelatorioCompleto(num) {
-            if (confirm(`Deseja remover todas as despesas do relatório ${num}?`)) {
-                const itensExcluir = window.listaDespesas.filter(i => i.num_relatorio === num);
-                
-                window.listaDespesas = window.listaDespesas.filter(i => i.num_relatorio !== num);
-                localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
-                
-                if (typeof window.excluirDespesaNuvem === 'function') {
-                    itensExcluir.forEach(it => window.excluirDespesaNuvem(it.id));
-                }
-
-                mostrarNotificacao(`Relatório ${num} removido!`);
-                renderizarRelatoriosDespesas();
-            }
-        }
-
-        function imprimirRelatorioEspecifico(numRelatorio) {
-            if (!relatoriosExpandidos.has(numRelatorio)) {
-                relatoriosExpandidos.add(numRelatorio);
-                renderizarRelatoriosDespesas();
-            }
-            setTimeout(() => {
-                window.print();
-            }, 200);
-        }
-
-        /* OBTER DESPESAS FILTRADAS DA LISTA ATUAL */
-        function obterDespesasFiltradas() {
-            const filterData = safeGetVal('filter-data-desp');
-            const filterMes = safeGetVal('filter-mes-desp');
-            const filterTecnico = safeGetVal('filter-tecnico-desp');
-            const filterCategoria = safeGetVal('filter-categoria-desp') || 'Todas';
+        function obterItensFiltradosDespesas() {
+            const filterData = safeGetVal('filter-data-desp'); const filterMes = safeGetVal('filter-mes-desp');
+            const filterTecnico = safeGetVal('filter-tecnico-desp'); const filterCategoria = safeGetVal('filter-categoria-desp') || 'Todas';
             const filterSearch = safeGetVal('filter-search-desp').toLowerCase();
 
             return window.listaDespesas.filter(item => {
@@ -1972,249 +2223,739 @@
                 if (filterMes && item.data && !item.data.startsWith(filterMes)) return false;
                 if (filterTecnico !== 'Todos' && item.tecnico !== filterTecnico) return false;
                 if (filterCategoria !== 'Todas' && item.categoria !== filterCategoria) return false;
-                if (filterSearch) {
-                    const matchText = `${item.num_relatorio} ${item.tecnico} ${item.cliente} ${item.cidade} ${item.descricao} ${item.categoria} ${item.observacoes || ''}`.toLowerCase();
-                    if (!matchText.includes(filterSearch)) return false;
-                }
+                if (filterSearch && !`${item.num_relatorio} ${item.tecnico} ${item.cliente} ${item.cidade} ${item.descricao} ${item.categoria}`.toLowerCase().includes(filterSearch)) return false;
                 return true;
             });
         }
 
-        /* EXPORTAR RELATÓRIO COMPLETO CONFORME OS FILTROS SELECIONADOS (EXCEL) */
-        function exportarRelatorioFiltradoExcel() {
-            if (typeof XLSX === 'undefined') {
-                mostrarNotificacao('Biblioteca Excel carregando...');
-                return;
-            }
+        function renderizarRelatoriosDespesas() {
+            const tbody = document.getElementById('despesas-grouped-body');
+            if (!tbody) return;
 
-            const itens = obterDespesasFiltradas();
-            if (itens.length === 0) {
-                mostrarNotificacao('Nenhum item encontrado para os filtros selecionados.');
-                return;
-            }
-
-            const filterData = safeGetVal('filter-data-desp');
-            const filterMes = safeGetVal('filter-mes-desp');
-            const filterTecnico = safeGetVal('filter-tecnico-desp');
-            const filterCategoria = safeGetVal('filter-categoria-desp');
-
-            let descFiltro = `Filtros Aplicados - `;
-            if (filterTecnico && filterTecnico !== 'Todos') descFiltro += `Técnico: ${filterTecnico} | `;
-            if (filterCategoria && filterCategoria !== 'Todas') descFiltro += `Categoria: ${filterCategoria} | `;
-            if (filterData) descFiltro += `Data: ${filterData.split('-').reverse().join('/')} | `;
-            if (filterMes) descFiltro += `Mês: ${filterMes} | `;
-            descFiltro += `Total Itens: ${itens.length}`;
-
-            function createCell(val, opts = {}) {
-                const { bold = false, color = "1E293B", bg = null, align = "left", sz = 10, border = true } = opts;
-                const cellObj = { v: val !== null && val !== undefined ? val : '', t: typeof val === 'number' ? 'n' : 's' };
-                const s = { font: { name: 'Calibri', sz: sz, bold: bold, color: { rgb: color } }, alignment: { horizontal: align, vertical: 'center', wrapText: true } };
-                if (bg) s.fill = { fgColor: { rgb: bg } };
-                if (border) s.border = { top: { style: 'thin', color: { rgb: 'CBD5E1' } }, bottom: { style: 'thin', color: { rgb: 'CBD5E1' } }, left: { style: 'thin', color: { rgb: 'CBD5E1' } }, right: { style: 'thin', color: { rgb: 'CBD5E1' } } };
-                cellObj.s = s;
-                return cellObj;
-            }
-
-            const headers = ["#", "Nº Relatório", "Técnico", "Cliente", "Cidade", "Data Pagto", "Descrição do Item / Compra", "Categoria", "Forma / Cartão", "Observações", "Valor (R$)"];
-
-            const wsData = [
-                [createCell('RELATÓRIO CONSOLIDADO DE DESPESAS (FILTRADO)', { bold: true, color: 'FFFFFF', bg: '1E3A8A', align: 'center', sz: 12 }), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell('')],
-                [createCell(descFiltro, { bold: true, color: '1E3A8A', bg: 'DBEAFE', align: 'center', sz: 10 }), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell('')],
-                [createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false})],
-                headers.map(h => createCell(h, { bold: true, color: 'FFFFFF', bg: '0F172A', align: h === 'Valor (R$)' ? 'right' : (h === '#' || h === 'Data Pagto' || h === 'Nº Relatório' ? 'center' : 'left'), sz: 10 }))
-            ];
-            const merges = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 10 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 10 } }];
-
-            let totalGeral = 0;
-            itens.forEach((it, idx) => {
-                const val = (parseFloat(it.valor) || 0);
-                totalGeral += val;
-                const bg = idx % 2 === 0 ? 'FFFFFF' : 'F8FAFC';
-                wsData.push([
-                    createCell(idx + 1, { bg, align: 'center', bold: true, color: '64748B' }),
-                    createCell(it.num_relatorio || '-', { bg, align: 'center', bold: true, color: '1E3A8A' }),
-                    createCell(it.tecnico || '-', { bg }),
-                    createCell(it.cliente || '-', { bg }),
-                    createCell(it.cidade || '-', { bg }),
-                    createCell(it.data ? it.data.split('-').reverse().join('/') : '-', { bg, align: 'center' }),
-                    createCell(it.descricao || '-', { bg }),
-                    createCell(it.categoria || '-', { bg }),
-                    createCell(it.cartao || '-', { bg }),
-                    createCell(it.observacoes || '-', { bg }),
-                    createCell(formatarMoeda(val), { bg, align: 'right', bold: true, color: '0958D9' })
-                ]);
+            let itensFiltrados = obterItensFiltradosDespesas();
+            const grupos = {};
+            itensFiltrados.forEach(item => {
+                const key = item.num_relatorio || 'REL-1001';
+                if (!grupos[key]) grupos[key] = { num_relatorio: key, tecnico: item.tecnico, cliente: item.cliente, cidade: item.cidade, data_min: item.data, total: 0, itens: [] };
+                grupos[key].total += item.valor; grupos[key].itens.push(item);
             });
 
-            wsData.push([
-                createCell('TOTAL GERAL DOS ITENS FILTRADOS:', { bold: true, bg: 'E2E8F0', align: 'right', color: '1E3A8A' }),
-                createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }),
-                createCell(formatarMoeda(totalGeral), { bold: true, bg: 'E2E8F0', align: 'right', color: '0958D9' })
-            ]);
-            merges.push({ s: { r: wsData.length - 1, c: 0 }, e: { r: wsData.length - 1, c: 9 } });
+            tbody.innerHTML = ''; let totalGeralExibido = 0;
+            const chaves = Object.keys(grupos);
+            if (chaves.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400 font-medium">Nenhum relatório encontrado.</td></tr>`;
+                safeSetText('desp-total-acumulado', 'R$ 0,00'); return;
+            }
 
-            function aoaToSheet(data, m) {
-                const ws = {};
-                const range = { s: { c: 10000, r: 10000 }, e: { c: 0, r: 0 } };
-                for (let R = 0; R < data.length; ++R) {
-                    for (let C = 0; C < data[R].length; ++C) {
-                        if (range.s.r > R) range.s.r = R; if (range.s.c > C) range.s.c = C;
-                        if (range.e.r < R) range.e.r = R; if (range.e.c < C) range.e.c = C;
-                        if (data[R][C]) ws[XLSX.utils.encode_cell({ c: C, r: R })] = data[R][C];
-                    }
+            chaves.forEach(num => {
+                const g = grupos[num]; totalGeralExibido += g.total;
+                const isExpanded = relatoriosExpandidos.has(num);
+                const tr = document.createElement('tr'); tr.className = 'hover:bg-slate-50 transition border-b border-slate-200 font-medium';
+                
+                let acoesHtml = `<button onclick="toggleExpandirRelatorio('${g.num_relatorio}')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold rounded transition border border-slate-300"><i class="fa-solid ${isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'}"></i> Detalhes</button>`;
+                if (window.isUserAdminOrFinance) {
+                    acoesHtml = `
+                        <div class="flex items-center justify-center gap-1">
+                            <button onclick="imprimirRelatorioEspecifico('${g.num_relatorio}')" class="px-2 py-1 bg-sky-600 hover:bg-sky-700 text-white text-[11px] font-bold rounded shadow-sm"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+                            <button onclick="exportarRelatorioExcelEspecifico('${g.num_relatorio}')" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded shadow-sm"><i class="fa-solid fa-file-excel"></i> Excel</button>
+                            <button onclick="toggleExpandirRelatorio('${g.num_relatorio}')" class="px-2 py-1 bg-slate-100 text-slate-700 text-[11px] font-bold rounded border border-slate-300">Detalhes</button>
+                            <button onclick="excluirRelatorioCompleto('${g.num_relatorio}')" class="p-1 text-slate-400 hover:text-red-600"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    `;
                 }
-                ws['!ref'] = XLSX.utils.encode_range(range);
-                if (m) ws['!merges'] = m;
-                return ws;
-            }
 
-            const wb = XLSX.utils.book_new();
-            const ws = aoaToSheet(wsData, merges);
-            ws['!cols'] = [{ wch: 5 }, { wch: 15 }, { wch: 18 }, { wch: 25 }, { wch: 18 }, { wch: 14 }, { wch: 35 }, { wch: 20 }, { wch: 22 }, { wch: 30 }, { wch: 18 }];
-            XLSX.utils.book_append_sheet(wb, ws, "Relatório Filtrado");
+                tr.innerHTML = `
+                    <td class="p-3"><span class="inline-block px-2 py-0.5 text-[11px] font-extrabold bg-sky-100 text-sky-900 border border-sky-300 rounded-md mb-1">${g.num_relatorio}</span><div class="font-bold text-slate-900">${g.tecnico}</div></td>
+                    <td class="p-3"><div class="font-bold text-slate-800">${g.cliente}</div><div class="text-[11px] text-slate-500">${g.cidade}</div></td>
+                    <td class="p-3"><span class="text-xs font-semibold text-slate-700">${g.itens.length} despesa(s)</span></td>
+                    <td class="p-3 text-slate-600 text-xs">${g.data_min ? g.data_min.split('-').reverse().join('/') : ''}</td>
+                    <td class="p-3 font-extrabold text-sky-900 text-sm">${formatarMoeda(g.total)}</td>
+                    <td class="p-3 text-center no-print">${acoesHtml}</td>
+                `;
+                tbody.appendChild(tr);
 
-            const dataHoje = new Date().toISOString().split('T')[0];
-            XLSX.writeFile(wb, `Relatorio_Despesas_Filtrado_${dataHoje}.xlsx`);
-            mostrarNotificacao(`Relatório consolidado dos filtros baixado em Excel!`);
-        }
-
-        /* IMPRIMIR / SALVAR PDF DO RELATÓRIO FILTRADO */
-        function imprimirRelatorioFiltradoPDF() {
-            const itens = obterDespesasFiltradas();
-            if (itens.length === 0) {
-                mostrarNotificacao('Nenhum item encontrado para os filtros selecionados.');
-                return;
-            }
-            itens.forEach(it => {
-                if (it.num_relatorio) relatoriosExpandidos.add(it.num_relatorio);
+                if (isExpanded) {
+                    const trDetails = document.createElement('tr'); trDetails.className = 'bg-slate-50 border-b border-slate-300';
+                    let subRows = g.itens.map(it => `
+                        <tr class="border-b border-slate-200 text-[11px]">
+                            <td class="p-2 font-semibold text-slate-800">${it.descricao}</td><td class="p-2 text-slate-600">${it.categoria} (${it.cartao})</td><td class="p-2 text-slate-600">${it.data ? it.data.split('-').reverse().join('/') : ''}</td><td class="p-2 font-bold text-slate-900">${formatarMoeda(it.valor)}</td>
+                            <td class="p-2 text-center no-print">${window.isUserAdminOrFinance ? `<button onclick="excluirItemDespesa('${it.id}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-xmark"></i></button>` : '-'}</td>
+                        </tr>
+                    `).join('');
+                    trDetails.innerHTML = `<td colspan="6" class="p-3"><div class="bg-white border border-slate-200 rounded-xl p-3 shadow-inner"><h4 class="text-xs font-bold text-sky-900 mb-2 border-b border-slate-100 pb-1">Itens do Relatório ${g.num_relatorio}</h4><table class="w-full text-left"><thead><tr class="text-[10px] uppercase font-bold text-slate-500 bg-slate-100"><th class="p-2">Descrição</th><th class="p-2">Categoria/Forma</th><th class="p-2">Data</th><th class="p-2">Valor</th><th class="p-2 text-center no-print">Ação</th></tr></thead><tbody>${subRows}</tbody></table></div></td>`;
+                    tbody.appendChild(trDetails);
+                }
             });
-            renderizarRelatoriosDespesas();
-            setTimeout(() => {
-                window.print();
-            }, 200);
+            safeSetText('desp-total-acumulado', formatarMoeda(totalGeralExibido));
         }
 
-        /* EXCLUIR TODAS AS DESPESAS CORRESPONDENTES AO FILTRO ATUAL */
-        function excluirDespesasFiltradas() {
-            const itens = obterDespesasFiltradas();
-            if (itens.length === 0) {
-                mostrarNotificacao('Nenhum item encontrado para os filtros selecionados.');
-                return;
-            }
+        function toggleExpandirRelatorio(num) { relatoriosExpandidos.has(num) ? relatoriosExpandidos.delete(num) : relatoriosExpandidos.add(num); renderizarRelatoriosDespesas(); }
 
-            const confirmacao = confirm(`Atenção: Deseja realmente EXCLUIR as ${itens.length} despesa(s) selecionada(s) pelo filtro atual?\n\nEsta ação removerá todos os lançamentos do filtro e não poderá ser desfeita!`);
+        function excluirItemDespesa(id) {
+            window.listaDespesas = window.listaDespesas.filter(i => i.id !== id);
+            localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
+            if (typeof window.excluirDespesaNuvem === 'function') window.excluirDespesaNuvem(id);
+            mostrarNotificacao('Item removido!'); renderizarRelatoriosDespesas();
+        }
 
-            if (confirmacao) {
-                const idsParaExcluir = new Set(itens.map(it => it.id));
-
-                // Remove da memória e LocalStorage
-                window.listaDespesas = window.listaDespesas.filter(it => !idsParaExcluir.has(it.id));
+        function excluirRelatorioCompleto(num) {
+            mostrarModalConfirm('Excluir Relatório', `Remover permanentemente as despesas do relatório ${num}?`, () => {
+                const itensExcluir = window.listaDespesas.filter(i => i.num_relatorio === num);
+                window.listaDespesas = window.listaDespesas.filter(i => i.num_relatorio !== num);
                 localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
+                if (typeof window.excluirDespesaNuvem === 'function') itensExcluir.forEach(it => window.excluirDespesaNuvem(it.id));
+                mostrarNotificacao(`Relatório removido!`); renderizarRelatoriosDespesas();
+            });
+        }
 
-                // Remove do banco de dados na nuvem (Firebase)
-                if (typeof window.excluirDespesaNuvem === 'function') {
-                    itens.forEach(it => window.excluirDespesaNuvem(it.id));
-                }
-
-                mostrarNotificacao(`${itens.length} despesa(s) excluída(s) com sucesso!`);
-                renderizarRelatoriosDespesas();
-            }
+        function imprimirRelatorioEspecifico(numRelatorio) { if (!relatoriosExpandidos.has(numRelatorio)) { relatoriosExpandidos.add(numRelatorio); renderizarRelatoriosDespesas(); } setTimeout(() => window.print(), 200); }
+        function imprimirRelatorioFiltroPDF() { let itens = obterItensFiltradosDespesas(); if (itens.length === 0) return; itens.forEach(i => relatoriosExpandidos.add(i.num_relatorio)); renderizarRelatoriosDespesas(); setTimeout(() => window.print(), 250); }
+        
+        function confirmarExcluirTudoFiltro() {
+            let itensFiltrados = obterItensFiltradosDespesas();
+            if (itensFiltrados.length === 0) return;
+            mostrarModalConfirm('Excluir Filtro', `Excluir permanentemente ${itensFiltrados.length} despesa(s) visíveis?`, () => {
+                const idsParaExcluir = new Set(itensFiltrados.map(i => i.id));
+                window.listaDespesas = window.listaDespesas.filter(i => !idsParaExcluir.has(i.id));
+                localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
+                if (typeof window.excluirDespesaNuvem === 'function') idsParaExcluir.forEach(id => window.excluirDespesaNuvem(id));
+                mostrarNotificacao('Despesas excluídas!'); renderizarRelatoriosDespesas();
+            });
         }
 
         function exportarRelatorioExcelEspecifico(numRelatorio) {
-            if (typeof XLSX === 'undefined') {
-                mostrarNotificacao('Biblioteca Excel carregando...');
-                return;
-            }
-
             const itens = window.listaDespesas.filter(i => i.num_relatorio === numRelatorio);
-            if (itens.length === 0) {
-                mostrarNotificacao('Nenhum item encontrado para este relatório.');
+            if (itens.length > 0) gerarPlanilhaExcelItens(itens, `Relatorio_${numRelatorio}.xlsx`);
+        }
+
+        function exportarRelatorioExcelFiltro() {
+            const itens = obterItensFiltradosDespesas();
+            if (itens.length > 0) gerarPlanilhaExcelItens(itens, `Relatorio_Filtro.xlsx`);
+        }
+
+        function gerarPlanilhaExcelItens(itens, nomeArquivo) {
+            if (typeof XLSX === 'undefined') return;
+            const wsData = [["Nº Relatório", "Técnico", "Cliente", "Cidade", "Data", "Descrição", "Categoria", "Forma Pagto", "Valor (R$)"]];
+            itens.forEach(it => wsData.push([it.num_relatorio, it.tecnico, it.cliente, it.cidade, it.data, it.descricao, it.categoria, it.cartao, it.valor]));
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            XLSX.utils.book_append_sheet(wb, ws, "Despesas");
+            XLSX.writeFile(wb, nomeArquivo);
+        }
+
+        /* LÓGICA DO MÓDULO TABELAS DE PREÇOS */
+        function salvarNovaTabelaPrecos(e) {
+            e.preventDefault();
+            if (!window.isUserAdminOrFinance) return;
+
+            const nome = safeGetVal('tab_nome'); const categoria = safeGetVal('tab_categoria');
+            const fileInput = document.getElementById('tab_arquivo');
+            if (!fileInput || !fileInput.files || fileInput.files.length === 0) return;
+
+            const file = fileInput.files[0];
+            if (file.size > 3 * 1024 * 1024) { 
+                mostrarNotificacao("Arquivo muito grande (Máx 3MB).", true); 
+                return; 
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const novaTabela = { id: Date.now().toString(), nome, categoria, data_upload: new Date().toLocaleDateString('pt-BR'), arquivo_nome: file.name, arquivo_tipo: file.type, arquivo_tamanho: (file.size / 1024).toFixed(1) + ' KB', arquivo_data: evt.target.result };
+                window.listaTabelas.unshift(novaTabela);
+                localStorage.setItem('banco_tabelas_precos_cij', JSON.stringify(window.listaTabelas));
+                if (typeof window.salvarTabelaNuvem === 'function') window.salvarTabelaNuvem(novaTabela);
+                safeSetVal('tab_nome', ''); fileInput.value = ''; mostrarNotificacao(`Tabela salva!`); renderizarTabelasPrecos();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderizarTabelasPrecos() {
+            const tbody = document.getElementById('tabelas-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = ''; safeSetText('tab-count-badge', `${window.listaTabelas.length} tabela(s)`);
+
+            if (window.listaTabelas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Nenhuma tabela cadastrada.</td></tr>`; return;
+            }
+
+            window.listaTabelas.forEach(tab => {
+                const tr = document.createElement('tr'); tr.className = 'hover:bg-slate-50 transition border-b border-slate-200';
+                let acaoExcluir = '-';
+                if (window.isUserAdminOrFinance) {
+                    acaoExcluir = `<button onclick="excluirTabelaPrecos('${tab.id}')" class="p-1.5 text-slate-400 hover:text-red-600"><i class="fa-solid fa-trash-can"></i></button>`;
+                }
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-900">${tab.nome}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 rounded-md">${tab.categoria}</span></td>
+                    <td class="p-3 text-slate-600">${tab.data_upload}</td>
+                    <td class="p-3 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="visualizarTabelaNoNavegador('${tab.id}')" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-sm"><i class="fa-solid fa-eye"></i> Visualizar</button>
+                            <a href="${tab.arquivo_data}" download="${tab.arquivo_nome}" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl border border-slate-300"><i class="fa-solid fa-download"></i> Baixar</a>
+                        </div>
+                    </td>
+                    <td class="p-3 text-center">${acaoExcluir}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function visualizarTabelaNoNavegador(id) {
+            const tab = window.listaTabelas.find(t => t.id === id);
+            if (!tab) return;
+            const modal = document.getElementById('modal-preview-tabela');
+            document.getElementById('preview-tabela-titulo').textContent = `${tab.nome} (${tab.categoria})`;
+            document.getElementById('preview-tabela-download-btn').href = tab.arquivo_data;
+            document.getElementById('preview-tabela-download-btn').download = tab.arquivo_nome;
+
+            const container = document.getElementById('preview-tabela-container');
+            const isPdf = (tab.arquivo_tipo && tab.arquivo_tipo.includes('pdf')) || tab.arquivo_data.startsWith('data:application/pdf');
+            const isImage = (tab.arquivo_tipo && tab.arquivo_tipo.includes('image')) || tab.arquivo_data.startsWith('data:image/');
+
+            if (isPdf) container.innerHTML = `<iframe src="${tab.arquivo_data}" class="w-full h-full border-0 rounded-xl shadow-sm"></iframe>`;
+            else if (isImage) container.innerHTML = `<div class="w-full h-full flex items-center justify-center p-4"><img src="${tab.arquivo_data}" class="max-w-full max-h-full object-contain rounded-xl shadow-lg border border-slate-200"></div>`;
+            else container.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center shadow-md"><i class="fa-solid fa-file-excel text-4xl text-amber-600 mb-4"></i><h4 class="font-bold text-lg">${tab.arquivo_nome}</h4><p class="text-xs text-slate-500 my-2">Tamanho: ${tab.arquivo_tamanho}</p><a href="${tab.arquivo_data}" download="${tab.arquivo_nome}" class="px-4 py-2 bg-amber-600 text-white rounded-xl font-bold mt-4 inline-block">Baixar Arquivo</a></div>`;
+
+            modal.classList.remove('hidden');
+        }
+
+        function fecharModalPreviewTabela() { document.getElementById('modal-preview-tabela')?.classList.add('hidden'); }
+
+        function excluirTabelaPrecos(id) {
+            if (!window.isUserAdminOrFinance) return;
+            mostrarModalConfirm('Excluir Tabela', 'Remover esta tabela de preços?', () => {
+                window.listaTabelas = window.listaTabelas.filter(t => t.id !== id);
+                localStorage.setItem('banco_tabelas_precos_cij', JSON.stringify(window.listaTabelas));
+                if (typeof window.excluirTabelaNuvem === 'function') window.excluirTabelaNuvem(id);
+                mostrarNotificacao('Tabela removida!'); renderizarTabelasPrecos();
+            });
+        }
+
+        /* LÓGICA DO MÓDULO ADMIN - CONTROLE DE COMISSÕES */
+        let pendenteComissao = null;
+        let clienteParaApagarComissao = null;
+        let clienteParaRenovarComissao = null;
+
+        function filtrarDropdownClientes(valor) {
+            const dropdown = document.getElementById('dropdownClientesComissao');
+            dropdown.innerHTML = '';
+            if (valor.length === 0) { dropdown.classList.add('hidden'); return; }
+
+            const sugestoes = window.listaComissoes.filter(v => v.cliente.toLowerCase().includes(valor.toLowerCase()));
+            
+            if (sugestoes.length > 0) {
+                dropdown.classList.remove('hidden');
+                sugestoes.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = "px-3 py-2 hover:bg-purple-50 cursor-pointer text-xs border-b border-slate-100 last:border-0 transition-colors text-slate-700";
+                    div.textContent = s.cliente;
+                    div.onclick = () => { 
+                        document.getElementById('comissao_cliente').value = s.cliente; 
+                        dropdown.classList.add('hidden'); 
+                    };
+                    dropdown.appendChild(div);
+                });
+            } else { 
+                dropdown.classList.add('hidden'); 
+            }
+        }
+
+        function tentarAdicionarComissao() {
+            if (!window.isUserAdminOrFinance) return;
+
+            const vendedor = safeGetVal('comissao_vendedor');
+            const cliente = safeGetVal('comissao_cliente');
+            const dataVenda = safeGetVal('comissao_data');
+            
+            if (!cliente || !dataVenda || !vendedor) {
+                mostrarNotificacao("Preencha todos os campos da comissão.");
                 return;
             }
 
-            const tec = itens[0].tecnico || '-';
-            const cli = itens[0].cliente || '-';
-            const cidade = itens[0].cidade || '-';
+            const existente = window.listaComissoes.find(v => v.cliente.toLowerCase() === cliente.toLowerCase());
+            
+            if (existente) {
+                pendenteComissao = { id: existente.id, vendedor, cliente, dataVenda };
+                document.getElementById('modal-confirmacao-comissao').classList.remove('hidden');
+            } else {
+                const novaComissao = { id: Date.now().toString(), vendedor, cliente, dataVenda };
+                window.listaComissoes.push(novaComissao);
+                localStorage.setItem('banco_comissoes_cij', JSON.stringify(window.listaComissoes));
+                if (typeof window.salvarComissaoNuvem === 'function') window.salvarComissaoNuvem(novaComissao);
+                
+                renderizarTabelaComissoes();
+                limparFormularioComissao();
+                mostrarNotificacao("Comissão registrada com sucesso!");
+            }
+        }
 
-            function createCell(val, opts = {}) {
-                const { bold = false, color = "1E293B", bg = null, align = "left", sz = 10, border = true } = opts;
-                const cellObj = { v: val !== null && val !== undefined ? val : '', t: typeof val === 'number' ? 'n' : 's' };
-                const s = { font: { name: 'Calibri', sz: sz, bold: bold, color: { rgb: color } }, alignment: { horizontal: align, vertical: 'center', wrapText: true } };
-                if (bg) s.fill = { fgColor: { rgb: bg } };
-                if (border) s.border = { top: { style: 'thin', color: { rgb: 'CBD5E1' } }, bottom: { style: 'thin', color: { rgb: 'CBD5E1' } }, left: { style: 'thin', color: { rgb: 'CBD5E1' } }, right: { style: 'thin', color: { rgb: 'CBD5E1' } } };
-                cellObj.s = s;
-                return cellObj;
+        function limparFormularioComissao() {
+            safeSetVal('comissao_vendedor', '');
+            safeSetVal('comissao_cliente', '');
+        }
+
+        function confirmarRenovacaoComissao(aceitar) {
+            if (aceitar && pendenteComissao) {
+                const index = window.listaComissoes.findIndex(v => v.id === pendenteComissao.id);
+                if(index !== -1) {
+                    window.listaComissoes[index] = pendenteComissao;
+                    localStorage.setItem('banco_comissoes_cij', JSON.stringify(window.listaComissoes));
+                    if (typeof window.salvarComissaoNuvem === 'function') window.salvarComissaoNuvem(pendenteComissao);
+                    
+                    renderizarTabelaComissoes();
+                    limparFormularioComissao();
+                    mostrarNotificacao("Comissão renovada com sucesso!");
+                }
+            }
+            pendenteComissao = null;
+            document.getElementById('modal-confirmacao-comissao').classList.add('hidden');
+        }
+
+        function solicitarApagarComissao(idComissao, clienteNome) {
+            clienteParaApagarComissao = idComissao;
+            document.getElementById('nomeClienteApagarComissao').textContent = clienteNome;
+            document.getElementById('modal-apagar-comissao').classList.remove('hidden');
+        }
+
+        function fecharModalApagarComissao() {
+            clienteParaApagarComissao = null;
+            document.getElementById('modal-apagar-comissao').classList.add('hidden');
+        }
+
+        function confirmarApagarComissao() {
+            if (clienteParaApagarComissao) {
+                window.listaComissoes = window.listaComissoes.filter(v => v.id !== clienteParaApagarComissao);
+                localStorage.setItem('banco_comissoes_cij', JSON.stringify(window.listaComissoes));
+                if (typeof window.excluirComissaoNuvem === 'function') window.excluirComissaoNuvem(clienteParaApagarComissao);
+                
+                renderizarTabelaComissoes();
+                mostrarNotificacao("Registro apagado.");
+            }
+            fecharModalApagarComissao();
+        }
+
+        function solicitarRenovarComissao(idComissao, clienteNome) {
+            clienteParaRenovarComissao = idComissao;
+            document.getElementById('nomeClienteRenovarComissao').textContent = clienteNome;
+            document.getElementById('modal-renovar-comissao').classList.remove('hidden');
+        }
+
+        function fecharModalRenovarComissao() {
+            clienteParaRenovarComissao = null;
+            document.getElementById('modal-renovar-comissao').classList.add('hidden');
+        }
+
+        /* NAVEGAÇÃO INTERNA DO PAINEL ADMIN */
+        window.alternarAbaAdmin = function(aba) {
+            const tabDash = document.getElementById('admin-tab-dashboard');
+            const tabComis = document.getElementById('admin-tab-comissoes');
+            const btnDash = document.getElementById('btn-tab-dashboard');
+            const btnComis = document.getElementById('btn-tab-comissoes');
+
+            if (aba === 'dashboard') {
+                tabDash.classList.remove('hidden');
+                tabComis.classList.add('hidden');
+                
+                btnDash.classList.add('bg-purple-600', 'text-white', 'shadow-md');
+                btnDash.classList.remove('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
+                
+                btnComis.classList.add('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
+                btnComis.classList.remove('bg-purple-600', 'text-white', 'shadow-md');
+                
+                if (typeof window.renderizarDashboardDespesas === 'function') window.renderizarDashboardDespesas();
+            } else {
+                tabComis.classList.remove('hidden');
+                tabDash.classList.add('hidden');
+                
+                btnComis.classList.add('bg-purple-600', 'text-white', 'shadow-md');
+                btnComis.classList.remove('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
+                
+                btnDash.classList.add('bg-slate-100', 'text-slate-600', 'hover:bg-slate-200');
+                btnDash.classList.remove('bg-purple-600', 'text-white', 'shadow-md');
+                
+                if (typeof window.renderizarTabelaComissoes === 'function') window.renderizarTabelaComissoes();
+            }
+        };
+
+        function confirmarRenovacaoDiretaComissao() {
+            if (clienteParaRenovarComissao) {
+                const index = window.listaComissoes.findIndex(v => v.id === clienteParaRenovarComissao);
+                if (index !== -1) {
+                    window.listaComissoes[index].dataVenda = new Date().toISOString().split('T')[0];
+                    localStorage.setItem('banco_comissoes_cij', JSON.stringify(window.listaComissoes));
+                    if (typeof window.salvarComissaoNuvem === 'function') window.salvarComissaoNuvem(window.listaComissoes[index]);
+                    
+                    renderizarTabelaComissoes();
+                    mostrarNotificacao("Data base renovada para hoje (12 meses).");
+                }
+            }
+            fecharModalRenovarComissao();
+        }
+
+        function renderizarTabelaComissoes() {
+            const tbody = document.getElementById('tabelaComissoesBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            const hoje = new Date();
+            const fVendedor = safeGetVal('filtroComissaoVendedor').toLowerCase();
+            const fCliente = safeGetVal('filtroComissaoCliente').toLowerCase();
+            
+            const vendasFiltradas = window.listaComissoes.filter(v => 
+                (v.vendedor || '').toLowerCase().includes(fVendedor) && 
+                (v.cliente || '').toLowerCase().includes(fCliente)
+            );
+
+            // Dados para os gráficos de comissões
+            let countAtivas = 0;
+            let countEncerradas = 0;
+            let countAlerta = 0;
+            const comissoesPorVendedor = {};
+
+            if(vendasFiltradas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400 font-medium">Nenhum registro de comissão encontrado.</td></tr>`;
+                atualizarGraficosComissoes({}, 0, 0, 0);
+                return;
             }
 
-            const headers = ["#", "Técnico", "Cliente", "Cidade", "Data Pagto", "Descrição do Item / Compra", "Categoria", "Forma / Cartão", "Observações", "Valor (R$)"];
-
-            const wsData = [
-                [createCell(`RELATÓRIO DE DESPESAS - ${numRelatorio}`, { bold: true, color: 'FFFFFF', bg: '1E3A8A', align: 'center', sz: 12 }), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell('')],
-                [createCell(`TÉCNICO: ${tec}   |   CLIENTE: ${cli}   |   CIDADE: ${cidade}`, { bold: true, color: '1E3A8A', bg: 'DBEAFE', align: 'center', sz: 10 }), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell(''), createCell('')],
-                [createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false}), createCell('', {border:false})],
-                headers.map(h => createCell(h, { bold: true, color: 'FFFFFF', bg: '0F172A', align: h === 'Valor (R$)' ? 'right' : (h === '#' || h === 'Data Pagto' ? 'center' : 'left'), sz: 10 }))
-            ];
-            const merges = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 9 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 9 } }];
-
-            let total = 0;
-            itens.forEach((it, idx) => {
-                total += (parseFloat(it.valor) || 0);
-                const bg = idx % 2 === 0 ? 'FFFFFF' : 'F8FAFC';
-                wsData.push([
-                    createCell(idx + 1, { bg, align: 'center', bold: true, color: '64748B' }),
-                    createCell(it.tecnico || tec, { bg }),
-                    createCell(it.cliente || cli, { bg }),
-                    createCell(it.cidade || cidade, { bg }),
-                    createCell(it.data ? it.data.split('-').reverse().join('/') : '-', { bg, align: 'center' }),
-                    createCell(it.descricao || '-', { bg }),
-                    createCell(it.categoria || '-', { bg }),
-                    createCell(it.cartao || '-', { bg }),
-                    createCell(it.observacoes || '-', { bg }),
-                    createCell(formatarMoeda(it.valor), { bg, align: 'right', bold: true, color: '0958D9' })
-                ]);
-            });
-
-            wsData.push([
-                createCell('TOTAL DO RELATÓRIO:', { bold: true, bg: 'E2E8F0', align: 'right', color: '1E3A8A' }),
-                createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }), createCell('', { bg: 'E2E8F0' }),
-                createCell(formatarMoeda(total), { bold: true, bg: 'E2E8F0', align: 'right', color: '0958D9' })
-            ]);
-            merges.push({ s: { r: wsData.length - 1, c: 0 }, e: { r: wsData.length - 1, c: 8 } });
-
-            function aoaToSheet(data, m) {
-                const ws = {};
-                const range = { s: { c: 10000, r: 10000 }, e: { c: 0, r: 0 } };
-                for (let R = 0; R < data.length; ++R) {
-                    for (let C = 0; C < data[R].length; ++C) {
-                        if (range.s.r > R) range.s.r = R; if (range.s.c > C) range.s.c = C;
-                        if (range.e.r < R) range.e.r = R; if (range.e.c < C) range.e.c = C;
-                        if (data[R][C]) ws[XLSX.utils.encode_cell({ c: C, r: R })] = data[R][C];
+            vendasFiltradas.forEach(v => {
+                let diffMeses = 0;
+                let dataVencimento = new Date();
+                
+                if (v.dataVenda) {
+                    const partes = v.dataVenda.split('-');
+                    if (partes.length === 3) {
+                        const dataBase = new Date(partes[0], partes[1] - 1, partes[2]);
+                        dataVencimento = new Date(dataBase);
+                        dataVencimento.setMonth(dataVencimento.getMonth() + 12);
+                        
+                        const anosDiferenca = dataVencimento.getFullYear() - hoje.getFullYear();
+                        const mesesDiferenca = dataVencimento.getMonth() - hoje.getMonth();
+                        diffMeses = (anosDiferenca * 12) + mesesDiferenca;
+                        
+                        if (hoje.getDate() > dataVencimento.getDate()) {
+                            diffMeses--;
+                        }
                     }
                 }
-                ws['!ref'] = XLSX.utils.encode_range(range);
-                if (m) ws['!merges'] = m;
-                return ws;
+
+                let classeStatus = "bg-emerald-100 text-emerald-800 border border-emerald-300"; 
+                let textoStatus = `${diffMeses} meses restantes`;
+                
+                if (diffMeses <= 0) { 
+                    classeStatus = "bg-red-100 text-red-800 border border-red-300 shadow-sm"; 
+                    textoStatus = "Encerrado (0 meses)"; 
+                    countEncerradas++;
+                } else if (diffMeses <= 2) { 
+                    if (diffMeses === 1) { 
+                        classeStatus = "bg-orange-400 text-white border border-orange-500 shadow-sm"; 
+                    } else { 
+                        classeStatus = "bg-amber-100 text-amber-800 border border-amber-400 shadow-sm"; 
+                    }
+                    countAlerta++;
+                    // Conta como ativa também para o gráfico de vendedor
+                    const vend = v.vendedor || 'Desconhecido';
+                    comissoesPorVendedor[vend] = (comissoesPorVendedor[vend] || 0) + 1;
+                } else {
+                    countAtivas++;
+                    const vend = v.vendedor || 'Desconhecido';
+                    comissoesPorVendedor[vend] = (comissoesPorVendedor[vend] || 0) + 1;
+                }
+
+                const clienteEscapado = (v.cliente || '').replace(/'/g, "\\'");
+                const dataFormatada = v.dataVenda ? v.dataVenda.split('-').reverse().join('/') : '-';
+
+                tbody.innerHTML += `
+                <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                    <td class="p-3 text-slate-800 font-bold">${v.vendedor}</td>
+                    <td class="p-3 text-slate-700 font-medium">${v.cliente}</td>
+                    <td class="p-3 text-slate-600">${dataFormatada}</td>
+                    <td class="p-3">
+                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold ${classeStatus} whitespace-nowrap">
+                            ${textoStatus}
+                        </span>
+                    </td>
+                    <td class="p-3 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="solicitarRenovarComissao('${v.id}', '${clienteEscapado}')" class="px-2 py-1.5 bg-slate-100 hover:bg-blue-50 text-blue-700 font-bold text-[10px] rounded-lg border border-slate-200 transition shadow-sm flex items-center gap-1" title="Renovar por +12 meses a partir de hoje">
+                                <i class="fa-solid fa-clock-rotate-left"></i> Renovar
+                            </button>
+                            <button onclick="solicitarApagarComissao('${v.id}', '${clienteEscapado}')" class="px-2 py-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 rounded-lg transition border border-transparent hover:border-red-200" title="Apagar Registro">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+            });
+            
+            atualizarGraficosComissoes(comissoesPorVendedor, countAtivas, countEncerradas, countAlerta);
+        }
+
+        function atualizarGraficosComissoes(porVendedor, ativas, encerradas, alerta) {
+            if (typeof Chart === 'undefined') return;
+            
+            const paletteVend = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#6366f1', '#14b8a6'];
+            const vendedores = Object.keys(porVendedor);
+            const countsVend = Object.values(porVendedor);
+
+            const ctxVend = document.getElementById('chartComissoesVendedor');
+            if (ctxVend) {
+                if (chartComissoesVendInst) chartComissoesVendInst.destroy();
+                chartComissoesVendInst = new Chart(ctxVend.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: vendedores.length > 0 ? vendedores : ['Nenhum'],
+                        datasets: [{
+                            label: 'Comissões Ativas',
+                            data: countsVend.length > 0 ? countsVend : [0],
+                            backgroundColor: paletteVend,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+                });
             }
 
-            const wb = XLSX.utils.book_new();
-            const ws = aoaToSheet(wsData, merges);
-            ws['!cols'] = [{ wch: 5 }, { wch: 18 }, { wch: 25 }, { wch: 18 }, { wch: 14 }, { wch: 35 }, { wch: 20 }, { wch: 22 }, { wch: 30 }, { wch: 18 }];
-            XLSX.utils.book_append_sheet(wb, ws, "Despesas");
+            const ctxStat = document.getElementById('chartComissoesStatus');
+            if (ctxStat) {
+                if (chartComissoesStatInst) chartComissoesStatInst.destroy();
+                chartComissoesStatInst = new Chart(ctxStat.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Ativas (>2 meses)', 'Em Alerta (<=2 meses)', 'Encerradas'],
+                        datasets: [{
+                            data: [ativas, alerta, encerradas],
+                            backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
+                });
+            }
+        }
 
-            XLSX.writeFile(wb, `Relatorio_Despesas_${numRelatorio}_${tec}.xlsx`);
-            mostrarNotificacao(`Relatório ${numRelatorio} baixado em Excel com todas as informações!`);
+        window.limparFiltrosDashboard = function() {
+            safeSetVal('dash-filter-tecnico', '');
+            safeSetVal('dash-filter-categoria', '');
+            safeSetVal('dash-filter-cliente', '');
+            safeSetVal('dash-filter-data-inicio', '');
+            safeSetVal('dash-filter-data-fim', '');
+            window.renderizarDashboardDespesas();
+        };
+
+        /* DASHBOARD FINANCEIRO DE DESPESAS */
+        window.renderizarDashboardDespesas = function() {
+            const filtroTecnico = safeGetVal('dash-filter-tecnico');
+            const filtroCategoria = safeGetVal('dash-filter-categoria');
+            const filtroCliente = safeGetVal('dash-filter-cliente').toLowerCase();
+            const filtroDataInicio = safeGetVal('dash-filter-data-inicio');
+            const filtroDataFim = safeGetVal('dash-filter-data-fim');
+
+            let despesas = window.listaDespesas || [];
+
+            // Aplicação dos Filtros
+            despesas = despesas.filter(d => {
+                if (filtroTecnico && d.tecnico !== filtroTecnico) return false;
+                if (filtroCategoria && d.categoria !== filtroCategoria) return false;
+                if (filtroCliente && (!d.cliente || !d.cliente.toLowerCase().includes(filtroCliente))) return false;
+                if (filtroDataInicio && d.data < filtroDataInicio) return false;
+                if (filtroDataFim && d.data > filtroDataFim) return false;
+                return true;
+            });
+
+            let totalGasto = 0;
+            let transacoes = despesas.length;
+            let gastosPorCategoria = {};
+            let gastosPorCliente = {};
+            let gastosPorData = {}; // Para o gráfico de linha
+
+            const tbodyDetalhamento = document.getElementById('dashboard-despesas-body');
+            if (tbodyDetalhamento) tbodyDetalhamento.innerHTML = '';
+
+            if (transacoes === 0) {
+                safeSetText('dash-total-gasto', 'R$ 0,00');
+                safeSetText('dash-transacoes', '0');
+                safeSetText('dash-maior-categoria', '-');
+                safeSetText('dash-valor-categoria', 'R$ 0,00');
+                safeSetText('dash-maior-cliente', '-');
+                safeSetText('dash-valor-cliente', 'R$ 0,00');
+                if (tbodyDetalhamento) {
+                    tbodyDetalhamento.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500 font-medium">Nenhuma despesa registrada para análise.</td></tr>`;
+                }
+                atualizarGraficosDespesas({}, {});
+                return;
+            }
+
+            // Mapeando dados
+            despesas.forEach(d => {
+                const valor = parseFloat(d.valor) || 0;
+                totalGasto += valor;
+
+                const cat = d.categoria || 'Outros';
+                if (!gastosPorCategoria[cat]) gastosPorCategoria[cat] = 0;
+                gastosPorCategoria[cat] += valor;
+
+                const cli = d.cliente ? d.cliente.trim() : 'Não informado';
+                if (!gastosPorCliente[cli]) gastosPorCliente[cli] = 0;
+                gastosPorCliente[cli] += valor;
+
+                const data = d.data || 'Desconhecido';
+                if (!gastosPorData[data]) gastosPorData[data] = 0;
+                gastosPorData[data] += valor;
+
+                // Preencher a tabela de detalhamento
+                if (tbodyDetalhamento) {
+                    const tr = document.createElement('tr');
+                    tr.className = 'border-b border-slate-200 hover:bg-slate-50 transition-colors font-medium text-xs';
+                    const dataFormatada = d.data ? d.data.split('-').reverse().join('/') : '-';
+                    tr.innerHTML = `
+                        <td class="p-3 text-slate-600 whitespace-nowrap">${dataFormatada}</td>
+                        <td class="p-3 text-slate-800 font-bold whitespace-nowrap">${d.tecnico || '-'}</td>
+                        <td class="p-3 text-slate-700">${cli}</td>
+                        <td class="p-3 text-slate-600 truncate max-w-[150px]" title="${d.descricao || '-'}">${d.descricao || '-'}</td>
+                        <td class="p-3">
+                            <span class="px-2 py-0.5 bg-slate-100 border border-slate-300 rounded text-[10px] whitespace-nowrap">${cat}</span>
+                        </td>
+                        <td class="p-3 font-extrabold text-sky-900 text-right whitespace-nowrap">${formatarMoeda(valor)}</td>
+                    `;
+                    tbodyDetalhamento.appendChild(tr);
+                }
+            });
+
+            // Encontrar maior categoria
+            let maiorCategoria = '-';
+            let maxCatValor = 0;
+            for (const c in gastosPorCategoria) {
+                if (gastosPorCategoria[c] > maxCatValor) {
+                    maxCatValor = gastosPorCategoria[c];
+                    maiorCategoria = c;
+                }
+            }
+
+            // Encontrar maior cliente
+            let maiorCliente = '-';
+            let maxCliValor = 0;
+            for (const c in gastosPorCliente) {
+                if (gastosPorCliente[c] > maxCliValor) {
+                    maxCliValor = gastosPorCliente[c];
+                    maiorCliente = c;
+                }
+            }
+
+            // Atualizar os Cards de Resumo na UI
+            safeSetText('dash-total-gasto', formatarMoeda(totalGasto));
+            safeSetText('dash-transacoes', transacoes.toLocaleString('pt-BR'));
+            
+            safeSetText('dash-maior-categoria', maiorCategoria);
+            safeSetText('dash-valor-categoria', formatarMoeda(maxCatValor));
+
+            safeSetText('dash-maior-cliente', maiorCliente);
+            safeSetText('dash-valor-cliente', formatarMoeda(maxCliValor));
+
+            atualizarGraficosDespesas(gastosPorCategoria, gastosPorData);
+        };
+
+        function atualizarGraficosDespesas(porCategoria, porData) {
+            if (typeof Chart === 'undefined') return;
+
+            const palette = ['#0f172a', '#0ea5e9', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4'];
+            
+            // Gráfico de Categoria
+            const sortedCat = Object.entries(porCategoria).sort((a,b) => b[1] - a[1]);
+            const ctxCat = document.getElementById('chartDespesasCategoria');
+            
+            if (ctxCat) {
+                if (chartDespesasCatInst) chartDespesasCatInst.destroy();
+                chartDespesasCatInst = new Chart(ctxCat.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: sortedCat.map(x => x[0]),
+                        datasets: [{
+                            label: 'Gasto por Categoria',
+                            data: sortedCat.map(x => x[1]),
+                            backgroundColor: palette,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { callbacks: { label: (c) => ' ' + formatarMoeda(c.raw) } }
+                        },
+                        scales: {
+                            x: { grid: { borderDash: [2, 4] } },
+                            y: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // Gráfico Evolução Diária (Linha)
+            const sortedDates = Object.keys(porData).sort(); // Ordena cronologicamente
+            const ultimosDias = sortedDates.slice(-15); // Pega apenas os últimos 15 dias com registros
+            
+            const ctxEvo = document.getElementById('chartDespesasEvolucao');
+            
+            if (ctxEvo) {
+                if (chartDespesasEvoInst) chartDespesasEvoInst.destroy();
+                chartDespesasEvoInst = new Chart(ctxEvo.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: ultimosDias.map(d => d.split('-').reverse().join('/')),
+                        datasets: [{
+                            label: 'Gasto Diário',
+                            data: ultimosDias.map(d => porData[d]),
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: '#5b21b6',
+                            pointRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { callbacks: { label: (c) => ' ' + formatarMoeda(c.raw) } }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { borderDash: [2, 4] },
+                                ticks: { callback: (v) => 'R$ ' + v }
+                            },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
         }
 
         /* INICIALIZAÇÃO DA PÁGINA */
         window.addEventListener('DOMContentLoaded', () => {
             const hoje = new Date().toISOString().split('T')[0];
             safeSetVal('desp_data', hoje);
+            safeSetVal('comissao_data', hoje);
+
+            const savedEmail = localStorage.getItem('remember_email');
+            if (savedEmail) {
+                safeSetVal('auth-email', savedEmail);
+                const rem = document.getElementById('auth-remember');
+                if (rem) rem.checked = true;
+            }
 
             adicionarLinhaVenda('Impressora CIJ', '8820', 1, 28500);
             adicionarLinhaVenda('Tinta', '4101 STANDARD', 5, 350);
 
             calcularSimuladorOficial();
             renderizarRelatoriosDespesas();
+            renderizarTabelaComissoes();
         });
     </script>
 </body>

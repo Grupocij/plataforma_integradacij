@@ -14,6 +14,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- SheetJS with full cell styling support -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+    <!-- ExcelJS and FileSaver para exportação Azul -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <style>
         body {
@@ -322,11 +325,15 @@
                     </button>
 
                     <button onclick="navegarPara('tabelas')" id="nav-tabelas" class="hidden px-3 py-2 rounded-lg text-xs font-semibold text-amber-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5 border border-amber-500/30">
-                        <i class="fa-solid fa-tags"></i> Tabelas
+                        <i class="fa-solid fa-file-pdf"></i> Documentos
                     </button>
 
                     <button onclick="navegarPara('admin')" id="nav-admin" class="hidden px-3 py-2 rounded-lg text-xs font-semibold text-purple-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5 border border-purple-500/30">
                         <i class="fa-solid fa-shield-halved"></i> Painel Admin
+                    </button>
+
+                    <button onclick="navegarPara('comissoes-azul')" id="nav-comissoes-azul" class="hidden px-3 py-2 rounded-lg text-xs font-semibold text-blue-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5 border border-blue-500/30">
+                        <i class="fa-solid fa-chart-line"></i> Comissões Azul
                     </button>
 
                     <button onclick="fazerLogout()" class="ml-2 px-3 py-2 rounded-lg text-xs font-bold bg-red-950/60 hover:bg-red-900 text-red-300 border border-red-800 transition flex items-center gap-1.5">
@@ -412,17 +419,17 @@
                     <div>
                         <div class="flex items-center justify-between mb-4">
                             <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center text-xl">
-                                <i class="fa-solid fa-tags"></i>
+                                <i class="fa-solid fa-file-pdf"></i>
                             </div>
                             <span class="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-300">Comercial & Gestão</span>
                         </div>
-                        <h3 class="text-base font-bold text-slate-900">Tabelas de Preços</h3>
+                        <h3 class="text-base font-bold text-slate-900">Documentos Oficiais</h3>
                         <p class="text-xs text-slate-500 mt-2 leading-relaxed">
-                            Consulta, visualização e download de arquivos das tabelas de preços oficiais de equipamentos e insumos.
+                            Consulta, visualização e download de arquivos e documentos oficiais de equipamentos e insumos.
                         </p>
                     </div>
                     <button onclick="navegarPara('tabelas')" class="mt-6 w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
-                        Acessar Tabelas <i class="fa-solid fa-arrow-right"></i>
+                        Acessar Documentos <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
 
@@ -441,6 +448,24 @@
                     </div>
                     <button onclick="navegarPara('admin')" class="mt-6 w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
                         Acessar Painel <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div id="card-comissoes-azul-inicio" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-blue-200 hover:shadow-md transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-blue-800 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-300">Vendas & Metas</span>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900">Comissões Azul</h3>
+                        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+                            Gestão inteligente de vendas, regras de liberação e liquidação de comissões.
+                        </p>
+                    </div>
+                    <button onclick="navegarPara('comissoes-azul')" class="mt-6 w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-sm">
+                        Acessar Módulo <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
             </div>
@@ -1062,15 +1087,15 @@
             </div>
         </div>
 
-        <!-- 5. MÓDULO TABELAS DE PREÇOS -->
+        <!-- 5. MÓDULO TABELAS DE PREÇOS (AGORA DOCUMENTOS) -->
         <div id="view-tabelas" class="hidden space-y-6">
             <div class="bg-gradient-to-r from-amber-900 via-amber-950 to-slate-900 text-white p-6 rounded-3xl shadow-lg border border-amber-800/40 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <div class="flex items-center gap-2">
                         <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-300 bg-amber-950 px-2.5 py-0.5 rounded border border-amber-800">Comercial & Gestão</span>
                     </div>
-                    <h2 class="text-2xl font-black mt-1 text-white">Tabelas de Preços Oficiais</h2>
-                    <p class="text-xs text-amber-200/80 mt-1">Consulta, visualização no navegador e upload de tabelas de preços oficiais de equipamentos e insumos.</p>
+                    <h2 class="text-2xl font-black mt-1 text-white">Base de Documentos Oficiais</h2>
+                    <p class="text-xs text-amber-200/80 mt-1">Consulta, visualização no navegador e upload de documentos oficiais de equipamentos e insumos.</p>
                 </div>
             </div>
 
@@ -1079,12 +1104,12 @@
                 <section id="sec-upload-tabela" class="lg:col-span-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
                     <div class="flex items-center gap-2 border-b border-slate-200 pb-3 mb-5">
                         <i class="fa-solid fa-cloud-arrow-up text-amber-600 text-lg"></i>
-                        <h3 class="text-base font-bold text-slate-900">Nova Tabela de Preços</h3>
+                        <h3 class="text-base font-bold text-slate-900">Novo Documento</h3>
                     </div>
 
                     <form id="form-upload-tabela" class="space-y-4" onsubmit="salvarNovaTabelaPrecos(event)">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Título / Nome da Tabela *</label>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Título / Nome do Documento *</label>
                             <input type="text" id="tab_nome" required placeholder="Ex: Tabela CIJ Insumos 2026 V1" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-medium outline-none focus:border-amber-600">
                         </div>
 
@@ -1099,7 +1124,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Arquivo da Tabela *</label>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Arquivo *</label>
                             <input type="file" id="tab_arquivo" required accept=".pdf,.xlsx,.xls,.csv,.doc,.docx,.png,.jpg,.jpeg" class="w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-800 hover:file:bg-amber-200 cursor-pointer">
                             <p class="text-[10px] text-slate-400 mt-1">Tamanho máximo recomendado: 3MB</p>
                         </div>
@@ -1114,17 +1139,17 @@
                 <section id="sec-list-tabelas" class="lg:col-span-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-5">
                         <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-file-invoice text-amber-600 text-lg"></i>
-                            <h3 class="text-base font-bold text-slate-900">Tabelas Disponíveis</h3>
+                            <i class="fa-solid fa-file-pdf text-amber-600 text-lg"></i>
+                            <h3 class="text-base font-bold text-slate-900">Documentos Disponíveis</h3>
                         </div>
-                        <span id="tab-count-badge" class="text-xs px-2.5 py-1 bg-amber-100 text-amber-900 font-bold rounded-full border border-amber-300">0 tabela(s)</span>
+                        <span id="tab-count-badge" class="text-xs px-2.5 py-1 bg-amber-100 text-amber-900 font-bold rounded-full border border-amber-300">0 documento(s)</span>
                     </div>
 
                     <div class="overflow-x-auto border border-slate-200 rounded-xl">
                         <table class="w-full text-left text-xs">
                             <thead>
                                 <tr class="bg-slate-900 text-white font-bold border-b border-slate-800">
-                                    <th class="p-3">NOME DA TABELA</th>
+                                    <th class="p-3">NOME DO DOCUMENTO</th>
                                     <th class="p-3">CATEGORIA</th>
                                     <th class="p-3">DATA UPLOAD</th>
                                     <th class="p-3 text-center">AÇÃO / VISUALIZAR</th>
@@ -1139,7 +1164,7 @@
             </div>
         </div>
 
-        <!-- 6. MÓDULO PAINEL ADMIN E COMISSÕES -->
+        <!-- 6. MÓDULO PAINEL ADMIN -->
         <div id="view-admin" class="hidden space-y-6">
             <div class="bg-gradient-to-r from-purple-900 via-slate-900 to-slate-800 text-white p-6 rounded-3xl shadow-lg border border-purple-800/40 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
@@ -1344,6 +1369,192 @@
                 </div>
             </section>
         </div>
+
+        <!-- 7. MÓDULO COMISSÕES AZUL -->
+        <div id="view-comissoes-azul" class="hidden space-y-6">
+            <div class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 p-6 rounded-3xl text-white shadow-lg border border-blue-800/40 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-blue-300 bg-blue-950 px-2.5 py-0.5 rounded border border-blue-800">Vendas & Metas</span>
+                    </div>
+                    <h2 class="text-2xl font-black mt-1 text-white">Controle de Comissões Azul</h2>
+                    <p class="text-xs text-blue-200/80 mt-1">Gestão inteligente de vendas, regras de liberação e liquidação</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-blue-100 shadow-sm">
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-blue-600">Total de Vendas</p>
+                    <h3 id="kpiTotalSalesAzul" class="text-2xl font-black text-blue-950 mt-1">R$ 0,00</h3>
+                    <p id="kpiSalesCountAzul" class="text-xs font-medium text-slate-500 mt-1">0 vendas registradas</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-indigo-100 shadow-sm">
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-indigo-600">Total Comissões</p>
+                    <h3 id="kpiTotalCommissionsAzul" class="text-2xl font-black text-indigo-950 mt-1">R$ 0,00</h3>
+                    <p class="text-xs font-medium text-indigo-500 mt-1">Média do período</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-amber-100 shadow-sm">
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-amber-700">Comissões Pendentes</p>
+                    <h3 id="kpiPendingCommissionsAzul" class="text-2xl font-black text-amber-900 mt-1">R$ 0,00</h3>
+                    <p class="text-xs font-medium text-amber-600 mt-1">Aguardando quitação</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm">
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-700">Comissões Pagas</p>
+                    <h3 id="kpiPaidCommissionsAzul" class="text-2xl font-black text-emerald-950 mt-1">R$ 0,00</h3>
+                    <p class="text-xs font-medium text-emerald-600 mt-1">Liquidadas no período</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex items-center justify-between mb-5 border-b border-slate-200 pb-3">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-cart-plus text-blue-600 text-lg"></i>
+                        <h3 id="formTitleAzul" class="text-base font-bold text-slate-900">Nova Venda</h3>
+                    </div>
+                    <button type="button" id="btnCancelEditAzul" onclick="resetFormAzul()" class="hidden text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl transition border border-slate-300">
+                        Cancelar Edição
+                    </button>
+                </div>
+
+                <form id="commissionFormAzul" class="space-y-4" onsubmit="salvarVendaAzul(event)">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Vendedor *</label>
+                            <input type="text" id="azul_sellerName" required placeholder="Nome do Vendedor" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-medium outline-none focus:border-blue-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Data da Venda *</label>
+                            <input type="date" id="azul_date" required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-medium outline-none focus:border-blue-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Nº da NF *</label>
+                            <input type="text" id="azul_nfNumber" required placeholder="Ex: NF-1092" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-medium outline-none focus:border-blue-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Cliente *</label>
+                            <input type="text" id="azul_client" required placeholder="Nome do Cliente" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-medium outline-none focus:border-blue-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Tipo de Cliente</label>
+                            <select id="azul_clientType" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-semibold outline-none focus:border-blue-600">
+                                <option value="Atual">Cliente Atual</option>
+                                <option value="Novo">Cliente Novo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Item Vendido</label>
+                            <select id="azul_itemType" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-semibold outline-none focus:border-blue-600">
+                                <option value="Maquina">Maquina</option>
+                                <option value="Alternativo">Alternativo</option>
+                                <option value="Locação">Locação</option>
+                                <option value="Consumíveis">Consumíveis</option>
+                                <option value="Corpo de Prova">Corpo de Prova</option>
+                                <option value="Certificação">Certificação</option>
+                                <option value="Contrato">Contrato</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Valor da Venda (R$) *</label>
+                            <input type="number" step="0.01" min="0" id="azul_saleValue" required placeholder="0.00" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-bold outline-none focus:border-blue-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Entrada (%) *</label>
+                            <input type="number" step="0.1" min="0" max="100" id="azul_entryPercent" required placeholder="Ex: 20" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-bold outline-none focus:border-blue-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Condição de Pagamento</label>
+                            <select id="azul_paymentCond" onchange="updatePaymentFieldsAzul()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-semibold outline-none focus:border-blue-600">
+                                <option value="À Vista">À Vista</option>
+                                <option value="Parcelado">Parcelado</option>
+                            </select>
+                        </div>
+                        <div id="azul_containerInstallments" class="hidden">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Nº de Parcelas</label>
+                            <input type="number" id="azul_installmentsCount" min="1" max="72" value="1" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-medium outline-none focus:border-blue-600">
+                        </div>
+                        <div id="azul_containerInterval" class="hidden">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Intervalo (Dias)</label>
+                            <select id="azul_installmentInterval" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-semibold outline-none focus:border-blue-600">
+                                <option value="7">7 dias</option><option value="10">10 dias</option><option value="15">15 dias</option>
+                                <option value="21">21 dias</option><option value="28">28 dias</option><option value="30" selected>30 dias</option>
+                                <option value="35">35 dias</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Comissão (%) *</label>
+                            <input type="number" step="0.1" min="0" max="100" id="azul_commissionPercent" required placeholder="Ex: 5" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-xl text-xs font-bold outline-none focus:border-blue-600">
+                        </div>
+                    </div>
+                    <div class="flex justify-end pt-3">
+                        <button type="submit" id="btnSubmitAzul" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-save"></i> Salvar Venda
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-5">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-filter text-blue-600"></i> Filtros e Relatórios
+                    </h3>
+                    <button onclick="exportToExcelAzul()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-excel"></i> Exportar
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Vendedor</label>
+                        <input type="text" id="azul_filterSeller" oninput="renderTableAzul()" placeholder="Filtrar..." class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs outline-none focus:border-blue-600">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Cliente</label>
+                        <input type="text" id="azul_filterClient" oninput="renderTableAzul()" placeholder="Filtrar..." class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs outline-none focus:border-blue-600">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Data De</label>
+                        <input type="date" id="azul_filterDateFrom" onchange="renderTableAzul()" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs outline-none focus:border-blue-600">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Data Até</label>
+                        <input type="date" id="azul_filterDateTo" onchange="renderTableAzul()" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs outline-none focus:border-blue-600">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Status</label>
+                        <select id="azul_filterStatus" onchange="renderTableAzul()" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold outline-none focus:border-blue-600">
+                            <option value="">Todos</option>
+                            <option value="Pendente">Pendente</option>
+                            <option value="Pago">Pago</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200 custom-scrollbar">
+                    <table class="w-full text-left border-collapse min-w-[950px] text-xs">
+                        <thead>
+                            <tr class="bg-slate-900 text-white font-bold">
+                                <th onclick="sortTableAzul('sellerName')" class="p-3 cursor-pointer hover:bg-slate-800 select-none">Vendedor ↕</th>
+                                <th class="p-3">NF</th>
+                                <th onclick="sortTableAzul('date')" class="p-3 cursor-pointer hover:bg-slate-800 select-none">Data ↕</th>
+                                <th onclick="sortTableAzul('client')" class="p-3 cursor-pointer hover:bg-slate-800 select-none">Cliente ↕</th>
+                                <th class="p-3">Item</th>
+                                <th onclick="sortTableAzul('saleValue')" class="p-3 text-right cursor-pointer hover:bg-slate-800 select-none">Valor ↕</th>
+                                <th class="p-3 text-center">Entrada</th>
+                                <th onclick="sortTableAzul('commissionValue')" class="p-3 text-right cursor-pointer hover:bg-slate-800 select-none">Comissão ↕</th>
+                                <th class="p-3">Previsão Liberação</th>
+                                <th class="p-3 text-center">Status</th>
+                                <th class="p-3 text-center no-print">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBodyAzul" class="divide-y divide-slate-200 font-medium bg-white">
+                        </tbody>
+                        <tfoot id="tableFooterAzul" class="bg-slate-50/80 font-bold border-t border-slate-300 text-slate-900">
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- NOTIFICAÇÃO TOAST -->
@@ -1377,12 +1588,14 @@
         const tabelasCol = collection(db, 'artifacts', appId, 'public', 'data', 'tabelas_precos');
         const comissoesCol = collection(db, 'artifacts', appId, 'public', 'data', 'comissoes');
         const solicitacoesCol = collection(db, 'artifacts', appId, 'public', 'data', 'solicitacoes');
+        const comissoesAzulCol = collection(db, 'artifacts', appId, 'public', 'data', 'comissoes_azul');
 
         let unsubDespesas = null;
-        let unsubTabelas = null;
+       let unsubTabelas = null;
         let unsubComissoes = null;
         let unsubSolicitacoes = null;
         let isFirstLoadSolicitacoes = true;
+        let isFirstLoadDespesas = true;
 
         function attachFirestoreListeners() {
             unsubDespesas = onSnapshot(despesasCol, (snapshot) => {
@@ -1392,9 +1605,16 @@
                 localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
                 if (typeof window.renderizarRelatoriosDespesas === 'function') window.renderizarRelatoriosDespesas();
                 if (typeof window.renderizarDashboardDespesas === 'function') window.renderizarDashboardDespesas();
+                
+                // Atualiza a numeração assim que o Firebase baixar os dados
+                if (isFirstLoadDespesas && typeof window.inicializarNumeroRelatorio === 'function') {
+                    window.inicializarNumeroRelatorio();
+                    isFirstLoadDespesas = false;
+                }
             }, (error) => { console.warn("Aviso Firestore (Despesas):", error.message); });
 
             unsubTabelas = onSnapshot(tabelasCol, (snapshot) => {
+
                 const docsData = [];
                 snapshot.forEach(docSnap => docsData.push(docSnap.data()));
                 window.listaTabelas = docsData;
@@ -1413,33 +1633,25 @@
             unsubSolicitacoes = onSnapshot(solicitacoesCol, (snapshot) => {
                 const docsData = [];
                 snapshot.forEach(docSnap => docsData.push(docSnap.data()));
-                
-                // Notificar administradores se houver novas solicitações
-                if (!isFirstLoadSolicitacoes && window.isUserAdminOrFinance) {
-                    const currentIds = new Set(window.listaSolicitacoes.map(s => s.id));
-                    docsData.forEach(doc => {
-                        if (!currentIds.has(doc.id)) {
-                            // Ignora o alerta se foi o próprio usuário que criou
-                            if (window.currentUser && doc.autor !== window.currentUser.email) {
-                                if (typeof window.mostrarNotificacao === 'function') {
-                                    window.mostrarNotificacao(`Nova Solicitação Recebida: ${doc.numero_seq} - ${doc.cli_razao}`);
-                                }
-                            }
-                        }
-                    });
-                }
-                isFirstLoadSolicitacoes = false;
-
                 window.listaSolicitacoes = docsData;
                 localStorage.setItem('banco_solicitacoes_cij', JSON.stringify(window.listaSolicitacoes));
             }, (error) => { console.warn("Aviso Firestore (Solicitações):", error.message); });
-        }
+
+            unsubComissoesAzul = onSnapshot(comissoesAzulCol, (snapshot) => {
+                const docsData = [];
+                snapshot.forEach(docSnap => docsData.push(docSnap.data()));
+                window.listaComissoesAzul = docsData;
+                localStorage.setItem('banco_comissoes_azul_cij', JSON.stringify(window.listaComissoesAzul));
+                if (typeof window.renderTableAzul === 'function') window.renderTableAzul();
+            }, (error) => { console.warn("Aviso Firestore (Comissões Azul):", error.message); });
+        };
 
         function detachFirestoreListeners() {
             if (unsubDespesas) unsubDespesas();
             if (unsubTabelas) unsubTabelas();
             if (unsubComissoes) unsubComissoes();
             if (unsubSolicitacoes) unsubSolicitacoes();
+            if (unsubComissoesAzul) unsubComissoesAzul();
         }
 
         onAuthStateChanged(auth, (user) => {
@@ -1450,7 +1662,7 @@
                 if (typeof window.verificarPermissoesUsuario === 'function') {
                     window.verificarPermissoesUsuario(user.email);
                 }
-                attachFirestoreListeners();
+                window.attachFirestoreListeners();
             } else {
                 if (loginScreen) loginScreen.classList.remove('hidden');
                 window.currentUser = null;
@@ -1526,6 +1738,14 @@
             try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'solicitacoes', item.id), item); } 
             catch (err) { console.error("Erro no salvar solicitação:", err); }
         };
+        window.salvarComissaoAzulNuvem = async function(item) {
+            try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'comissoes_azul', item.id), item); } 
+            catch (err) { console.error("Erro no salvar comissão azul:", err); }
+        };
+        window.excluirComissaoAzulNuvem = async function(id) {
+            try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'comissoes_azul', id)); } 
+            catch (err) { console.error("Erro no excluir comissão azul:", err); }
+        };
     </script>
 
     <script>
@@ -1533,38 +1753,33 @@
         
         // 1. E-mails com acesso total (Admin / Financeiro)
         window.EMAILS_ADMIN_FINANCEIRO = [
-            'admin@grupocij.com.br',
-            'financeiro@grupocij.com.br',
+            'adm@grupocij.com',
             'faturamento@grupocij.com',
-            'faturamento@grupocij.com.br',
             'marcos@grupocij.com',
-            'marcos@grupocij.com.br',
-            'filipe@grupocij.com.br',
-            'filipe@leadjet.com.br',
-            'adm@grupocij.com.br'
+            'comercial@grupocij.com',
+            'suporte@grupocij.com' 
         ];
 
         // 2. E-mails da equipe técnica (NÃO vêm Tabelas de Preços, Comissões ou Totais)
         window.EMAILS_TECNICOS = [
-            'tecnico@grupocij.com.br',
-            'anderson@grupocij.com.br',
-            'adriano@grupocij.com.br',
-            'rafael@grupocij.com.br',
-            'gabriel@grupocij.com.br',
-            'sidnei@grupocij.com.br'
+            'tecnico.cij3@gmail.com',
+            'tecnico.cij1@gmail.com',
+            'engenharia@grupocij.com',
+            'estoque@grupocij.com'
+            
         ];
 
         // 3. E-mails da equipe de vendas (VÊM Tabelas de Preços, mas NÃO upload nem Comissões)
         window.EMAILS_VENDEDORES = [
-            'vendedor@grupocij.com.br',
-            'vendas@grupocij.com.br',
-            'marcos@grupocij.com.br'
+            'comercial.rs@grupocij.com',
+            'comercial.sc@grupocij.com',
+            'comercial02.sc@grupocij.com'
         ];
 
         window.userRole = 'VENDEDOR'; 
         window.isUserAdminOrFinance = false;
 
-        function verificarPermissoesUsuario(email) {
+        window.verificarPermissoesUsuario = function(email) {
             const cleanEmail = (email || '').toLowerCase().trim();
             
             let role = 'VENDEDOR';
@@ -1592,6 +1807,9 @@
             const navAdmin = document.getElementById('nav-admin');
             const cardAdminInicio = document.getElementById('card-admin-inicio');
 
+            const navComissoesAzul = document.getElementById('nav-comissoes-azul');
+            const cardComissoesAzulInicio = document.getElementById('card-comissoes-azul-inicio');
+
             if (badge) {
                 if (role === 'ADMIN_FINANCEIRO') {
                     badge.textContent = "Financeiro / Admin";
@@ -1605,26 +1823,12 @@
                 }
             }
 
-            if (cardTotal) {
-                if (role === 'ADMIN_FINANCEIRO') cardTotal.classList.remove('hidden');
-                else cardTotal.classList.add('hidden');
-            }
-
-            if (filterActions) {
-                if (role === 'ADMIN_FINANCEIRO') filterActions.classList.remove('hidden');
-                else filterActions.classList.add('hidden');
-            }
-
+            if (cardTotal) cardTotal.classList.toggle('hidden', role !== 'ADMIN_FINANCEIRO');
+            if (filterActions) filterActions.classList.toggle('hidden', role !== 'ADMIN_FINANCEIRO');
+            
             const podeVerTabelas = (role === 'ADMIN_FINANCEIRO' || role === 'VENDEDOR');
-            if (navTabelas) {
-                if (podeVerTabelas) navTabelas.classList.remove('hidden');
-                else navTabelas.classList.add('hidden');
-            }
-
-            if (cardTabelasInicio) {
-                if (podeVerTabelas) cardTabelasInicio.classList.remove('hidden');
-                else cardTabelasInicio.classList.add('hidden');
-            }
+            if (navTabelas) navTabelas.classList.toggle('hidden', !podeVerTabelas);
+            if (cardTabelasInicio) cardTabelasInicio.classList.toggle('hidden', !podeVerTabelas);
 
             if (formUploadSection) {
                 if (role === 'ADMIN_FINANCEIRO') formUploadSection.classList.remove('hidden');
@@ -1638,15 +1842,24 @@
                     listTabelasSection.className = "lg:col-span-12 bg-white p-6 rounded-2xl shadow-sm border border-slate-200";
                 }
             }
-
+            
+            if (cardAdminInicio) {
+                if (role === 'ADMIN_FINANCEIRO') cardAdminInicio.classList.remove('hidden');
+                else cardAdminInicio.classList.add('hidden');
+            }
             if (navAdmin) {
                 if (role === 'ADMIN_FINANCEIRO') navAdmin.classList.remove('hidden');
                 else navAdmin.classList.add('hidden');
             }
 
-            if (cardAdminInicio) {
-                if (role === 'ADMIN_FINANCEIRO') cardAdminInicio.classList.remove('hidden');
-                else cardAdminInicio.classList.add('hidden');
+            const podeVerComissoesAzul = (role === 'ADMIN_FINANCEIRO' || role === 'VENDEDOR');
+            if (navComissoesAzul) {
+                if (podeVerComissoesAzul) navComissoesAzul.classList.remove('hidden');
+                else navComissoesAzul.classList.add('hidden');
+            }
+            if (cardComissoesAzulInicio) {
+                if (podeVerComissoesAzul) cardComissoesAzulInicio.classList.remove('hidden');
+                else cardComissoesAzulInicio.classList.add('hidden');
             }
 
             renderizarRelatoriosDespesas();
@@ -1655,7 +1868,8 @@
                 renderizarTabelaComissoes();
                 if (typeof window.renderizarDashboardDespesas === 'function') window.renderizarDashboardDespesas();
             }
-        }
+            if (podeVerComissoesAzul && typeof window.renderTableAzul === 'function') window.renderTableAzul();
+        };
 
         /* MODAL E LEMBRAR SENHA */
         function abrirModalResetSenha() { document.getElementById('modal-reset-senha').classList.remove('hidden'); }
@@ -1681,6 +1895,7 @@
         window.listaTabelas = JSON.parse(localStorage.getItem('banco_tabelas_precos_cij') || '[]');
         window.listaComissoes = JSON.parse(localStorage.getItem('banco_comissoes_cij') || '[]');
         window.listaSolicitacoes = JSON.parse(localStorage.getItem('banco_solicitacoes_cij') || '[]');
+        window.listaComissoesAzul = JSON.parse(localStorage.getItem('banco_comissoes_azul_cij') || '[]');
         let relatoriosExpandidos = new Set();
         let rowVendaCount = 0;
 
@@ -1725,7 +1940,7 @@
 
         function formatarMoeda(val) { return (parseFloat(val) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
 
-        function mostrarNotificacao(msg, isError = false) {
+        window.mostrarNotificacao = function(msg, isError = false) {
             const toast = document.getElementById('toast');
             const icon = document.getElementById('toast-icon');
             safeSetText('toast-message', msg);
@@ -1740,19 +1955,23 @@
                 toast.classList.remove('hidden');
                 setTimeout(() => toast.classList.add('hidden'), 3500);
             }
-        }
+        };
 
-        function navegarPara(moduloId) {
+        window.navegarPara = function(moduloId) {
             if (moduloId === 'tabelas' && window.userRole === 'TECNICO') {
-                mostrarNotificacao('Acesso restrito. Módulo disponível para Comercial e Gestão.');
+                window.mostrarNotificacao('Acesso restrito. Módulo disponível para Comercial e Gestão.', true);
                 return;
             }
             if (moduloId === 'admin' && !window.isUserAdminOrFinance) {
-                mostrarNotificacao('Acesso restrito ao perfil de Administrador / Financeiro.');
+                window.mostrarNotificacao('Acesso restrito ao perfil de Administrador / Financeiro.', true);
+                return;
+            }
+            if (moduloId === 'comissoes-azul' && window.userRole === 'TECNICO') {
+                window.mostrarNotificacao('Acesso restrito. Módulo para Comercial e Gestão.', true);
                 return;
             }
 
-            const modulos = ['inicio', 'solicitacao', 'calculadora', 'despesas', 'tabelas', 'admin'];
+            const modulos = ['inicio', 'solicitacao', 'calculadora', 'despesas', 'tabelas', 'admin', 'comissoes-azul'];
             modulos.forEach(m => {
                 const view = document.getElementById(`view-${m}`);
                 const nav = document.getElementById(`nav-${m}`);
@@ -1777,12 +1996,13 @@
                 renderizarTabelaComissoes();
                 if (typeof window.renderizarDashboardDespesas === 'function') window.renderizarDashboardDespesas();
             }
+            if (moduloId === 'comissoes-azul' && typeof window.renderTableAzul === 'function') window.renderTableAzul();
             if (moduloId === 'calculadora') calcularSimuladorOficial();
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        };
 
         /* LÓGICA DO SIMULADOR LEADJET */
-        function calcularSimuladorOficial() {
+        window.calcularSimuladorOficial = function() {
             const ptsMatriz = parseInt(safeGetVal('tipoMatriz', '16')) || 16;
             const chars = parseInt(safeGetVal('caracteres', '150')) || 0;
             const ptsExtra = parseInt(safeGetVal('extras', '0')) || 0;
@@ -1819,7 +2039,7 @@
             safeSetText('res-diario', "R$ " + custoTotalDiario.toFixed(2));
             safeSetText('res-mensal', "R$ " + custoTotalMensal.toFixed(2));
             safeSetText('res-anual', "R$ " + custoTotalAnual.toFixed(2));
-        }
+        };
 
         /* LÓGICA DA TABELA DE SOLICITAÇÃO CIJ */
         function obterDescricaoDaLinha(tr) {
@@ -1830,7 +2050,7 @@
             return selectModelo.value;
         }
 
-        function adicionarLinhaVenda(categoria = 'Impressora CIJ', descricao = '', qtd = 1, precoUnit = '') {
+        window.adicionarLinhaVenda = function(categoria = 'Impressora CIJ', descricao = '', qtd = 1, precoUnit = '') {
             rowVendaCount++;
             const tbody = document.getElementById('corpoTabelaVenda');
             if (!tbody) return;
@@ -1879,11 +2099,11 @@
 
             tbody.appendChild(tr);
             const catSelect = tr.querySelector('.venda-cat');
-            if (catSelect) atualizarModelosDaLinha(catSelect, descricao);
-            calcularLinhaVenda(tr.querySelector('.venda-qtd'));
-        }
+            if (catSelect) window.atualizarModelosDaLinha(catSelect, descricao);
+            window.calcularLinhaVenda(tr.querySelector('.venda-qtd'));
+        };
 
-        function atualizarModelosDaLinha(catSelect, valorDescricaoExistente = '') {
+        window.atualizarModelosDaLinha = function(catSelect, valorDescricaoExistente = '') {
             const tr = catSelect.closest('tr');
             if (!tr) return;
             const selectModelo = tr.querySelector('.venda-desc-select');
@@ -1913,9 +2133,9 @@
             } else {
                 if (inputCustom) inputCustom.classList.add('hidden');
             }
-        }
+        };
 
-        function tratarSelecaoModeloCustom(selectModelo) {
+        window.tratarSelecaoModeloCustom = function(selectModelo) {
             const tr = selectModelo.closest('tr');
             const inputCustom = tr?.querySelector('.venda-desc-custom');
             if (!inputCustom) return;
@@ -1926,9 +2146,9 @@
                 inputCustom.classList.add('hidden');
                 inputCustom.value = '';
             }
-        }
+        };
 
-        function calcularLinhaVenda(elementInRow) {
+        window.calcularLinhaVenda = function(elementInRow) {
             const tr = elementInRow.closest('tr');
             if (!tr) return;
             const qtdVal = parseInt(tr.querySelector('.venda-qtd')?.value || '1', 10) || 1;
@@ -1936,22 +2156,22 @@
             const inputTotal = tr.querySelector('.venda-preco-total');
             if (inputTotal) inputTotal.value = formatarMoeda(qtdVal * numUnit);
             atualizarContadoresETotais();
-        }
+        };
 
-        function formatarCampoPrecoUnit(input) {
+        window.formatarCampoPrecoUnit = function(input) {
             const num = parseValorMoeda(input.value);
             input.value = num > 0 ? formatarMoeda(num) : '';
-            calcularLinhaVenda(input);
-        }
+            window.calcularLinhaVenda(input);
+        };
 
-        function removerLinhaVenda(rowId) {
+        window.removerLinhaVenda = function(rowId) {
             const row = document.getElementById(rowId);
             if (row) {
                 row.remove();
                 reindexarVenda();
                 atualizarContadoresETotais();
             }
-        }
+        };
 
         function reindexarVenda() {
             document.querySelectorAll('#corpoTabelaVenda tr').forEach((row, idx) => {
@@ -1968,26 +2188,24 @@
             safeSetText('valorTotalGeral', formatarMoeda(somaGeral));
         }
 
-        function limparFormulario() {
+        window.limparFormulario = function() {
             document.getElementById('formVendaInstalacao')?.reset();
             document.getElementById('corpoTabelaVenda').innerHTML = '';
             rowVendaCount = 0;
-            adicionarLinhaVenda();
-            mostrarNotificacao('Formulário limpo.');
-        }
+            window.adicionarLinhaVenda();
+            window.mostrarNotificacao('Formulário limpo.');
+        };
 
-        function salvarSolicitacao() {
-            // Validar campos obrigatórios
+        window.salvarSolicitacao = function() {
             const razao = safeGetVal('cli_razao');
             const cnpj = safeGetVal('cli_cnpj');
             const pedido = safeGetVal('ven_num_pedido');
             
             if(!razao || !cnpj || !pedido) {
-                mostrarNotificacao('Preencha os campos obrigatórios (*): Razão Social, CNPJ e Nº Pedido', true);
+                window.mostrarNotificacao('Preencha os campos obrigatórios (*): Razão Social, CNPJ e Nº Pedido', true);
                 return;
             }
 
-            // Gerar numeração sequencial
             const nums = window.listaSolicitacoes
                 .map(i => i.numero_seq)
                 .filter(Boolean)
@@ -1995,7 +2213,6 @@
                 .filter(n => !isNaN(n));
             const proxSeq = `SOL-${(nums.length > 0 ? Math.max(...nums) : 1000) + 1}`;
 
-            // Coletar itens da tabela
             const itensVenda = [];
             document.querySelectorAll('#corpoTabelaVenda tr').forEach((row) => {
                 itensVenda.push({
@@ -2007,63 +2224,38 @@
                 });
             });
 
-            // Montar objeto da solicitação
             const solicitacaoObj = {
                 id: Date.now().toString(),
                 numero_seq: proxSeq,
                 data_registro: new Date().toISOString(),
                 autor: window.currentUser ? window.currentUser.email : 'Desconhecido',
                 
-                // Cliente
-                cli_razao: razao,
-                cli_fantasia: safeGetVal('cli_fantasia'),
-                cli_cnpj: cnpj,
-                cli_ie: safeGetVal('cli_ie'),
-                cli_cep: safeGetVal('cli_cep'),
-                cli_endereco: safeGetVal('cli_endereco'),
-                cli_cidade: safeGetVal('cli_cidade'),
-                cli_contato_nome: safeGetVal('cli_contato_nome'),
-                cli_contato_fone: safeGetVal('cli_contato_fone'),
-                cli_contato_email: safeGetVal('cli_contato_email'),
-                cli_tecnico_nome: safeGetVal('cli_tecnico_nome'),
-                cli_tecnico_fone: safeGetVal('cli_tecnico_fone'),
+                cli_razao: razao, cli_fantasia: safeGetVal('cli_fantasia'), cli_cnpj: cnpj,
+                cli_ie: safeGetVal('cli_ie'), cli_cep: safeGetVal('cli_cep'), cli_endereco: safeGetVal('cli_endereco'),
+                cli_cidade: safeGetVal('cli_cidade'), cli_contato_nome: safeGetVal('cli_contato_nome'),
+                cli_contato_fone: safeGetVal('cli_contato_fone'), cli_contato_email: safeGetVal('cli_contato_email'),
+                cli_tecnico_nome: safeGetVal('cli_tecnico_nome'), cli_tecnico_fone: safeGetVal('cli_tecnico_fone'),
                 cli_transportadora: safeGetVal('cli_transportadora'),
 
-                // Comercial
-                ven_num_proposta: safeGetVal('ven_num_proposta'),
-                ven_num_pedido: pedido,
-                ven_data_solicitacao: safeGetVal('ven_data_solicitacao'),
-                ven_vendedor: safeGetVal('ven_vendedor'),
-                ven_modalidade: safeGetVal('ven_modalidade'),
-                ven_cond_pagto: safeGetVal('ven_cond_pagto'),
-                ven_previsao_entrega: safeGetVal('ven_previsao_entrega'),
-                ven_previsao_instalacao: safeGetVal('ven_previsao_instalacao'),
+                ven_num_proposta: safeGetVal('ven_num_proposta'), ven_num_pedido: pedido,
+                ven_data_solicitacao: safeGetVal('ven_data_solicitacao'), ven_vendedor: safeGetVal('ven_vendedor'),
+                ven_modalidade: safeGetVal('ven_modalidade'), ven_cond_pagto: safeGetVal('ven_cond_pagto'),
+                ven_previsao_entrega: safeGetVal('ven_previsao_entrega'), ven_previsao_instalacao: safeGetVal('ven_previsao_instalacao'),
 
-                // Itens
                 itens: itensVenda,
                 valor_total: parseValorMoeda(document.getElementById('valorTotalGeral').innerText),
 
-                // Linha
-                lin_substrato: safeGetVal('lin_substrato'),
-                lin_velocidade: safeGetVal('lin_velocidade'),
-                lin_sentido: safeGetVal('lin_sentido'),
-                lin_ambiente: safeGetVal('lin_ambiente'),
-                lin_energia: safeGetVal('lin_energia'),
-                lin_suporte_mecanico: safeGetVal('lin_suporte_mecanico'),
+                lin_substrato: safeGetVal('lin_substrato'), lin_velocidade: safeGetVal('lin_velocidade'),
+                lin_sentido: safeGetVal('lin_sentido'), lin_ambiente: safeGetVal('lin_ambiente'),
+                lin_energia: safeGetVal('lin_energia'), lin_suporte_mecanico: safeGetVal('lin_suporte_mecanico'),
 
-                // Serviços
-                srv_fisica: safeGetChecked('srv_fisica'),
-                srv_eletrica: safeGetChecked('srv_eletrica'),
-                srv_parametrizacao: safeGetChecked('srv_parametrizacao'),
-                srv_treina_operador: safeGetChecked('srv_treina_operador'),
-                srv_treina_manutencao: safeGetChecked('srv_treina_manutencao'),
-                srv_integracao_clp: safeGetChecked('srv_integracao_clp'),
+                srv_fisica: safeGetChecked('srv_fisica'), srv_eletrica: safeGetChecked('srv_eletrica'),
+                srv_parametrizacao: safeGetChecked('srv_parametrizacao'), srv_treina_operador: safeGetChecked('srv_treina_operador'),
+                srv_treina_manutencao: safeGetChecked('srv_treina_manutencao'), srv_integracao_clp: safeGetChecked('srv_integracao_clp'),
 
-                // Observações
                 obs_gerais: safeGetVal('obs_gerais')
             };
 
-            // Salvar local e na nuvem
             window.listaSolicitacoes.unshift(solicitacaoObj);
             localStorage.setItem('banco_solicitacoes_cij', JSON.stringify(window.listaSolicitacoes));
             
@@ -2071,13 +2263,12 @@
                 window.salvarSolicitacaoNuvem(solicitacaoObj);
             }
 
-            mostrarNotificacao(`Solicitação ${proxSeq} salva com sucesso!`);
-            limparFormulario();
-        }
+            window.mostrarNotificacao(`Solicitação ${proxSeq} salva com sucesso!`);
+            window.limparFormulario();
+        };
 
-        /* EXPORTAÇÃO EXCEL DA SOLICITAÇÃO CIJ */
-        function gerarExcel() {
-            if (typeof XLSX === 'undefined') { mostrarNotificacao('Biblioteca Excel carregando...'); return; }
+        window.gerarExcel = function() {
+            if (typeof XLSX === 'undefined') { window.mostrarNotificacao('Biblioteca Excel carregando...'); return; }
 
             const cliente = safeGetVal('cli_razao', 'Cliente').trim() || 'Cliente';
             const proposta = safeGetVal('ven_num_proposta', 'S/N').trim() || 'S/N';
@@ -2172,27 +2363,52 @@
             XLSX.utils.book_append_sheet(wb, ws2, "Resumo");
 
             XLSX.writeFile(wb, `CIJ_Solicitacao_${pedido}_${cliente.replace(/\s+/g, '_')}.xlsx`);
-            mostrarNotificacao('Planilha Excel gerada com sucesso!');
-        }
+            window.mostrarNotificacao('Planilha Excel gerada com sucesso!');
+        };
 
         /* LÓGICA DE DESPESAS */
+        window.inicializarNumeroRelatorio = function() {
+            if (window.listaDespesas && window.listaDespesas.length > 0) {
+                // Filtra todos os números de relatórios salvos e pega matematicamente o MAIOR deles
+                const nums = window.listaDespesas
+                    .map(i => i.num_relatorio)
+                    .filter(Boolean)
+                    .map(n => parseInt(n.replace(/\D/g, '')))
+                    .filter(n => !isNaN(n));
+                
+                if (nums.length > 0) {
+                    const maxNum = Math.max(...nums);
+                    // SOMA + 1 PARA ABRIR SEMPRE NO PRÓXIMO NÚMERO
+                    const proximoRelatorio = `REL-${maxNum + 1}`;
+                    safeSetVal('desp_num_relatorio', proximoRelatorio);
+                    safeSetText('desp-num-badge', proximoRelatorio);
+                    return;
+                }
+            }
+            
+            // Se não houver nada, começa do 1001
+            safeSetVal('desp_num_relatorio', 'REL-1001');
+            safeSetText('desp-num-badge', 'REL-1001');
+        };
+
         function novoRelatorioSequencial() {
+
             const nums = window.listaDespesas.map(i => i.num_relatorio).filter(Boolean).map(n => parseInt(n.replace(/\D/g, ''))).filter(n => !isNaN(n));
             const prox = `REL-${(nums.length > 0 ? Math.max(...nums) : 1000) + 1}`;
             safeSetVal('desp_num_relatorio', prox); safeSetText('desp-num-badge', prox);
-            mostrarNotificacao(`Novo relatório ${prox} iniciado.`);
-        }
+            window.mostrarNotificacao(`Novo relatório ${prox} iniciado.`);
+        };
 
-        function finalizarRelatorioAtual() {
+        window.finalizarRelatorioAtual = function() {
             const relAtual = safeGetVal('desp_num_relatorio');
             safeSetVal('desp_tecnico', ''); safeSetVal('desp_cliente', ''); safeSetVal('desp_cidade', '');
             safeSetVal('desp_descricao', ''); safeSetVal('desp_valor', ''); safeSetVal('desp_observacoes', '');
             safeSetVal('desp_data', new Date().toISOString().split('T')[0]);
-            novoRelatorioSequencial();
-            mostrarNotificacao(`Relatório ${relAtual} finalizado!`);
-        }
+            window.novoRelatorioSequencial();
+            window.mostrarNotificacao(`Relatório ${relAtual} finalizado!`);
+        };
 
-        function salvarDespesa(e) {
+        window.salvarDespesa = function(e) {
             e.preventDefault();
             const num_relatorio = safeGetVal('desp_num_relatorio') || 'REL-1001';
             const novaDespesa = {
@@ -2209,9 +2425,9 @@
             if (typeof window.salvarDespesaNuvem === 'function') window.salvarDespesaNuvem(novaDespesa);
 
             safeSetVal('desp_descricao', ''); safeSetVal('desp_valor', ''); safeSetVal('desp_observacoes', '');
-            mostrarNotificacao(`Item adicionado ao relatório ${num_relatorio}!`);
-            renderizarRelatoriosDespesas();
-        }
+            window.mostrarNotificacao(`Item adicionado ao relatório ${num_relatorio}!`);
+            window.renderizarRelatoriosDespesas();
+        };
 
         function obterItensFiltradosDespesas() {
             const filterData = safeGetVal('filter-data-desp'); const filterMes = safeGetVal('filter-mes-desp');
@@ -2228,7 +2444,7 @@
             });
         }
 
-        function renderizarRelatoriosDespesas() {
+        window.renderizarRelatoriosDespesas = function() {
             const tbody = document.getElementById('despesas-grouped-body');
             if (!tbody) return;
 
@@ -2287,31 +2503,31 @@
                 }
             });
             safeSetText('desp-total-acumulado', formatarMoeda(totalGeralExibido));
-        }
+        };
 
-        function toggleExpandirRelatorio(num) { relatoriosExpandidos.has(num) ? relatoriosExpandidos.delete(num) : relatoriosExpandidos.add(num); renderizarRelatoriosDespesas(); }
+        window.toggleExpandirRelatorio = function(num) { relatoriosExpandidos.has(num) ? relatoriosExpandidos.delete(num) : relatoriosExpandidos.add(num); window.renderizarRelatoriosDespesas(); };
 
-        function excluirItemDespesa(id) {
+        window.excluirItemDespesa = function(id) {
             window.listaDespesas = window.listaDespesas.filter(i => i.id !== id);
             localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
             if (typeof window.excluirDespesaNuvem === 'function') window.excluirDespesaNuvem(id);
-            mostrarNotificacao('Item removido!'); renderizarRelatoriosDespesas();
-        }
+            window.mostrarNotificacao('Item removido!'); window.renderizarRelatoriosDespesas();
+        };
 
-        function excluirRelatorioCompleto(num) {
+        window.excluirRelatorioCompleto = function(num) {
             mostrarModalConfirm('Excluir Relatório', `Remover permanentemente as despesas do relatório ${num}?`, () => {
                 const itensExcluir = window.listaDespesas.filter(i => i.num_relatorio === num);
                 window.listaDespesas = window.listaDespesas.filter(i => i.num_relatorio !== num);
                 localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
                 if (typeof window.excluirDespesaNuvem === 'function') itensExcluir.forEach(it => window.excluirDespesaNuvem(it.id));
-                mostrarNotificacao(`Relatório removido!`); renderizarRelatoriosDespesas();
+                window.mostrarNotificacao(`Relatório removido!`); window.renderizarRelatoriosDespesas();
             });
-        }
+        };
 
-        function imprimirRelatorioEspecifico(numRelatorio) { if (!relatoriosExpandidos.has(numRelatorio)) { relatoriosExpandidos.add(numRelatorio); renderizarRelatoriosDespesas(); } setTimeout(() => window.print(), 200); }
-        function imprimirRelatorioFiltroPDF() { let itens = obterItensFiltradosDespesas(); if (itens.length === 0) return; itens.forEach(i => relatoriosExpandidos.add(i.num_relatorio)); renderizarRelatoriosDespesas(); setTimeout(() => window.print(), 250); }
+        window.imprimirRelatorioEspecifico = function(numRelatorio) { if (!relatoriosExpandidos.has(numRelatorio)) { relatoriosExpandidos.add(numRelatorio); window.renderizarRelatoriosDespesas(); } setTimeout(() => window.print(), 200); };
+        window.imprimirRelatorioFiltroPDF = function() { let itens = obterItensFiltradosDespesas(); if (itens.length === 0) return; itens.forEach(i => relatoriosExpandidos.add(i.num_relatorio)); window.renderizarRelatoriosDespesas(); setTimeout(() => window.print(), 250); };
         
-        function confirmarExcluirTudoFiltro() {
+        window.confirmarExcluirTudoFiltro = function() {
             let itensFiltrados = obterItensFiltradosDespesas();
             if (itensFiltrados.length === 0) return;
             mostrarModalConfirm('Excluir Filtro', `Excluir permanentemente ${itensFiltrados.length} despesa(s) visíveis?`, () => {
@@ -2319,19 +2535,19 @@
                 window.listaDespesas = window.listaDespesas.filter(i => !idsParaExcluir.has(i.id));
                 localStorage.setItem('banco_despesas_cij', JSON.stringify(window.listaDespesas));
                 if (typeof window.excluirDespesaNuvem === 'function') idsParaExcluir.forEach(id => window.excluirDespesaNuvem(id));
-                mostrarNotificacao('Despesas excluídas!'); renderizarRelatoriosDespesas();
+                window.mostrarNotificacao('Despesas excluídas!'); window.renderizarRelatoriosDespesas();
             });
-        }
+        };
 
-        function exportarRelatorioExcelEspecifico(numRelatorio) {
+        window.exportarRelatorioExcelEspecifico = function(numRelatorio) {
             const itens = window.listaDespesas.filter(i => i.num_relatorio === numRelatorio);
             if (itens.length > 0) gerarPlanilhaExcelItens(itens, `Relatorio_${numRelatorio}.xlsx`);
-        }
+        };
 
-        function exportarRelatorioExcelFiltro() {
+        window.exportarRelatorioExcelFiltro = function() {
             const itens = obterItensFiltradosDespesas();
             if (itens.length > 0) gerarPlanilhaExcelItens(itens, `Relatorio_Filtro.xlsx`);
-        }
+        };
 
         function gerarPlanilhaExcelItens(itens, nomeArquivo) {
             if (typeof XLSX === 'undefined') return;
@@ -2343,8 +2559,8 @@
             XLSX.writeFile(wb, nomeArquivo);
         }
 
-        /* LÓGICA DO MÓDULO TABELAS DE PREÇOS */
-        function salvarNovaTabelaPrecos(e) {
+        /* LÓGICA DO MÓDULO TABELAS DE PREÇOS (DOCUMENTOS) */
+        window.salvarNovaTabelaPrecos = function(e) {
             e.preventDefault();
             if (!window.isUserAdminOrFinance) return;
 
@@ -2354,7 +2570,7 @@
 
             const file = fileInput.files[0];
             if (file.size > 3 * 1024 * 1024) { 
-                mostrarNotificacao("Arquivo muito grande (Máx 3MB).", true); 
+                window.mostrarNotificacao("Arquivo muito grande (Máx 3MB).", true); 
                 return; 
             }
 
@@ -2364,18 +2580,18 @@
                 window.listaTabelas.unshift(novaTabela);
                 localStorage.setItem('banco_tabelas_precos_cij', JSON.stringify(window.listaTabelas));
                 if (typeof window.salvarTabelaNuvem === 'function') window.salvarTabelaNuvem(novaTabela);
-                safeSetVal('tab_nome', ''); fileInput.value = ''; mostrarNotificacao(`Tabela salva!`); renderizarTabelasPrecos();
+                safeSetVal('tab_nome', ''); fileInput.value = ''; window.mostrarNotificacao(`Documento salvo!`); window.renderizarTabelasPrecos();
             };
             reader.readAsDataURL(file);
-        }
+        };
 
-        function renderizarTabelasPrecos() {
+        window.renderizarTabelasPrecos = function() {
             const tbody = document.getElementById('tabelas-table-body');
             if (!tbody) return;
-            tbody.innerHTML = ''; safeSetText('tab-count-badge', `${window.listaTabelas.length} tabela(s)`);
+            tbody.innerHTML = ''; safeSetText('tab-count-badge', `${window.listaTabelas.length} documento(s)`);
 
             if (window.listaTabelas.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Nenhuma tabela cadastrada.</td></tr>`; return;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Nenhum documento cadastrado.</td></tr>`; return;
             }
 
             window.listaTabelas.forEach(tab => {
@@ -2398,9 +2614,9 @@
                 `;
                 tbody.appendChild(tr);
             });
-        }
+        };
 
-        function visualizarTabelaNoNavegador(id) {
+        window.visualizarTabelaNoNavegador = function(id) {
             const tab = window.listaTabelas.find(t => t.id === id);
             if (!tab) return;
             const modal = document.getElementById('modal-preview-tabela');
@@ -2417,26 +2633,26 @@
             else container.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center shadow-md"><i class="fa-solid fa-file-excel text-4xl text-amber-600 mb-4"></i><h4 class="font-bold text-lg">${tab.arquivo_nome}</h4><p class="text-xs text-slate-500 my-2">Tamanho: ${tab.arquivo_tamanho}</p><a href="${tab.arquivo_data}" download="${tab.arquivo_nome}" class="px-4 py-2 bg-amber-600 text-white rounded-xl font-bold mt-4 inline-block">Baixar Arquivo</a></div>`;
 
             modal.classList.remove('hidden');
-        }
+        };
 
-        function fecharModalPreviewTabela() { document.getElementById('modal-preview-tabela')?.classList.add('hidden'); }
+        window.fecharModalPreviewTabela = function() { document.getElementById('modal-preview-tabela')?.classList.add('hidden'); };
 
-        function excluirTabelaPrecos(id) {
+        window.excluirTabelaPrecos = function(id) {
             if (!window.isUserAdminOrFinance) return;
-            mostrarModalConfirm('Excluir Tabela', 'Remover esta tabela de preços?', () => {
+            mostrarModalConfirm('Excluir Documento', 'Remover este documento?', () => {
                 window.listaTabelas = window.listaTabelas.filter(t => t.id !== id);
                 localStorage.setItem('banco_tabelas_precos_cij', JSON.stringify(window.listaTabelas));
                 if (typeof window.excluirTabelaNuvem === 'function') window.excluirTabelaNuvem(id);
-                mostrarNotificacao('Tabela removida!'); renderizarTabelasPrecos();
+                window.mostrarNotificacao('Documento removido!'); window.renderizarTabelasPrecos();
             });
-        }
+        };
 
         /* LÓGICA DO MÓDULO ADMIN - CONTROLE DE COMISSÕES */
         let pendenteComissao = null;
         let clienteParaApagarComissao = null;
         let clienteParaRenovarComissao = null;
 
-        function filtrarDropdownClientes(valor) {
+        window.filtrarDropdownClientes = function(valor) {
             const dropdown = document.getElementById('dropdownClientesComissao');
             dropdown.innerHTML = '';
             if (valor.length === 0) { dropdown.classList.add('hidden'); return; }
@@ -2458,9 +2674,9 @@
             } else { 
                 dropdown.classList.add('hidden'); 
             }
-        }
+        };
 
-        function tentarAdicionarComissao() {
+        window.tentarAdicionarComissao = function() {
             if (!window.isUserAdminOrFinance) return;
 
             const vendedor = safeGetVal('comissao_vendedor');
@@ -2468,7 +2684,7 @@
             const dataVenda = safeGetVal('comissao_data');
             
             if (!cliente || !dataVenda || !vendedor) {
-                mostrarNotificacao("Preencha todos os campos da comissão.");
+                window.mostrarNotificacao("Preencha todos os campos da comissão.", true);
                 return;
             }
 
@@ -2483,18 +2699,18 @@
                 localStorage.setItem('banco_comissoes_cij', JSON.stringify(window.listaComissoes));
                 if (typeof window.salvarComissaoNuvem === 'function') window.salvarComissaoNuvem(novaComissao);
                 
-                renderizarTabelaComissoes();
-                limparFormularioComissao();
-                mostrarNotificacao("Comissão registrada com sucesso!");
+                window.renderizarTabelaComissoes();
+                window.limparFormularioComissao();
+                window.mostrarNotificacao("Comissão registrada com sucesso!");
             }
-        }
+        };
 
-        function limparFormularioComissao() {
+        window.limparFormularioComissao = function() {
             safeSetVal('comissao_vendedor', '');
             safeSetVal('comissao_cliente', '');
-        }
+        };
 
-        function confirmarRenovacaoComissao(aceitar) {
+        window.confirmarRenovacaoComissao = function(aceitar) {
             if (aceitar && pendenteComissao) {
                 const index = window.listaComissoes.findIndex(v => v.id === pendenteComissao.id);
                 if(index !== -1) {
@@ -2502,48 +2718,48 @@
                     localStorage.setItem('banco_comissoes_cij', JSON.stringify(window.listaComissoes));
                     if (typeof window.salvarComissaoNuvem === 'function') window.salvarComissaoNuvem(pendenteComissao);
                     
-                    renderizarTabelaComissoes();
-                    limparFormularioComissao();
-                    mostrarNotificacao("Comissão renovada com sucesso!");
+                    window.renderizarTabelaComissoes();
+                    window.limparFormularioComissao();
+                    window.mostrarNotificacao("Comissão renovada com sucesso!");
                 }
             }
             pendenteComissao = null;
             document.getElementById('modal-confirmacao-comissao').classList.add('hidden');
-        }
+        };
 
-        function solicitarApagarComissao(idComissao, clienteNome) {
+        window.solicitarApagarComissao = function(idComissao, clienteNome) {
             clienteParaApagarComissao = idComissao;
             document.getElementById('nomeClienteApagarComissao').textContent = clienteNome;
             document.getElementById('modal-apagar-comissao').classList.remove('hidden');
-        }
+        };
 
-        function fecharModalApagarComissao() {
+        window.fecharModalApagarComissao = function() {
             clienteParaApagarComissao = null;
             document.getElementById('modal-apagar-comissao').classList.add('hidden');
-        }
+        };
 
-        function confirmarApagarComissao() {
+        window.confirmarApagarComissao = function() {
             if (clienteParaApagarComissao) {
                 window.listaComissoes = window.listaComissoes.filter(v => v.id !== clienteParaApagarComissao);
                 localStorage.setItem('banco_comissoes_cij', JSON.stringify(window.listaComissoes));
                 if (typeof window.excluirComissaoNuvem === 'function') window.excluirComissaoNuvem(clienteParaApagarComissao);
                 
-                renderizarTabelaComissoes();
-                mostrarNotificacao("Registro apagado.");
+                window.renderizarTabelaComissoes();
+                window.mostrarNotificacao("Registro apagado.");
             }
-            fecharModalApagarComissao();
-        }
+            window.fecharModalApagarComissao();
+        };
 
-        function solicitarRenovarComissao(idComissao, clienteNome) {
+        window.solicitarRenovarComissao = function(idComissao, clienteNome) {
             clienteParaRenovarComissao = idComissao;
             document.getElementById('nomeClienteRenovarComissao').textContent = clienteNome;
             document.getElementById('modal-renovar-comissao').classList.remove('hidden');
-        }
+        };
 
-        function fecharModalRenovarComissao() {
+        window.fecharModalRenovarComissao = function() {
             clienteParaRenovarComissao = null;
             document.getElementById('modal-renovar-comissao').classList.add('hidden');
-        }
+        };
 
         /* NAVEGAÇÃO INTERNA DO PAINEL ADMIN */
         window.alternarAbaAdmin = function(aba) {
@@ -2577,7 +2793,7 @@
             }
         };
 
-        function confirmarRenovacaoDiretaComissao() {
+        window.confirmarRenovacaoDiretaComissao = function() {
             if (clienteParaRenovarComissao) {
                 const index = window.listaComissoes.findIndex(v => v.id === clienteParaRenovarComissao);
                 if (index !== -1) {
@@ -2585,14 +2801,14 @@
                     localStorage.setItem('banco_comissoes_cij', JSON.stringify(window.listaComissoes));
                     if (typeof window.salvarComissaoNuvem === 'function') window.salvarComissaoNuvem(window.listaComissoes[index]);
                     
-                    renderizarTabelaComissoes();
-                    mostrarNotificacao("Data base renovada para hoje (12 meses).");
+                    window.renderizarTabelaComissoes();
+                    window.mostrarNotificacao("Data base renovada para hoje (12 meses).");
                 }
             }
-            fecharModalRenovarComissao();
-        }
+            window.fecharModalRenovarComissao();
+        };
 
-        function renderizarTabelaComissoes() {
+        window.renderizarTabelaComissoes = function() {
             const tbody = document.getElementById('tabelaComissoesBody');
             if (!tbody) return;
             
@@ -2689,7 +2905,7 @@
             });
             
             atualizarGraficosComissoes(comissoesPorVendedor, countAtivas, countEncerradas, countAlerta);
-        }
+        };
 
         function atualizarGraficosComissoes(porVendedor, ativas, encerradas, alerta) {
             if (typeof Chart === 'undefined') return;
@@ -2937,11 +3153,342 @@
             }
         }
 
+        /* LÓGICA DO MÓDULO COMISSÕES AZUL */
+        let azul_editingIndex = null;
+        let azul_sortColumn = 'date';
+        let azul_sortAsc = false;
+
+        window.updatePaymentFieldsAzul = function() {
+            const isParcelado = document.getElementById('azul_paymentCond').value === 'Parcelado';
+            const contInst = document.getElementById('azul_containerInstallments');
+            const contInt = document.getElementById('azul_containerInterval');
+            if (isParcelado) {
+                contInst.classList.remove('hidden');
+                contInt.classList.remove('hidden');
+            } else {
+                contInst.classList.add('hidden');
+                contInt.classList.add('hidden');
+            }
+        };
+
+        function getNextPaymentDateAzul(saleDateStr) {
+            if (!saleDateStr) return '-';
+            const parts = saleDateStr.split('-');
+            if (parts.length !== 3) return '-';
+
+            let year = parseInt(parts[0], 10);
+            let month = parseInt(parts[1], 10) - 1;
+            let day = parseInt(parts[2], 10);
+
+            if (day < 15) { day = 15; } 
+            else if (day < 30) { day = 30; } 
+            else { day = 15; month++; if (month > 11) { month = 0; year++; } }
+
+            const lastDay = new Date(year, month + 1, 0).getDate();
+            if (day > lastDay) day = lastDay;
+
+            return `${String(day).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}`;
+        }
+
+        function getCommissionEligibilityAzul(sale) {
+            const entryPercent = parseFloat(sale.entryPercent) || 0;
+            const paymentCond = sale.paymentCond || (entryPercent >= 100 ? 'À Vista' : 'Parcelado');
+            const itemType = sale.itemType;
+            const clientType = sale.clientType;
+
+            const isSpecialRule = (itemType === 'Alternativo') && clientType === 'Novo';
+            const requiredPercent = isSpecialRule ? 100 : 20;
+
+            if (paymentCond === 'À Vista' || entryPercent >= requiredPercent) {
+                const payDate = getNextPaymentDateAzul(sale.date);
+                const label = requiredPercent === 100 ? `Lib. 100% Pago (${payDate})` : `Lib. Entrada (${payDate})`;
+                return { unlocked: true, info: label, detail: `Previsão: ${payDate}`, class: 'text-emerald-800 bg-emerald-100 border-emerald-300' };
+            }
+
+            const installments = parseInt(sale.installmentsCount) || 1;
+            const intervalDays = parseInt(sale.installmentInterval) || 30;
+            const percentPerInstallment = (100 - entryPercent) / installments;
+
+            let k = Math.ceil((requiredPercent - entryPercent) / percentPerInstallment);
+            if (k < 1) k = 1;
+            if (k > installments) k = installments;
+
+            const saleDateObj = new Date(sale.date + 'T00:00:00');
+            saleDateObj.setDate(saleDateObj.getDate() + (k * intervalDays));
+
+            const targetDateStr = `${saleDateObj.getFullYear()}-${String(saleDateObj.getMonth() + 1).padStart(2, '0')}-${String(saleDateObj.getDate()).padStart(2, '0')}`;
+            const payDate = getNextPaymentDateAzul(targetDateStr);
+
+            const isQuitacao = (requiredPercent === 100);
+            const label = isQuitacao ? `Lib. Quitação (${k}ª Parc - ${payDate})` : `Lib. ${k}ª Parc (${payDate})`;
+
+            return { unlocked: false, info: label, detail: isQuitacao ? `Alternativo/Novo: Exige 100% pago na ${k}ª parc.` : `Atinge 20% na ${k}ª parc.`, class: 'text-amber-800 bg-amber-100 border-amber-300' };
+        }
+
+        window.getFilteredSalesAzul = function() {
+            const seller = safeGetVal('azul_filterSeller').toLowerCase();
+            const client = safeGetVal('azul_filterClient').toLowerCase();
+            const dateFrom = safeGetVal('azul_filterDateFrom');
+            const dateTo = safeGetVal('azul_filterDateTo');
+            const status = safeGetVal('azul_filterStatus');
+
+            const isVendedor = !window.isUserAdminOrFinance;
+            const currentUserEmail = window.currentUser ? window.currentUser.email : '';
+
+            return window.listaComissoesAzul.filter(s => {
+                if (isVendedor && s.autor !== currentUserEmail) return false;
+                if (seller && !s.sellerName.toLowerCase().includes(seller)) return false;
+                if (client && !s.client.toLowerCase().includes(client)) return false;
+                if (dateFrom && s.date < dateFrom) return false;
+                if (dateTo && s.date > dateTo) return false;
+                if (status && (s.status || 'Pendente') !== status) return false;
+                return true;
+            });
+        };
+
+        window.sortTableAzul = function(column) {
+            if (azul_sortColumn === column) azul_sortAsc = !azul_sortAsc;
+            else { azul_sortColumn = column; azul_sortAsc = true; }
+            window.renderTableAzul();
+        };
+
+        window.renderTableAzul = function() {
+            let filtered = window.getFilteredSalesAzul();
+
+            filtered.sort((a, b) => {
+                let valA = a[azul_sortColumn] || '';
+                let valB = b[azul_sortColumn] || '';
+                if (typeof valA === 'string') valA = valA.toLowerCase();
+                if (typeof valB === 'string') valB = valB.toLowerCase();
+                if (valA < valB) return azul_sortAsc ? -1 : 1;
+                if (valA > valB) return azul_sortAsc ? 1 : -1;
+                return 0;
+            });
+
+            const tbody = document.getElementById('tableBodyAzul');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+
+            let totalSalesVal = 0, totalCommissionVal = 0, totalPendingVal = 0, totalPaidVal = 0;
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" class="p-6 text-center text-slate-500 font-medium">Nenhum registro encontrado.</td></tr>`;
+            } else {
+                filtered.forEach((sale) => {
+                    const saleVal = parseFloat(sale.saleValue) || 0;
+                    const commVal = parseFloat(sale.commissionValue) || 0;
+                    const isPaid = sale.status === 'Pago';
+
+                    totalSalesVal += saleVal;
+                    totalCommissionVal += commVal;
+                    if (isPaid) totalPaidVal += commVal; else totalPendingVal += commVal;
+
+                    const elig = getCommissionEligibilityAzul(sale);
+                    const dateFormatted = sale.date ? sale.date.split('-').reverse().join('/') : '-';
+
+                    let acoes = `-`;
+                    if (window.isUserAdminOrFinance || sale.autor === (window.currentUser ? window.currentUser.email : '')) {
+                        acoes = `
+                            <button onclick="editSaleAzul('${sale.id}')" title="Editar" class="p-1.5 text-blue-600 hover:bg-blue-100 rounded-md transition"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteSaleAzul('${sale.id}')" title="Excluir" class="p-1.5 text-red-600 hover:bg-red-100 rounded-md transition"><i class="fa-solid fa-trash-can"></i></button>
+                        `;
+                    }
+
+                    let btnStatus = `<span class="px-2 py-1 rounded-md text-[10px] font-bold border ${isPaid ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-amber-100 text-amber-800 border-amber-300'}">${isPaid ? '✓ Pago' : '⏳ Pendente'}</span>`;
+                    if (window.isUserAdminOrFinance) {
+                        btnStatus = `<button onclick="toggleStatusAzul('${sale.id}')" class="px-2 py-1 rounded-md text-[10px] font-bold border transition hover:opacity-80 ${isPaid ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-amber-100 text-amber-800 border-amber-300'}">${isPaid ? '✓ Pago' : '⏳ Pendente'}</button>`;
+                    }
+
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition border-b border-slate-200">
+                            <td class="p-3 font-bold text-slate-900">${sale.sellerName}</td>
+                            <td class="p-3 font-bold text-blue-900">${sale.nf}</td>
+                            <td class="p-3 text-slate-600">${dateFormatted}</td>
+                            <td class="p-3 text-slate-800"><div>${sale.client}</div><span class="text-[10px] px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded">${sale.clientType}</span></td>
+                            <td class="p-3 text-slate-600">${sale.itemType}</td>
+                            <td class="p-3 text-right font-bold text-slate-900">${formatarMoeda(saleVal)}</td>
+                            <td class="p-3 text-center text-slate-600">${sale.entryPercent}%</td>
+                            <td class="p-3 text-right font-extrabold text-blue-700">${formatarMoeda(commVal)}</td>
+                            <td class="p-3"><span title="${elig.detail}" class="inline-block text-[10px] font-bold px-2 py-1 rounded-md border ${elig.class}">${elig.info}</span></td>
+                            <td class="p-3 text-center">${btnStatus}</td>
+                            <td class="p-3 text-center space-x-1 no-print">${acoes}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            const tfoot = document.getElementById('tableFooterAzul');
+            if(tfoot) {
+                tfoot.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-3 text-right uppercase tracking-wider text-xs">Totais do Filtro:</td>
+                        <td class="p-3 text-right font-black text-blue-900">${formatarMoeda(totalSalesVal)}</td>
+                        <td class="p-3"></td>
+                        <td class="p-3 text-right font-black text-blue-900">${formatarMoeda(totalCommissionVal)}</td>
+                        <td colspan="3" class="p-3 text-xs text-slate-500 font-medium">(${filtered.length} registro(s))</td>
+                    </tr>
+                `;
+            }
+
+            safeSetText('kpiTotalSalesAzul', formatarMoeda(totalSalesVal));
+            safeSetText('kpiSalesCountAzul', `${filtered.length} vendas`);
+            safeSetText('kpiTotalCommissionsAzul', formatarMoeda(totalCommissionVal));
+            safeSetText('kpiPendingCommissionsAzul', formatarMoeda(totalPendingVal));
+            safeSetText('kpiPaidCommissionsAzul', formatarMoeda(totalPaidVal));
+        };
+
+        window.salvarVendaAzul = function(e) {
+            e.preventDefault();
+            const saleValue = parseFloat(safeGetVal('azul_saleValue')) || 0;
+            const commissionPercent = parseFloat(safeGetVal('azul_commissionPercent')) || 0;
+            const entryPercent = parseFloat(safeGetVal('azul_entryPercent')) || 0;
+            const paymentCond = safeGetVal('azul_paymentCond');
+
+            const saleData = {
+                id: azul_editingIndex !== null ? azul_editingIndex : Date.now().toString(),
+                autor: window.currentUser ? window.currentUser.email : '',
+                sellerName: safeGetVal('azul_sellerName'),
+                date: safeGetVal('azul_date'),
+                nf: safeGetVal('azul_nfNumber'),
+                client: safeGetVal('azul_client'),
+                clientType: safeGetVal('azul_clientType'),
+                itemType: safeGetVal('azul_itemType'),
+                saleValue: saleValue,
+                entryPercent: entryPercent,
+                paymentCond: paymentCond,
+                installmentsCount: paymentCond === 'Parcelado' ? (parseInt(safeGetVal('azul_installmentsCount')) || 1) : 1,
+                installmentInterval: paymentCond === 'Parcelado' ? (parseInt(safeGetVal('azul_installmentInterval')) || 30) : 30,
+                commissionPercent: commissionPercent,
+                commissionValue: saleValue * (commissionPercent / 100)
+            };
+
+            if (azul_editingIndex !== null) {
+                const idx = window.listaComissoesAzul.findIndex(s => s.id === azul_editingIndex);
+                if(idx > -1) {
+                    saleData.status = window.listaComissoesAzul[idx].status;
+                    saleData.autor = window.listaComissoesAzul[idx].autor; // Preserve original author
+                    window.listaComissoesAzul[idx] = saleData;
+                }
+                azul_editingIndex = null;
+            } else {
+                saleData.status = 'Pendente';
+                window.listaComissoesAzul.push(saleData);
+            }
+
+            localStorage.setItem('banco_comissoes_azul_cij', JSON.stringify(window.listaComissoesAzul));
+            if (typeof window.salvarComissaoAzulNuvem === 'function') window.salvarComissaoAzulNuvem(saleData);
+
+            window.resetFormAzul();
+            window.renderTableAzul();
+            window.mostrarNotificacao('Venda salva com sucesso!');
+        };
+
+        window.editSaleAzul = function(id) {
+            const sale = window.listaComissoesAzul.find(s => s.id === id);
+            if (!sale) return;
+
+            azul_editingIndex = id;
+            safeSetVal('azul_sellerName', sale.sellerName);
+            safeSetVal('azul_date', sale.date);
+            safeSetVal('azul_nfNumber', sale.nf);
+            safeSetVal('azul_client', sale.client);
+            safeSetVal('azul_clientType', sale.clientType);
+            safeSetVal('azul_itemType', sale.itemType);
+            safeSetVal('azul_saleValue', sale.saleValue);
+            safeSetVal('azul_entryPercent', sale.entryPercent);
+            safeSetVal('azul_paymentCond', sale.paymentCond || 'À Vista');
+            safeSetVal('azul_installmentsCount', sale.installmentsCount || 1);
+            safeSetVal('azul_installmentInterval', sale.installmentInterval || 30);
+            safeSetVal('azul_commissionPercent', sale.commissionPercent);
+
+            window.updatePaymentFieldsAzul();
+
+            safeSetText('formTitleAzul', "Editar Venda");
+            document.getElementById('btnSubmitAzul').innerHTML = '<i class="fa-solid fa-save"></i> Atualizar';
+            document.getElementById('btnCancelEditAzul').classList.remove('hidden');
+
+            document.getElementById('commissionFormAzul').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+
+        window.resetFormAzul = function() {
+            document.getElementById('commissionFormAzul').reset();
+            azul_editingIndex = null;
+            safeSetText('formTitleAzul', "Nova Venda");
+            document.getElementById('btnSubmitAzul').innerHTML = '<i class="fa-solid fa-save"></i> Salvar Venda';
+            document.getElementById('btnCancelEditAzul').classList.add('hidden');
+            window.updatePaymentFieldsAzul();
+        };
+
+        window.toggleStatusAzul = function(id) {
+            if (!window.isUserAdminOrFinance) return;
+            const idx = window.listaComissoesAzul.findIndex(s => s.id === id);
+            if(idx > -1) {
+                window.listaComissoesAzul[idx].status = window.listaComissoesAzul[idx].status === 'Pago' ? 'Pendente' : 'Pago';
+                localStorage.setItem('banco_comissoes_azul_cij', JSON.stringify(window.listaComissoesAzul));
+                if (typeof window.salvarComissaoAzulNuvem === 'function') window.salvarComissaoAzulNuvem(window.listaComissoesAzul[idx]);
+                window.renderTableAzul();
+            }
+        };
+
+        window.deleteSaleAzul = function(id) {
+            mostrarModalConfirm('Excluir Venda', 'Deseja remover esta venda?', () => {
+                window.listaComissoesAzul = window.listaComissoesAzul.filter(s => s.id !== id);
+                localStorage.setItem('banco_comissoes_azul_cij', JSON.stringify(window.listaComissoesAzul));
+                if (typeof window.excluirComissaoAzulNuvem === 'function') window.excluirComissaoAzulNuvem(id);
+                window.renderTableAzul();
+                window.mostrarNotificacao('Venda removida.');
+            });
+        };
+
+        window.exportToExcelAzul = async function() {
+            if (typeof ExcelJS === 'undefined') { window.mostrarNotificacao('Carregando biblioteca Excel...', true); return; }
+            const filteredData = window.getFilteredSalesAzul();
+            if (filteredData.length === 0) { window.mostrarNotificacao('Nenhum dado para exportar.', true); return; }
+
+            const wb = new ExcelJS.Workbook();
+            const ws = wb.addWorksheet('Comissões Azul');
+
+            ws.columns = [
+                { header: 'Vendedor', key: 'sellerName', width: 20 }, { header: 'NF', key: 'nf', width: 12 },
+                { header: 'Data', key: 'date', width: 12 }, { header: 'Cliente', key: 'client', width: 25 },
+                { header: 'Item', key: 'itemType', width: 15 }, { header: 'Valor (R$)', key: 'saleValue', width: 15 },
+                { header: 'Entrada (%)', key: 'entryPercent', width: 12 }, { header: 'Comissão (%)', key: 'commissionPercent', width: 15 },
+                { header: 'Valor Comissão', key: 'commissionValue', width: 18 }, { header: 'Status', key: 'status', width: 12 }
+            ];
+
+            const headerRow = ws.getRow(1);
+            headerRow.font = { bold: true, color: { argb: 'FFFFFF' } };
+            headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '1E3A8A' } };
+
+            let tSales = 0, tComm = 0;
+            filteredData.forEach((s) => {
+                const row = ws.addRow({
+                    sellerName: s.sellerName, nf: s.nf, date: s.date ? s.date.split('-').reverse().join('/') : '',
+                    client: s.client, itemType: s.itemType, saleValue: s.saleValue,
+                    entryPercent: s.entryPercent / 100, commissionPercent: s.commissionPercent / 100,
+                    commissionValue: s.commissionValue, status: s.status || 'Pendente'
+                });
+                row.getCell('saleValue').numFmt = '"R$" #,##0.00';
+                row.getCell('entryPercent').numFmt = '0.0%';
+                row.getCell('commissionPercent').numFmt = '0.0%';
+                row.getCell('commissionValue').numFmt = '"R$" #,##0.00';
+                tSales += s.saleValue; tComm += s.commissionValue;
+            });
+
+            const tRow = ws.addRow({ sellerName: 'TOTAL', saleValue: tSales, commissionValue: tComm });
+            tRow.font = { bold: true }; tRow.getCell('saleValue').numFmt = '"R$" #,##0.00'; tRow.getCell('commissionValue').numFmt = '"R$" #,##0.00';
+
+            const buffer = await wb.xlsx.writeBuffer();
+            saveAs(new Blob([buffer]), `Comissoes_Azul_${new Date().toISOString().slice(0, 10)}.xlsx`);
+            window.mostrarNotificacao('Exportado com sucesso!');
+        };
+
         /* INICIALIZAÇÃO DA PÁGINA */
         window.addEventListener('DOMContentLoaded', () => {
             const hoje = new Date().toISOString().split('T')[0];
             safeSetVal('desp_data', hoje);
             safeSetVal('comissao_data', hoje);
+            safeSetVal('azul_date', hoje);
 
             const savedEmail = localStorage.getItem('remember_email');
             if (savedEmail) {
@@ -2950,12 +3497,13 @@
                 if (rem) rem.checked = true;
             }
 
-            adicionarLinhaVenda('Impressora CIJ', '8820', 1, 28500);
-            adicionarLinhaVenda('Tinta', '4101 STANDARD', 5, 350);
+            window.adicionarLinhaVenda('Impressora CIJ', '8820', 1, 28500);
+            window.adicionarLinhaVenda('Tinta', '4101 STANDARD', 5, 350);
 
-            calcularSimuladorOficial();
-            renderizarRelatoriosDespesas();
-            renderizarTabelaComissoes();
+            window.calcularSimuladorOficial();
+            
+            // Garantir que não chame funcoes de dados vazias antes do listener do Firebase agir
+            // O attachFirestoreListeners é chamado após o login com sucesso (onAuthStateChanged).
         });
     </script>
 </body>
